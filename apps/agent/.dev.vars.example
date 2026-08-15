@@ -1,5 +1,14 @@
 # Copy to .dev.vars for local `wrangler dev`. Never commit real values.
+
+# Croma REST (Bearer). Key: platform.usecroma.com
 CROMA_API_KEY=croma_test_xxx
+
+# Gemini API key (AI Studio). Models are set as vars in wrangler.jsonc and can be
+# overridden here if the lineup shifts (2.5 retires 2026-10-16).
 GEMINI_API_KEY=AIza-xxx
-AGENT_INGEST_KEY=shared-secret-for-agent-ingest
-WEB_API_URL=http://localhost:3000
+# GEMINI_SWEEP_MODEL=gemini-3.5-flash-lite
+# GEMINI_SCORING_MODEL=gemini-3.1-pro-preview
+
+# Shared secret for POST {WEB_API_URL}/api/agent/findings (header x-agent-key).
+AGENT_INGEST_KEY=dev-agent-ingest-key
+# WEB_API_URL is a var in wrangler.jsonc (http://localhost:3000 by default).
