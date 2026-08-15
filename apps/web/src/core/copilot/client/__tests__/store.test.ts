@@ -11,7 +11,22 @@ describe("copilotUiReducer", () => {
             focusFindingId: null,
             focusNit: null,
             chatOpen: true,
+            selectedWatchlistId: null,
         });
+    });
+
+    it("tracks the watchlist the Panel is showing", () => {
+        const next = copilotUiReducer(initialCopilotUiState, {
+            type: "setSelectedWatchlist",
+            watchlistId: "w-1",
+        });
+        expect(next.selectedWatchlistId).toBe("w-1");
+        expect(
+            copilotUiReducer(next, {
+                type: "setSelectedWatchlist",
+                watchlistId: null,
+            }).selectedWatchlistId,
+        ).toBeNull();
     });
 
     it("toggles the chat panel without touching commands", () => {

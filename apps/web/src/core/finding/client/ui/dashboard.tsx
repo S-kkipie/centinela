@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useCopilotUiOptional } from "@/core/copilot/client/store";
 import { pickDefaultWatchlist } from "@/core/finding/client/default-watchlist";
 import { useFindingsFeed } from "@/core/finding/client/hooks";
 import { FindingsFeed } from "@/core/finding/client/ui/findings-feed";
@@ -38,6 +39,13 @@ export function Dashboard() {
     }, [watchlists, allFindings, selected]);
 
     const watchlistId = selected === ALL ? undefined : selected;
+
+    // Publish the selection so the copilot reasons about what's on screen.
+    const copilot = useCopilotUiOptional();
+    const setSelectedWatchlist = copilot?.setSelectedWatchlist;
+    useEffect(() => {
+        setSelectedWatchlist?.(watchlistId ?? null);
+    }, [watchlistId, setSelectedWatchlist]);
 
     // Shares the feed's react-query cache — same request the feed polls.
     const { data: feed } = useFindingsFeed({ watchlistId });

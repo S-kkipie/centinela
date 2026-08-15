@@ -34,6 +34,8 @@ export type CopilotUiState = {
     focusNit: string | null;
     /** Chat panel visibility — lives here so the app shell can make room. */
     chatOpen: boolean;
+    /** Which watchlist the Panel is showing, so the copilot sees what you see. */
+    selectedWatchlistId: string | null;
 };
 
 export const initialCopilotUiState: CopilotUiState = {
@@ -41,13 +43,15 @@ export const initialCopilotUiState: CopilotUiState = {
     focusFindingId: null,
     focusNit: null,
     chatOpen: true,
+    selectedWatchlistId: null,
 };
 
 export type CopilotUiAction =
     | { type: "setFindingFilter"; filter: FindingFilter | null }
     | { type: "focusFinding"; findingId: string | null }
     | { type: "focusNit"; nit: string | null }
-    | { type: "setChatOpen"; open: boolean };
+    | { type: "setChatOpen"; open: boolean }
+    | { type: "setSelectedWatchlist"; watchlistId: string | null };
 
 export function copilotUiReducer(
     state: CopilotUiState,
@@ -62,6 +66,8 @@ export function copilotUiReducer(
             return { ...state, focusNit: action.nit };
         case "setChatOpen":
             return { ...state, chatOpen: action.open };
+        case "setSelectedWatchlist":
+            return { ...state, selectedWatchlistId: action.watchlistId };
         default:
             return state;
     }
@@ -111,6 +117,7 @@ export type CopilotUiApi = {
     focusFinding(findingId: string | null): void;
     focusNit(nit: string | null): void;
     setChatOpen(open: boolean): void;
+    setSelectedWatchlist(watchlistId: string | null): void;
 };
 
 const CopilotUiContext = createContext<CopilotUiApi | null>(null);
@@ -129,6 +136,8 @@ export function CopilotUiProvider({ children }: { children: ReactNode }) {
                 dispatch({ type: "focusFinding", findingId }),
             focusNit: (nit) => dispatch({ type: "focusNit", nit }),
             setChatOpen: (open) => dispatch({ type: "setChatOpen", open }),
+            setSelectedWatchlist: (watchlistId) =>
+                dispatch({ type: "setSelectedWatchlist", watchlistId }),
         }),
         [state],
     );
