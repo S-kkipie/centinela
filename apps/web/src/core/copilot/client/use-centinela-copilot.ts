@@ -8,12 +8,12 @@ import { useWatchlistTools } from "@/core/copilot/client/tools/use-watchlist-too
 
 /**
  * Single mount point for every copilot capability. The chat panel calls this
- * once.
+ * once and uses the returned state to show the suggestions loader.
  */
 export function useCentinelaCopilot() {
     useCopilotAppContext();
     useFindingTools();
     useWatchlistTools();
     useGraphTools();
-    useCopilotSuggestions();
+    return useCopilotSuggestions();
 }

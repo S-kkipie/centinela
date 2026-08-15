@@ -9,6 +9,7 @@ import {
 import { useFindingsFeed } from "@/core/finding/client/hooks";
 import { ContractorGraph } from "@/core/finding/client/ui/contractor-graph";
 import type { Finding } from "@/core/finding/domain/types";
+import { ScrollArea } from "@/frontend/components/ui/scroll-area";
 import { Spinner } from "@/frontend/components/ui/spinner";
 import { cn } from "@/frontend/lib/utils";
 
@@ -291,17 +292,19 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
                                 En vivo
                             </span>
                         </header>
-                        <div className="space-y-1 p-2 lg:max-h-[calc(100svh-9.5rem)] lg:overflow-y-auto">
-                            {items.map((f, i) => (
-                                <FindingRow
-                                    active={f.id === selected.id}
-                                    finding={f}
-                                    index={i}
-                                    key={f.id}
-                                    onSelect={() => select(f.id)}
-                                />
-                            ))}
-                        </div>
+                        <ScrollArea className="lg:max-h-[calc(100svh-9.5rem)]">
+                            <div className="space-y-1 p-2">
+                                {items.map((f, i) => (
+                                    <FindingRow
+                                        active={f.id === selected.id}
+                                        finding={f}
+                                        index={i}
+                                        key={f.id}
+                                        onSelect={() => select(f.id)}
+                                    />
+                                ))}
+                            </div>
+                        </ScrollArea>
                     </div>
                 </section>
 

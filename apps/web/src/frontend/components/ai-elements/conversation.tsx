@@ -1,20 +1,26 @@
 "use client";
 
-import type { ComponentProps } from "react";
+import type { ComponentProps, Ref } from "react";
+import { ScrollArea } from "@/frontend/components/ui/scroll-area";
 import { cn } from "@/frontend/lib/utils";
 
 /**
  * Minimal AI-Elements-style chat primitives, hand-authored against the app's
  * "intel" dark-ops tokens instead of the shadcn registry (kept offline + fully
- * themed). The scroll container owns overflow; the panel handles stick-to-bottom.
+ * themed). The scroll container is the shadcn ScrollArea (Radix) so the panel
+ * gets the themed overlay scrollbar, never Chrome's native one; the `ref`
+ * lands on the scroll viewport so the panel's stick-to-bottom keeps working.
  */
 
-export function Conversation({ className, ...props }: ComponentProps<"div">) {
+export function Conversation({
+    className,
+    ref,
+    ...props
+}: ComponentProps<"div"> & { ref?: Ref<HTMLDivElement> }) {
     return (
-        <div
-            className={cn("relative flex-1 overflow-y-auto", className)}
-            {...props}
-        />
+        <ScrollArea className={cn("flex-1", className)} viewportRef={ref}>
+            <div {...props} />
+        </ScrollArea>
     );
 }
 

@@ -37,6 +37,7 @@ import {
     SuggestionSkeleton,
     Suggestions,
 } from "@/frontend/components/ai-elements/suggestion";
+import { Spinner } from "@/frontend/components/ui/spinner";
 import { cn } from "@/frontend/lib/utils";
 
 /** Raw AG-UI shapes we read for generative-UI rendering. */
@@ -57,7 +58,7 @@ type RawMessage = {
  */
 export function ChatPanel() {
     // Single mount point for all copilot context + tools (WS-B/WS-C append here).
-    useCentinelaCopilot();
+    const { isRegenerating } = useCentinelaCopilot();
 
     const { copilotkit } = useCopilotKit();
     const { agent } = useAgent({
@@ -78,7 +79,7 @@ export function ChatPanel() {
     const running = agent.isRunning;
 
     // Model-written chips, with the static seeds as the cold-start fallback.
-    const { suggestions, isLoading: suggestionsLoading } = useSuggestions();
+    const { suggestions } = useSuggestions();
     // Cap the row: a stale batch that slips past the clear must never turn the
     // panel into a wall of chips.
     const generated = dedupeSuggestions(
@@ -86,12 +87,17 @@ export function ChatPanel() {
             .map((s) => s.title || s.message)
             .filter((s): s is string => Boolean(s)),
     ).slice(-3);
-    const chips =
-        generated.length > 0
-            ? generated
-            : suggestionsLoading || messages.length > 0
-              ? []
-              : [...SEED_SUGGESTIONS];
+    // The loader wins over the existing chips: once the user moves, those chips
+    // describe something they already left, so showing them reads as an answer
+    // that never updated.
+    const showSuggestionLoader = isRegenerating;
+    const chips = showSuggestionLoader
+        ? []
+        : generated.length > 0
+          ? generated
+          : messages.length > 0
+            ? []
+            : [...SEED_SUGGESTIONS];
 
     // Stick to bottom as the thread grows / streams.
     // biome-ignore lint/correctness/useExhaustiveDependencies: length + running drive scroll
@@ -213,22 +219,18 @@ export function ChatPanel() {
 
             {/* AI-written chips that follow whatever the user is looking at.
                 They sit above the input so they stay reachable mid-thread. */}
-            {!running && (suggestionsLoading || chips.length > 0) && (
+            {!running && (showSuggestionLoader || chips.length > 0) && (
                 <div className="border-rule border-t px-3 py-2">
-                    {suggestionsLoading && chips.length === 0 ? (
+                    {showSuggestionLoader ? (
                         <div className="space-y-1.5">
-                            <span className="label-ops text-muted-foreground">
+                            <span className="label-ops flex items-center gap-1.5 text-signal">
+                                <Spinner className="size-3" />
                                 {CHAT_LABELS.suggesting}
                             </span>
                             <SuggestionSkeleton />
                         </div>
                     ) : (
-                        <Suggestions
-                            className={cn(
-                                suggestionsLoading &&
-                                    "animate-pulse opacity-60",
-                            )}
-                        >
+                        <Suggestions>
                             {/* The model can repeat itself, so the text alone
                                 is not a stable key. */}
                             {chips.map((s, i) => (

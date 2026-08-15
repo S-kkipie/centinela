@@ -13,6 +13,8 @@ import { useWatchlists } from "@/core/watchlist/client/hooks";
 
 /** Clicking through rows shouldn't fire one generation per click. */
 const SETTLE_MS = 700;
+/** Upper bound on how long the skeleton may stay up. */
+const GIVE_UP_MS = 12_000;
 
 function useSettled<T>(value: T, ms = SETTLE_MS): T {
     const [settled, setSettled] = useState(value);
@@ -89,9 +91,27 @@ export function useCopilotSuggestions() {
     // is the only trigger: `clearSuggestions` gets a new identity every render,
     // and depending on it turned this into a request storm that burned the
     // model's rate limit and left the chat answering nothing.
-    const { clearSuggestions } = useSuggestions();
+    const { suggestions, isLoading, clearSuggestions } = useSuggestions();
     const clearRef = useRef(clearSuggestions);
     clearRef.current = clearSuggestions;
+
+    // `isLoading` alone leaves the chips row looking idle between the context
+    // changing and the request starting, which is most of the wait. Track the
+    // gap ourselves so the skeleton covers it end to end.
+    const [pending, setPending] = useState(true);
+
+    // Flip to loading the moment the user selects something, not when the
+    // debounced prompt catches up — otherwise the stale chips sit there through
+    // the settle window and the regeneration looks instantaneous.
+    const mounted = useRef(false);
+    useEffect(() => {
+        if (!mounted.current) {
+            mounted.current = true;
+            return;
+        }
+        setPending(true);
+    }, [openFindingId, watchlistId]);
+
     const lastCleared = useRef<string | null>(null);
     useEffect(() => {
         if (lastCleared.current === null) {
@@ -100,6 +120,21 @@ export function useCopilotSuggestions() {
         }
         if (lastCleared.current === instructions) return;
         lastCleared.current = instructions;
+        setPending(true);
         clearRef.current();
     }, [instructions]);
+
+    useEffect(() => {
+        if (suggestions.length > 0) setPending(false);
+    }, [suggestions]);
+
+    // If generation never lands (rate limit, network), stop waiting so the row
+    // falls back to chips instead of showing a skeleton forever.
+    useEffect(() => {
+        if (!pending) return;
+        const t = setTimeout(() => setPending(false), GIVE_UP_MS);
+        return () => clearTimeout(t);
+    }, [pending]);
+
+    return { isRegenerating: pending || isLoading };
 }
