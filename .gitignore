@@ -22,3 +22,5 @@ out/
 
 # Playwright MCP session artifacts
 .playwright-mcp/
+
+.vercel

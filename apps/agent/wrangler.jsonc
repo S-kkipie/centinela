@@ -44,7 +44,7 @@
   // Non-secret vars. Secrets (CROMA_API_KEY, GEMINI_API_KEY, AGENT_INGEST_KEY)
   // go via `.dev.vars` locally and `wrangler secret put` in prod.
   "vars": {
-    "WEB_API_URL": "http://localhost:3000",
+    "WEB_API_URL": "https://centinela.aido.lat",
     "GEMINI_SWEEP_MODEL": "gemini-3.5-flash-lite",
     "GEMINI_SCORING_MODEL": "gemini-3.1-pro-preview"
   }
