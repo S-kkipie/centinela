@@ -20,10 +20,18 @@ const MeshGradient = dynamic(
     { ssr: false },
 );
 
-const GodRays = dynamic(
+const GrainGradient = dynamic(
     () =>
         import("@paper-design/shaders-react").then((m) => ({
-            default: m.GodRays,
+            default: m.GrainGradient,
+        })),
+    { ssr: false },
+);
+
+const PulsingBorder = dynamic(
+    () =>
+        import("@paper-design/shaders-react").then((m) => ({
+            default: m.PulsingBorder,
         })),
     { ssr: false },
 );
@@ -65,30 +73,54 @@ export function ShaderBackdrop() {
     );
 }
 
-/** Hero: god-rays sweeping down from the top — the surveillance light. */
-export function HeroShader() {
+/** Problema: campo voronoi — el mapa celular de procesos moviéndose. */
+export function ProblemaShader() {
     const live = useShaderGate();
     return (
         <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-            <div className="absolute inset-0 bg-[radial-gradient(90%_70%_at_70%_-10%,var(--color-accent-signal-soft),transparent_60%)] opacity-60" />
             {live ? (
-                <GodRays
-                    colorBack="#12171500"
-                    colorBloom="#35c08b"
-                    colors={["#1d3a2f", "#35c08b", "#171d1a"]}
-                    offsetY={-0.9}
-                    density={0.35}
-                    spotty={0.28}
-                    midSize={0.1}
-                    midIntensity={0.35}
-                    intensity={0.5}
-                    bloom={0.35}
-                    speed={0.6}
-                    className="absolute inset-0 opacity-45"
+                <GrainGradient
+                    colorBack="#00000000"
+                    colors={["#171d1a", "#1d3a2f", "#254c3b"]}
+                    shape="wave"
+                    softness={0.85}
+                    intensity={0.35}
+                    noise={0.25}
+                    speed={0.4}
+                    className="absolute inset-0 opacity-60"
                     width="100%"
                     height="100%"
                 />
             ) : null}
+        </div>
+    );
+}
+
+/** Borde vivo para el nodo CENTINELA del diagrama — el agente late. */
+export function NodoVivoBorder() {
+    const live = useShaderGate();
+    if (!live) return null;
+    return (
+        <div
+            className="pointer-events-none absolute -inset-3"
+            aria-hidden="true"
+        >
+            <PulsingBorder
+                colorBack="#00000000"
+                colors={["#35c08b", "#1d3a2f"]}
+                roundness={0.12}
+                thickness={0.04}
+                softness={0.5}
+                intensity={0.5}
+                bloom={0.5}
+                spots={3}
+                spotSize={0.35}
+                pulse={0.4}
+                speed={0.7}
+                className="h-full w-full"
+                width="100%"
+                height="100%"
+            />
         </div>
     );
 }

@@ -5,6 +5,7 @@
 import { useRef } from "react";
 
 import { AnimatedBeam } from "@/frontend/components/aceternity/animated-beam";
+import { NodoVivoBorder } from "@/frontend/components/landing/shader-backdrop";
 import { cn } from "@/frontend/lib/utils";
 
 const fuentes = [
@@ -94,7 +95,8 @@ export function RedFuentes() {
                     ))}
                 </div>
 
-                <div ref={centroRef}>
+                <div ref={centroRef} className="relative">
+                    <NodoVivoBorder />
                     <Nodo className="border-signal/50 px-6 py-5 text-center shadow-[0_0_40px_-12px_var(--color-accent-signal)]">
                         <span className="font-display text-lg font-bold tracking-[0.04em]">
                             CENTINELA

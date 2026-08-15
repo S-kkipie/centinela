@@ -1,4 +1,5 @@
 import { NumberTicker } from "@/frontend/components/aceternity/number-ticker";
+import { ProblemaShader } from "@/frontend/components/landing/shader-backdrop";
 
 const strip = [
     { k: "LATIDO", v: "CADA 2 H" },
@@ -8,8 +9,9 @@ const strip = [
 
 export function LandingProblema() {
     return (
-        <section className="border-y border-rule bg-secondary">
-            <div className="mx-auto w-full max-w-6xl px-4 py-24 text-center sm:px-10 md:py-32">
+        <section className="relative border-y border-rule bg-secondary">
+            <ProblemaShader />
+            <div className="relative z-10 mx-auto w-full max-w-6xl px-4 py-24 text-center sm:px-10 md:py-32">
                 <p className="label-ops text-muted-foreground">
                     Caudal real · medido por el agente
                 </p>

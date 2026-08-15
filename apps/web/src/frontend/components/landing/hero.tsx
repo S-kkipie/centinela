@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Highlight } from "@/frontend/components/aceternity/hero-highlight";
-import { HeroShader } from "@/frontend/components/landing/shader-backdrop";
+import { Spotlight } from "@/frontend/components/aceternity/spotlight";
 import { cn } from "@/frontend/lib/utils";
 
 const ciclo = [
@@ -124,7 +124,7 @@ function CicloPanel() {
 export function LandingHero() {
     return (
         <section className="relative overflow-hidden">
-            <HeroShader />
+            <Spotlight className="-top-40 left-0 md:-top-24 md:left-40" />
             <div className="mx-auto grid w-full max-w-6xl items-center gap-14 px-4 py-20 sm:px-10 md:min-h-[calc(100svh-61px)] md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
                 <div className="relative z-10">
                     <p className="label-ops mb-7 text-signal">
