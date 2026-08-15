@@ -63,11 +63,10 @@ describe("composeBriefing", () => {
             lastSeenAt: null,
             now: NOW,
         });
-        expect(b.action).toEqual({
-            kind: "createWatchlist",
-            label: "Crear un frente",
-        });
-        expect(b.headline).toContain("ningún frente");
+        expect(b.action?.kind).toBe("createWatchlist");
+        // Onboarding: no NIT required, guide by name; offer a concrete example.
+        expect(b.lines.join(" ")).toMatch(/no necesitas saber nit/i);
+        expect(b.lines.join(" ")).toMatch(/frente/i);
     });
 
     it("explains the wait when a frente exists but has no findings", () => {

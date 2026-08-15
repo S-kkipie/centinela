@@ -6,6 +6,7 @@ import { useCopilotAppContext } from "@/core/copilot/client/context/use-copilot-
 import { useCopilotSuggestions } from "@/core/copilot/client/suggestions/use-copilot-suggestions";
 import { useAnalysisTools } from "@/core/copilot/client/tools/use-analysis-tools";
 import { useDocumentTools } from "@/core/copilot/client/tools/use-document-tools";
+import { useEntityTools } from "@/core/copilot/client/tools/use-entity-tools";
 import { useFindingTools } from "@/core/copilot/client/tools/use-finding-tools";
 import { useGraphTools } from "@/core/copilot/client/tools/use-graph-tools";
 import { useNetworkTools } from "@/core/copilot/client/tools/use-network-tools";
@@ -27,6 +28,7 @@ export function useCentinelaCopilot() {
     useNetworkTools();
     useAnalysisTools();
     useDocumentTools();
+    useEntityTools();
     // The copilot acting on its own: it speaks first, and it interrupts.
     useAgentBriefing();
     useFeedWatcher();

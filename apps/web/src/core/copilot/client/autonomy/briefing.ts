@@ -65,14 +65,18 @@ export function composeBriefing(input: BriefingInput): Briefing {
     const { findings, watchlistNames, lastSeenAt } = input;
 
     if (watchlistNames.length === 0) {
+        // First-run onboarding: the console is empty because the agent has
+        // nothing to sweep yet. Guide the user to the one action that starts
+        // everything — naming an entity — and make clear they don't need a NIT.
         return {
-            headline: "Todavía no tengo ningún frente que barrer.",
+            headline: "Soy tu copiloto de contratación pública. Empecemos.",
             lines: [
-                "Sin un frente no hay barrido: dime qué entidad contratante o qué contratista quieres seguir y lo creo.",
+                "Un FRENTE es un grupo de entidades o contratistas que vigilo por ti. Sin uno, no hay nada que barrer — por eso la consola está vacía.",
+                "No necesitas saber NITs: dime un nombre (por ejemplo “Alcaldía de Bogotá” o “entidades de salud”) y yo busco el NIT, lo confirmo contigo y creo tu primer frente.",
             ],
             action: {
                 kind: "createWatchlist",
-                label: "Crear un frente",
+                label: "Vigilar la Alcaldía de Bogotá",
             },
         };
     }

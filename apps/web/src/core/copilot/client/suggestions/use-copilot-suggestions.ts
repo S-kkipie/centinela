@@ -69,6 +69,7 @@ export function useCopilotSuggestions() {
                 oportunidades: scoped.length - banderas,
             },
             topCounterpartyNit: summary.topCounterparty?.nit ?? null,
+            hasWatchlists: (watchlists ?? []).length > 0,
         });
     }, [feed, watchlists, graph, openFindingId, watchlistId]);
 

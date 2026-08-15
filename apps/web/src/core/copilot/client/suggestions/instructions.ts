@@ -17,7 +17,17 @@ export type SuggestionContext = {
     watchlistName: string | null;
     findingCounts: { oportunidades: number; banderas: number };
     topCounterpartyNit: string | null;
+    /** False on first run — no frentes yet, so the chips must onboard. */
+    hasWatchlists: boolean;
 };
+
+const ONBOARDING =
+    "El usuario ACABA de llegar y no tiene ningún frente todavía, así que la consola está vacía. " +
+    "Genera 3 sugerencias en español (es-CO), en primera persona, cortas (máximo 6 palabras) que lo ayuden a EMPEZAR: " +
+    "vigilar una entidad conocida por su nombre (ej. 'Vigila la Alcaldía de Bogotá'), " +
+    "buscar entidades de un sector (ej. 'Busca entidades de educación'), " +
+    "y una para entender la herramienta (ej. '¿Qué es un frente?'). " +
+    "NO sugieras filtrar hallazgos, abrir la red ni generar documentos: todavía no hay nada de eso.";
 
 const BASE =
     "Genera preguntas que el usuario le haría al copiloto de Centinela sobre contratación pública. " +
@@ -29,6 +39,10 @@ const BASE =
     "generar el dossier de evidencia, redactar el derecho de petición, preparar el checklist para presentarse o escribir el hilo.";
 
 export function buildSuggestionInstructions(ctx: SuggestionContext): string {
+    // Onboarding overrides everything: with no frentes there is nothing to
+    // filter, open or export, so the normal action prompts would dead-end.
+    if (!ctx.hasWatchlists && !ctx.openFinding) return ONBOARDING;
+
     const parts = [BASE];
 
     if (ctx.watchlistName) {
