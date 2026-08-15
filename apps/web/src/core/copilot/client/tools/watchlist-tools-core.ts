@@ -53,7 +53,9 @@ export function toAddEntityBodies(
 
 /** Injected mutations — the tsx hook wires these to react-query mutateAsync. */
 export interface WatchlistWriteDeps {
-    createWatchlist(body: { name: string }): Promise<{ id: string; name: string }>;
+    createWatchlist(body: {
+        name: string;
+    }): Promise<{ id: string; name: string }>;
     addEntity(args: {
         watchlistId: string;
         body: { nit: string; name: string };
@@ -78,7 +80,9 @@ export async function confirmProposeWatchlist(
     deps: WatchlistWriteDeps,
 ): Promise<ConfirmResult> {
     try {
-        const created = await deps.createWatchlist(toCreateWatchlistBody(params));
+        const created = await deps.createWatchlist(
+            toCreateWatchlistBody(params),
+        );
         const bodies = toAddEntityBodies(params.entities);
         for (const body of bodies) {
             await deps.addEntity({ watchlistId: created.id, body });

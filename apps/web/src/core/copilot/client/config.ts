@@ -29,6 +29,15 @@ export const SEED_SUGGESTIONS: readonly string[] = [
 ];
 
 /** es-CO strings for the custom chat shell. */
+/**
+ * Chat panel width and the matching offset the app shell reserves for it.
+ * These two MUST stay in sync — same breakpoints, same sizes — or the panel
+ * either covers the console or leaves a gap. Written as literal class strings
+ * so Tailwind's scanner picks them up.
+ */
+export const CHAT_PANEL_WIDTH = "w-full md:w-80 xl:w-96";
+export const CHAT_PANEL_OFFSET = "md:pr-80 xl:pr-96";
+
 export const CHAT_LABELS = {
     title: "Copiloto Centinela",
     placeholder: "Pregunta por un hallazgo…",

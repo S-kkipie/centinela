@@ -49,9 +49,9 @@ describe("toFindingFilter", () => {
     });
 
     it("passes through set fields only", () => {
-        expect(
-            toFindingFilter({ entityQuery: "salud", sinceDays: 7 }),
-        ).toEqual({ entityQuery: "salud", sinceDays: 7 });
+        expect(toFindingFilter({ entityQuery: "salud", sinceDays: 7 })).toEqual(
+            { entityQuery: "salud", sinceDays: 7 },
+        );
     });
 });
 

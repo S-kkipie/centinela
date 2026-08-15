@@ -7,10 +7,7 @@ const MAX_COMPARE = 3;
  * feed cache. Only OPORTUNIDAD findings are comparable; ids are honoured in
  * the order the agent asked, deduped, and capped at three side-by-side cards.
  */
-export function selectForCompare(
-    items: Finding[],
-    ids: string[],
-): Finding[] {
+export function selectForCompare(items: Finding[], ids: string[]): Finding[] {
     const byId = new Map(items.map((f) => [f.id, f]));
     const seen = new Set<string>();
     const out: Finding[] = [];

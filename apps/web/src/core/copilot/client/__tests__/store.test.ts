@@ -5,12 +5,30 @@ import {
 } from "@/core/copilot/client/store";
 
 describe("copilotUiReducer", () => {
-    it("starts with no overrides", () => {
+    it("starts with no overrides and the chat panel open", () => {
         expect(initialCopilotUiState).toEqual({
             findingFilter: null,
             focusFindingId: null,
             focusNit: null,
+            chatOpen: true,
         });
+    });
+
+    it("toggles the chat panel without touching commands", () => {
+        const filtered = copilotUiReducer(initialCopilotUiState, {
+            type: "setFindingFilter",
+            filter: { kind: "OPORTUNIDAD" },
+        });
+        const closed = copilotUiReducer(filtered, {
+            type: "setChatOpen",
+            open: false,
+        });
+        expect(closed.chatOpen).toBe(false);
+        expect(closed.findingFilter).toEqual({ kind: "OPORTUNIDAD" });
+        expect(
+            copilotUiReducer(closed, { type: "setChatOpen", open: true })
+                .chatOpen,
+        ).toBe(true);
     });
 
     it("sets a finding filter", () => {

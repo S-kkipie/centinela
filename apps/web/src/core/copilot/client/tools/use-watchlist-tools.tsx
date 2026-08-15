@@ -4,12 +4,12 @@ import { useHumanInTheLoop } from "@copilotkit/react-core/v2";
 import { useMemo, useReducer } from "react";
 import {
     addEntitiesToWatchlistParams,
+    type ConfirmResult,
     canCancel,
     canConfirm,
     confirmAddEntities,
     confirmProposeWatchlist,
     confirmSummary,
-    type ConfirmResult,
     hitlReducer,
     initialHitlState,
     proposeWatchlistParams,

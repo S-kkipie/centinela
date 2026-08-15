@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { pickDefaultWatchlist } from "@/core/finding/client/default-watchlist";
 import { useFindingsFeed } from "@/core/finding/client/hooks";
 import { FindingsFeed } from "@/core/finding/client/ui/findings-feed";
 import { useWatchlists } from "@/core/watchlist/client/hooks";
@@ -27,12 +28,14 @@ export function Dashboard() {
     const { data: watchlists } = useWatchlists();
     const [selected, setSelected] = useState<string>(ALL);
 
-    // Default the graph to the first watchlist once they load.
+    // Open on the watchlist the agent has actually reported on, so a brand-new
+    // (empty) watchlist doesn't take over the Panel just for being newest.
+    const { data: allFindings } = useFindingsFeed();
     useEffect(() => {
-        if (selected === ALL && watchlists && watchlists.length > 0) {
-            setSelected(watchlists[0].id);
-        }
-    }, [watchlists, selected]);
+        if (selected !== ALL) return;
+        const preferred = pickDefaultWatchlist(watchlists, allFindings?.items);
+        if (preferred) setSelected(preferred);
+    }, [watchlists, allFindings, selected]);
 
     const watchlistId = selected === ALL ? undefined : selected;
 

@@ -32,18 +32,22 @@ export type CopilotUiState = {
     focusFindingId: string | null;
     /** Contractor-graph center/highlight target. */
     focusNit: string | null;
+    /** Chat panel visibility — lives here so the app shell can make room. */
+    chatOpen: boolean;
 };
 
 export const initialCopilotUiState: CopilotUiState = {
     findingFilter: null,
     focusFindingId: null,
     focusNit: null,
+    chatOpen: true,
 };
 
 export type CopilotUiAction =
     | { type: "setFindingFilter"; filter: FindingFilter | null }
     | { type: "focusFinding"; findingId: string | null }
-    | { type: "focusNit"; nit: string | null };
+    | { type: "focusNit"; nit: string | null }
+    | { type: "setChatOpen"; open: boolean };
 
 export function copilotUiReducer(
     state: CopilotUiState,
@@ -56,6 +60,8 @@ export function copilotUiReducer(
             return { ...state, focusFindingId: action.findingId };
         case "focusNit":
             return { ...state, focusNit: action.nit };
+        case "setChatOpen":
+            return { ...state, chatOpen: action.open };
         default:
             return state;
     }
@@ -104,6 +110,7 @@ export type CopilotUiApi = {
     setFindingFilter(filter: FindingFilter | null): void;
     focusFinding(findingId: string | null): void;
     focusNit(nit: string | null): void;
+    setChatOpen(open: boolean): void;
 };
 
 const CopilotUiContext = createContext<CopilotUiApi | null>(null);
@@ -121,6 +128,7 @@ export function CopilotUiProvider({ children }: { children: ReactNode }) {
             focusFinding: (findingId) =>
                 dispatch({ type: "focusFinding", findingId }),
             focusNit: (nit) => dispatch({ type: "focusNit", nit }),
+            setChatOpen: (open) => dispatch({ type: "setChatOpen", open }),
         }),
         [state],
     );

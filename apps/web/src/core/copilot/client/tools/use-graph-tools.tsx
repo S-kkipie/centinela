@@ -90,8 +90,7 @@ export function useGraphTools() {
                 };
             },
             render: ({ args }) => {
-                if (!args.fromNit || !args.toNit)
-                    return "Trazando conexión…";
+                if (!args.fromNit || !args.toNit) return "Trazando conexión…";
                 const result = tracePath(readEdges(), args.fromNit, args.toNit);
                 if ("error" in result)
                     return (
@@ -103,7 +102,9 @@ export function useGraphTools() {
                     <section className="space-y-1.5 rounded-md border border-rule bg-background p-3">
                         <header className="label-ops text-muted-foreground">
                             Cadena de {result.path.length}{" "}
-                            {result.path.length === 1 ? "relación" : "relaciones"}
+                            {result.path.length === 1
+                                ? "relación"
+                                : "relaciones"}
                         </header>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px]">
                             <span className="rounded-sm bg-signal-soft px-1.5 py-0.5 text-signal">

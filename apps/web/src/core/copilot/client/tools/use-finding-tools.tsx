@@ -2,7 +2,7 @@
 
 import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
+import type { z } from "zod";
 import { useCopilotUi } from "@/core/copilot/client/store";
 import {
     explainFindingParams,

@@ -1,8 +1,8 @@
 "use client";
 
+import type { WatchlistEntityInput } from "@/core/copilot/client/tools/watchlist-tools-core";
 import { Button } from "@/frontend/components/ui/button";
 import { Spinner } from "@/frontend/components/ui/spinner";
-import type { WatchlistEntityInput } from "@/core/copilot/client/tools/watchlist-tools-core";
 
 /**
  * HITL preview rendered inside the copilot thread before any DB write: the
@@ -70,9 +70,7 @@ export function WatchlistPreviewCard({
                     ))}
                 </ul>
 
-                {error && (
-                    <p className="label-ops text-flag">{error}</p>
-                )}
+                {error && <p className="label-ops text-flag">{error}</p>}
 
                 <div className="flex items-center justify-end gap-2">
                     <Button

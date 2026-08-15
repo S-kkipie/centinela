@@ -5,11 +5,7 @@ import {
 } from "@/core/copilot/client/ui/compare-select";
 import type { Finding } from "@/core/finding/domain/types";
 
-function finding(
-    id: string,
-    kind: Finding["kind"],
-    summary = "",
-): Finding {
+function finding(id: string, kind: Finding["kind"], summary = ""): Finding {
     return {
         id,
         watchlistId: "w1",
@@ -54,9 +50,9 @@ describe("selectForCompare", () => {
     });
 
     it("dedupes repeated ids", () => {
-        expect(selectForCompare(items, ["a", "a", "b"]).map((f) => f.id)).toEqual(
-            ["a", "b"],
-        );
+        expect(
+            selectForCompare(items, ["a", "a", "b"]).map((f) => f.id),
+        ).toEqual(["a", "b"]);
     });
 
     it("caps the selection at three", () => {

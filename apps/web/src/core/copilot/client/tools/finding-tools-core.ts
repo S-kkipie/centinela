@@ -23,7 +23,9 @@ export const explainFindingParams = z.object({
     findingId: z
         .string()
         .min(1)
-        .describe("Finding id, or a title/entity fragment if the id is unknown"),
+        .describe(
+            "Finding id, or a title/entity fragment if the id is unknown",
+        ),
 });
 
 /** Empty params mean "clear the override" → null. */

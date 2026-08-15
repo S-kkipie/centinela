@@ -8,7 +8,12 @@ import {
 } from "@copilotkit/react-core/v2";
 import { MessageSquareIcon, XIcon } from "lucide-react";
 import { type FormEvent, Fragment, useEffect, useRef, useState } from "react";
-import { CHAT_LABELS, SEED_SUGGESTIONS } from "@/core/copilot/client/config";
+import {
+    CHAT_LABELS,
+    CHAT_PANEL_WIDTH,
+    SEED_SUGGESTIONS,
+} from "@/core/copilot/client/config";
+import { useCopilotUi } from "@/core/copilot/client/store";
 import { useCentinelaCopilot } from "@/core/copilot/client/use-centinela-copilot";
 import {
     Conversation,
@@ -28,6 +33,7 @@ import {
     Suggestion,
     Suggestions,
 } from "@/frontend/components/ai-elements/suggestion";
+import { cn } from "@/frontend/lib/utils";
 
 /** Raw AG-UI shapes we read for generative-UI rendering. */
 type RawToolCall = { id: string; function: { name: string } };
@@ -58,7 +64,9 @@ export function ChatPanel() {
     });
     const renderToolCall = useRenderToolCall();
 
-    const [open, setOpen] = useState(true);
+    // Open state lives in the store so AppShell can reserve the panel's width.
+    const { state, setChatOpen } = useCopilotUi();
+    const open = state.chatOpen;
     const [draft, setDraft] = useState("");
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -95,7 +103,7 @@ export function ChatPanel() {
         return (
             <button
                 type="button"
-                onClick={() => setOpen(true)}
+                onClick={() => setChatOpen(true)}
                 aria-label={CHAT_LABELS.open}
                 className="fixed right-4 bottom-4 z-40 flex size-11 items-center justify-center rounded-full bg-signal text-background shadow-lg"
             >
@@ -105,7 +113,12 @@ export function ChatPanel() {
     }
 
     return (
-        <aside className="fixed inset-y-0 right-0 z-40 flex w-full max-w-96 flex-col border-rule border-l bg-background/95 backdrop-blur">
+        <aside
+            className={cn(
+                "fixed inset-y-0 right-0 z-40 flex flex-col border-rule border-l bg-background/95 backdrop-blur",
+                CHAT_PANEL_WIDTH,
+            )}
+        >
             <header className="flex items-center justify-between border-rule border-b px-4 py-3">
                 <div className="flex items-center gap-2">
                     <span className="label-ops text-signal">
@@ -119,7 +132,7 @@ export function ChatPanel() {
                 </div>
                 <button
                     type="button"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setChatOpen(false)}
                     aria-label={CHAT_LABELS.close}
                     className="text-muted-foreground transition-colors hover:text-foreground"
                 >

@@ -39,7 +39,10 @@ describe("param schemas", () => {
 
     it("proposeWatchlist rejects empty name and empty entity list", () => {
         expect(() =>
-            proposeWatchlistParams.parse({ name: "", entities: proposal.entities }),
+            proposeWatchlistParams.parse({
+                name: "",
+                entities: proposal.entities,
+            }),
         ).toThrowError();
         expect(() =>
             proposeWatchlistParams.parse({ name: "X", entities: [] }),
@@ -112,7 +115,9 @@ describe("confirmProposeWatchlist", () => {
 
     it("returns { ok:false, error } and adds nothing when create fails", async () => {
         const deps = fakeDeps();
-        deps.createWatchlist.mockRejectedValueOnce(new Error("create failed: 500"));
+        deps.createWatchlist.mockRejectedValueOnce(
+            new Error("create failed: 500"),
+        );
         const result = await confirmProposeWatchlist(proposal, deps);
 
         expect(result).toEqual({ ok: false, error: "create failed: 500" });
@@ -121,7 +126,9 @@ describe("confirmProposeWatchlist", () => {
 
     it("surfaces an addEntity failure as an error", async () => {
         const deps = fakeDeps();
-        deps.addEntity.mockRejectedValueOnce(new Error("add entity failed: 422"));
+        deps.addEntity.mockRejectedValueOnce(
+            new Error("add entity failed: 422"),
+        );
         const result = await confirmProposeWatchlist(proposal, deps);
         expect(result).toEqual({ ok: false, error: "add entity failed: 422" });
     });
