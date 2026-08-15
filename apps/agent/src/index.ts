@@ -71,7 +71,8 @@ export class CentinelaAgent extends Agent<Env, State> {
   /**
    * HTTP surface (routed by `routeAgentRequest` to
    * `/agents/centinela-agent/<instance>/…`), guarded by the shared agent key:
-   *   POST …/watch {"targets": [{nit,name,kind}, …]} → watched list
+   *   POST …/set   {"targets": [{nit,name,kind}, …]} → REPLACE (web sync)
+   *   POST …/watch {"targets": [{nit,name,kind}, …]} → merge (additive)
    *   POST …/watch {"entities": ["<nit>", …]}        → legacy, all contratante
    *   POST …/sweep                                   → {"enqueued": n}
    *   GET  …/status                                  → current state
@@ -81,6 +82,12 @@ export class CentinelaAgent extends Agent<Env, State> {
       return Response.json({ error: "unauthorized" }, { status: 401 });
     }
     const path = new URL(request.url).pathname;
+    // Full replace — the web app is the source of truth and pushes the user's
+    // entire target list on every watchlist change, so removals propagate.
+    if (request.method === "POST" && path.endsWith("/set")) {
+      const body = (await request.json()) as { targets?: WatchTarget[] };
+      return Response.json({ targets: await this.setTargets(body.targets ?? []) });
+    }
     if (request.method === "POST" && path.endsWith("/watch")) {
       const body = (await request.json()) as {
         targets?: WatchTarget[];
@@ -113,6 +120,19 @@ export class CentinelaAgent extends Agent<Env, State> {
     const merged = new Map(readTargets(this.state).map((t) => [t.nit, t]));
     for (const target of targets) merged.set(target.nit, target);
     const next = [...merged.values()];
+    this.setState({ ...this.state, targets: next, watchedEntities: undefined });
+    return next;
+  }
+
+  /**
+   * Replace the whole target list (web-sync path). Deduped by NIT so a target
+   * that moved between watchlists is not swept twice. `seen` rows for dropped
+   * targets stay in SQLite — harmless, and they keep dedup honest if the target
+   * is re-added.
+   */
+  async setTargets(targets: WatchTarget[]): Promise<WatchTarget[]> {
+    const byNit = new Map(targets.map((t) => [t.nit, t]));
+    const next = [...byNit.values()];
     this.setState({ ...this.state, targets: next, watchedEntities: undefined });
     return next;
   }

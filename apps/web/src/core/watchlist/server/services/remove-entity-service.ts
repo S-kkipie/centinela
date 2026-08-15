@@ -7,6 +7,7 @@ import {
 } from "@/server/common/responses";
 import { removeWatchlistEntity } from "../repository/entities";
 import { findWatchlistById } from "../repository/find-watchlist-by-id";
+import { syncAgentForUser } from "../sync-agent";
 
 export async function removeEntityService(
     userId: string,
@@ -19,6 +20,8 @@ export async function removeEntityService(
             return err(AppErrors.notFound({ targets: ["watchlist"] }));
         const removed = await removeWatchlistEntity(watchlistId, entityId);
         if (!removed) return err(AppErrors.notFound({ targets: ["entity"] }));
+        // Replace semantics: the removed NIT drops out of the agent's sweep.
+        await syncAgentForUser(userId);
         return ok(removed);
     } catch (cause) {
         return err(AppErrors.unexpected(cause));
