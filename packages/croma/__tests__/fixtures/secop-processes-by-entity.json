@@ -1,0 +1,47 @@
+{
+  "data": {
+    "document_number": "899999061",
+    "from_date": "2026-01-01",
+    "to_date": null,
+    "count": 2,
+    "capped": false,
+    "processes": [
+      {
+        "notice_uid": "CO1.NTC.10701223",
+        "process_id": "CO1.REQ.10824169",
+        "reference": "FCLE-CD-718-2026",
+        "name": "PRESTAR LOS SERVICIOS PROFESIONALES AL ÁREA DE GESTIÓN DE DESARROLLO LOCAL; PARA EL SEGUIMIENTO DE MANERA TRANSVERSAL DE LAS ACTIVIDADES PROPIAS DEL FUNCIONAMIENTO DEL FONDO DE DESARROLLO LOCAL DE ENG",
+        "entity": "ALCALDIA LOCAL DE ENGATIVÁ",
+        "entity_nit": "899999061",
+        "modality": "Contratación directa",
+        "contract_type": "Prestación de servicios",
+        "base_price": 20460000,
+        "phase": "Presentación de oferta",
+        "procedure_status": "Seleccionado",
+        "published_date": "2026-08-13",
+        "url": "https://community.secop.gov.co/Public/Tendering/OpportunityDetail/Index?noticeUID=CO1.NTC.10701223"
+      },
+      {
+        "notice_uid": "CO1.NTC.10700800",
+        "process_id": "CO1.REQ.10824833",
+        "reference": "FDLE-CD-701-2026",
+        "name": "PRESTACIÓN DE SERVICIOS DE APOYO TÉCNICO A LA ALCALDÍA LOCAL DE ENGATIVÁ PARA EL DESARROLLO DE ACTIVIDADES PROPIAS DE ALMACÉN; INCLUYENDO LA RECEPCIÓN; CUSTODIA; ALMACENAMIENTO; INVENTARIO; CONTROL; D",
+        "entity": "ALCALDIA LOCAL DE ENGATIVÁ",
+        "entity_nit": "899999061",
+        "modality": "Contratación directa",
+        "contract_type": "Prestación de servicios",
+        "base_price": 14580000,
+        "phase": "Presentación de oferta",
+        "procedure_status": "Seleccionado",
+        "published_date": "2026-08-13",
+        "url": "https://community.secop.gov.co/Public/Tendering/OpportunityDetail/Index?noticeUID=CO1.NTC.10700800"
+      }
+    ],
+    "pagination": {
+      "total": 17954,
+      "page_size": 500,
+      "total_pages": 36,
+      "page": 1
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "data": {
+    "document_number": "1067811412",
+    "count": 1,
+    "capped": false,
+    "sanctions": [
+      {
+        "entity": "ADMINISTRADORA DE LOS RECURSOS DEL SISTEMA GENERAL DE SEGURIDAD SOCIAL EN SALUD",
+        "entity_nit": "901037916",
+        "entity_level": "NACIONAL",
+        "entity_order": "NACIONAL DESCENTRALIZADO",
+        "municipality": "Bogotá D.C.",
+        "resolution_number": "RESOLUCION 41549 DE 2019",
+        "provider": "JORGE HUMBERTO FERIAS MANJARRES",
+        "contract_number": "ADRES-CTO-137-2019",
+        "sanction_value": 3797492,
+        "published_date": "2019-11-07",
+        "final_date": "2019-11-14",
+        "url": "https://www.contratos.gov.co/consultas/detalleProcesoAACS.do?numProcAACS=26189079"
+      }
+    ]
+  }
+}

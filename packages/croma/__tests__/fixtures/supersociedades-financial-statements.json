@@ -1,0 +1,68 @@
+{
+  "data": {
+    "found": true,
+    "document_number": "900249127",
+    "company": {
+      "name": "SANMIGUEL HERRERA SAS",
+      "status": "ACTIVA",
+      "society_type": "08. SOCIEDAD POR ACCIONES SIMPLIFICADA SAS",
+      "primary_activity": {
+        "code": "J6201",
+        "description": "Actividades de desarrollo de sistemas informáticos (planificación, análisis, diseño, programación, pruebas)"
+      },
+      "incorporation_date": "2008-10-29",
+      "city": "BOGOTA D.C.",
+      "department": "BOGOTA D.C.",
+      "registration_number": "01848556"
+    },
+    "count": 7,
+    "capped": false,
+    "statements": [
+      {
+        "year": 2025,
+        "cutoff_date": "2025-12-31",
+        "filing_id": "2026-01-190620",
+        "statement_type": "individual",
+        "niif_group": "pymes",
+        "reporting_unit": "MILES DE PESOS",
+        "income_statement": {
+          "revenue": 225523,
+          "cost_of_sales": null,
+          "gross_profit": 225523,
+          "administrative_expenses": 235708,
+          "selling_expenses": null,
+          "other_income": 5,
+          "other_expenses": 444,
+          "finance_income": 34617,
+          "finance_costs": 1464,
+          "operating_profit": -10624,
+          "profit_before_tax": 22529,
+          "income_tax": 30494,
+          "net_income": -7965
+        },
+        "balance_sheet": {
+          "current_assets": 506988,
+          "non_current_assets": 2764918,
+          "total_assets": 3271906,
+          "current_liabilities": 38231,
+          "non_current_liabilities": 1076526,
+          "total_liabilities": 1114757,
+          "total_equity": 2157149,
+          "cash_and_equivalents": 4606,
+          "inventories": 0,
+          "trade_receivables": 20872,
+          "trade_payables": 20958,
+          "issued_capital": 2500,
+          "retained_earnings": 1561461
+        },
+        "cash_flow": {
+          "net_cash_from_operating": -179515,
+          "net_cash_from_investing": 156926,
+          "net_cash_from_financing": 25888,
+          "cash_at_start": 1307,
+          "cash_at_end": 4606
+        }
+      }
+    ]
+  }
+}
