@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { useFindingsFeed, useGraph } from "@/core/finding/client/hooks";
 import type { GraphEdge } from "@/core/finding/domain/types";
 import { Spinner } from "@/frontend/components/ui/spinner";
+import { cn } from "@/frontend/lib/utils";
 
 /** Recolor React Flow chrome (controls, attribution) to intel tokens. */
 const flowTheme = {
@@ -89,7 +90,14 @@ function toFlow(
     return { nodes, edges: flowEdges };
 }
 
-export function ContractorGraph({ watchlistId }: { watchlistId?: string }) {
+export function ContractorGraph({
+    watchlistId,
+    findingId,
+}: {
+    watchlistId?: string;
+    /** Si se pasa, la red se acota a las relaciones de ese hallazgo. */
+    findingId?: string;
+}) {
     const { data, isLoading } = useGraph(watchlistId);
     // Shares the feed's react-query cache; used to flag BANDERA_ROJA relations.
     const { data: feed } = useFindingsFeed({ watchlistId });
@@ -103,10 +111,12 @@ export function ContractorGraph({ watchlistId }: { watchlistId?: string }) {
             ),
         [feed],
     );
-    const flow = useMemo(
-        () => toFlow(data?.edges ?? [], flaggedFindingIds),
-        [data, flaggedFindingIds],
-    );
+    const flow = useMemo(() => {
+        const edges = (data?.edges ?? []).filter(
+            (e) => !findingId || e.findingId === findingId,
+        );
+        return toFlow(edges, flaggedFindingIds);
+    }, [data, flaggedFindingIds, findingId]);
 
     if (!watchlistId)
         return (
@@ -122,19 +132,42 @@ export function ContractorGraph({ watchlistId }: { watchlistId?: string }) {
         );
     if (flow.nodes.length === 0)
         return (
-            <p className="text-muted-foreground text-sm">
-                Sin relaciones todavía. Aparecerán cuando el agente cruce datos.
+            <p className="rounded-md border border-rule border-dashed bg-background px-3 py-3 text-muted-foreground text-sm">
+                {findingId
+                    ? "Este hallazgo no registró relaciones entre NITs."
+                    : "Sin relaciones todavía. Aparecerán cuando el agente cruce datos."}
             </p>
         );
 
     return (
-        <div
-            className="bg-grid-ops h-[480px] w-full overflow-hidden rounded-md border border-rule bg-panel"
-            style={flowTheme}
-        >
-            <ReactFlow edges={flow.edges} fitView nodes={flow.nodes}>
-                <Controls />
-            </ReactFlow>
+        <div className="space-y-2">
+            <div
+                className={cn(
+                    "bg-grid-ops w-full overflow-hidden rounded-md border border-rule bg-panel",
+                    findingId ? "h-[320px]" : "h-[480px]",
+                )}
+                style={flowTheme}
+            >
+                <ReactFlow edges={flow.edges} fitView nodes={flow.nodes}>
+                    <Controls showInteractive={false} />
+                </ReactFlow>
+            </div>
+            <p className="label-ops flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                    <span
+                        aria-hidden
+                        className="size-1.5 rounded-full bg-signal"
+                    />
+                    NIT sin alerta
+                </span>
+                <span className="flex items-center gap-1.5">
+                    <span
+                        aria-hidden
+                        className="size-1.5 rounded-full bg-flag"
+                    />
+                    NIT en bandera roja
+                </span>
+            </p>
         </div>
     );
 }

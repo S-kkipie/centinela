@@ -16,6 +16,7 @@ export function HoverBorderGradient({
     children,
     containerClassName,
     className,
+    maskClassName,
     as: Tag = "button",
     duration = 1.6,
     clockwise = true,
@@ -25,6 +26,8 @@ export function HoverBorderGradient({
         as?: ElementType;
         containerClassName?: string;
         className?: string;
+        /** Fill of the inner mask that hides the gradient body (default ink). */
+        maskClassName?: string;
         duration?: number;
         clockwise?: boolean;
     } & HTMLAttributes<HTMLElement>
@@ -100,7 +103,12 @@ export function HoverBorderGradient({
                 }}
                 transition={{ ease: "linear", duration: duration ?? 1 }}
             />
-            <div className="absolute inset-[2px] z-[1] flex-none rounded-[3px] bg-foreground" />
+            <div
+                className={cn(
+                    "absolute inset-[2px] z-[1] flex-none rounded-[3px] bg-foreground",
+                    maskClassName,
+                )}
+            />
         </Tag>
     );
 }

@@ -1,13 +1,15 @@
 import Link from "next/link";
 import type { PropsWithChildren } from "react";
 import { requireAuth } from "@/server/auth/require-auth";
+import { AppNav } from "./app-nav";
 import { SignOutButton } from "./sign-out-button";
 
 export default async function AppLayout({ children }: PropsWithChildren) {
     const { user } = await requireAuth();
     return (
-        <div className="min-h-svh bg-background">
-            <header className="sticky top-0 z-40 border-rule border-b bg-panel">
+        // La consola es una sala de operaciones: siempre dark, como la landing.
+        <div className="dark min-h-svh bg-background text-foreground">
+            <header className="sticky top-0 z-40 border-rule border-b bg-panel/85 backdrop-blur">
                 <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-2.5 md:px-6">
                     <div className="flex min-w-0 items-center gap-5">
                         <Link
@@ -15,33 +17,24 @@ export default async function AppLayout({ children }: PropsWithChildren) {
                             href="/dashboard"
                         >
                             CENTINELA
+                            <span className="text-signal">_</span>
                         </Link>
                         <span
                             aria-hidden
                             className="hidden h-4 w-px bg-rule sm:block"
                         />
-                        <nav className="flex items-center gap-4">
-                            <Link
-                                className="label-ops text-muted-foreground transition-colors hover:text-foreground"
-                                href="/dashboard"
-                            >
-                                Panel
-                            </Link>
-                            <Link
-                                className="label-ops text-muted-foreground transition-colors hover:text-foreground"
-                                href="/watchlists"
-                            >
-                                Vigiladas
-                            </Link>
-                        </nav>
+                        <AppNav />
                     </div>
                     <div className="flex min-w-0 items-center gap-3">
                         <span className="label-ops flex items-center gap-1.5 whitespace-nowrap text-signal">
                             <span
                                 aria-hidden
-                                className="size-1.5 rounded-full bg-signal motion-safe:animate-pulse"
-                            />
-                            En vivo
+                                className="relative flex size-1.5"
+                            >
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60 motion-reduce:hidden" />
+                                <span className="relative inline-flex size-1.5 rounded-full bg-signal" />
+                            </span>
+                            <span className="hidden sm:inline">En vivo</span>
                         </span>
                         <span
                             className="hidden max-w-48 truncate font-mono text-[11px] text-muted-foreground md:inline"
