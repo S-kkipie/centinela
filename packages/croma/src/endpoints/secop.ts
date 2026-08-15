@@ -97,13 +97,11 @@ const contractsByProviderSchema = z
 
 /**
  * `secop-contracts-by-provider` → a provider's contracts (concentration signal).
- * NOTE: the API returns `contract_id`, not a notice UID, so `noticeUid` carries
- * the contract id for now — pending an orchestrator contract change.
  */
 export function mapProviderContracts(data: unknown): ProviderContract[] {
   const d = parse(contractsByProviderSchema, data, "secop-contracts-by-provider");
   return (d.contracts ?? []).map((c) => ({
-    noticeUid: c.contract_id,
+    contractId: c.contract_id,
     entityNit: c.entity_nit ?? "",
     entityName: c.entity ?? undefined,
     valueCop: c.value ?? undefined,

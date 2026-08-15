@@ -66,7 +66,7 @@ describe("mapProviderContracts (secop-contracts-by-provider)", () => {
 
   it("maps contracts with value and award date", () => {
     const c = contracts[0];
-    expect(c.noticeUid).toBe("CO1.PCCNTR.9132006"); // interim: contract_id
+    expect(c.contractId).toBe("CO1.PCCNTR.9132006");
     expect(c.entityNit).toBe("899999061");
     expect(c.valueCop).toBe(23808000);
     expect(c.awardedAt).toBe("2026-01-27");

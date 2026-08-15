@@ -39,7 +39,10 @@ export interface TenderDetail extends Tender {
 }
 
 export interface ProviderContract {
-  noticeUid: string;
+  /** SECOP `contract_id` — this endpoint does not expose a notice UID. */
+  contractId: string;
+  /** Only when the payload happens to include one. */
+  noticeUid?: string;
   entityNit: string;
   entityName?: string;
   valueCop?: number;
