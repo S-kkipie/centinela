@@ -67,6 +67,7 @@ export type FilterableFinding = {
     entityName: string;
     kind: FindingKind;
     createdAt: string;
+    watchlistId?: string;
 };
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -84,6 +85,12 @@ export function applyFindingFilter<T extends FilterableFinding>(
             ? now.getTime() - filter.sinceDays * DAY_MS
             : null;
     return items.filter((f) => {
+        if (
+            filter.watchlistId &&
+            f.watchlistId != null &&
+            f.watchlistId !== filter.watchlistId
+        )
+            return false;
         if (filter.kind && f.kind !== filter.kind) return false;
         if (query && !f.entityName.toLowerCase().includes(query)) return false;
         if (cutoff != null && new Date(f.createdAt).getTime() < cutoff)
@@ -125,4 +132,9 @@ export function useCopilotUi(): CopilotUiApi {
     if (!ctx)
         throw new Error("useCopilotUi requires <CopilotUiProvider> above it");
     return ctx;
+}
+
+/** Null outside the provider — for components that must render standalone. */
+export function useCopilotUiOptional(): CopilotUiApi | null {
+    return useContext(CopilotUiContext);
 }

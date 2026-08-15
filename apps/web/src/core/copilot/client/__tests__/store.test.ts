@@ -84,6 +84,16 @@ describe("applyFindingFilter", () => {
         expect(applyFindingFilter([base, old], null)).toHaveLength(2);
     });
 
+    it("filters by watchlistId when items carry one", async () => {
+        const { applyFindingFilter } = await import(
+            "@/core/copilot/client/store"
+        );
+        const a = { ...base, watchlistId: "w-1" };
+        const b = { ...old, watchlistId: "w-2" };
+        const out = applyFindingFilter([a, b], { watchlistId: "w-2" });
+        expect(out.map((f) => f.id)).toEqual(["f-2"]);
+    });
+
     it("filters by kind, entity substring and recency", async () => {
         const { applyFindingFilter } = await import(
             "@/core/copilot/client/store"

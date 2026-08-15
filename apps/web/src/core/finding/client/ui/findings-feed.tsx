@@ -1,7 +1,11 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+    applyFindingFilter,
+    useCopilotUiOptional,
+} from "@/core/copilot/client/store";
 import { useFindingsFeed } from "@/core/finding/client/hooks";
 import { ContractorGraph } from "@/core/finding/client/ui/contractor-graph";
 import type { Finding } from "@/core/finding/domain/types";
@@ -200,6 +204,17 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const reportRef = useRef<HTMLDivElement>(null);
 
+    // Copilot overrides: filter the polled items and jump to a focused finding.
+    const copilot = useCopilotUiOptional();
+    const findingFilter = copilot?.state.findingFilter ?? null;
+    const focusFindingId = copilot?.state.focusFindingId ?? null;
+    useEffect(() => {
+        if (focusFindingId) {
+            setSelectedId(focusFindingId);
+            copilot?.focusFinding(null); // one-shot: consume the command
+        }
+    }, [focusFindingId, copilot]);
+
     if (isLoading)
         return (
             <div className="label-ops flex items-center gap-2 text-muted-foreground">
@@ -217,8 +232,22 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
             </p>
         );
 
-    const selected =
-        data.items.find((f) => f.id === selectedId) ?? data.items[0];
+    const items = applyFindingFilter(data.items, findingFilter);
+    if (items.length === 0)
+        return (
+            <p className="text-muted-foreground text-sm">
+                Ningún hallazgo coincide con el filtro del copiloto.{" "}
+                <button
+                    className="text-signal underline decoration-rule underline-offset-2"
+                    onClick={() => copilot?.setFindingFilter(null)}
+                    type="button"
+                >
+                    Limpiar filtro
+                </button>
+            </p>
+        );
+
+    const selected = items.find((f) => f.id === selectedId) ?? items[0];
 
     const select = (id: string) => {
         setSelectedId(id);
@@ -240,7 +269,10 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
                     <div className="overflow-hidden rounded-lg border border-rule bg-card">
                         <header className="flex items-center justify-between border-rule border-b bg-secondary/60 px-3.5 py-2.5">
                             <h2 className="label-ops text-muted-foreground">
-                                Hallazgos · {data.total}
+                                Hallazgos ·{" "}
+                                {findingFilter
+                                    ? `${items.length} de ${data.total}`
+                                    : data.total}
                             </h2>
                             <span className="label-ops flex items-center gap-1.5 text-signal">
                                 <span
@@ -254,7 +286,7 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
                             </span>
                         </header>
                         <div className="space-y-1 p-2 lg:max-h-[calc(100svh-9.5rem)] lg:overflow-y-auto">
-                            {data.items.map((f, i) => (
+                            {items.map((f, i) => (
                                 <FindingRow
                                     active={f.id === selected.id}
                                     finding={f}
