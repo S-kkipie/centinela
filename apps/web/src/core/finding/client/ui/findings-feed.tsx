@@ -215,6 +215,15 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
         }
     }, [focusFindingId, copilot]);
 
+    // The Informe falls back to the first row, so the effective selection —
+    // not `selectedId` — is what the user sees and what "este proceso" means.
+    const items = applyFindingFilter(data?.items ?? [], findingFilter);
+    const selected = items.find((f) => f.id === selectedId) ?? items[0];
+    const setSelectedFinding = copilot?.setSelectedFinding;
+    useEffect(() => {
+        setSelectedFinding?.(selected?.id ?? null);
+    }, [selected?.id, setSelectedFinding]);
+
     if (isLoading)
         return (
             <div className="label-ops flex items-center gap-2 text-muted-foreground">
@@ -232,7 +241,6 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
             </p>
         );
 
-    const items = applyFindingFilter(data.items, findingFilter);
     if (items.length === 0)
         return (
             <p className="text-muted-foreground text-sm">
@@ -246,8 +254,6 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
                 </button>
             </p>
         );
-
-    const selected = items.find((f) => f.id === selectedId) ?? items[0];
 
     const select = (id: string) => {
         setSelectedId(id);

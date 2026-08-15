@@ -12,7 +12,59 @@ describe("copilotUiReducer", () => {
             focusNit: null,
             chatOpen: true,
             selectedWatchlistId: null,
+            selectedFindingId: null,
         });
+    });
+
+    // Components publish their selection from an effect. If a no-op dispatch
+    // produced a fresh state object, that effect would re-fire forever.
+    it("returns the same state for a no-op update", () => {
+        const s = copilotUiReducer(initialCopilotUiState, {
+            type: "setSelectedFinding",
+            findingId: "f-1",
+        });
+        expect(
+            copilotUiReducer(s, {
+                type: "setSelectedFinding",
+                findingId: "f-1",
+            }),
+        ).toBe(s);
+        expect(
+            copilotUiReducer(s, {
+                type: "setSelectedWatchlist",
+                watchlistId: null,
+            }),
+        ).toBe(s);
+        expect(copilotUiReducer(s, { type: "setChatOpen", open: true })).toBe(
+            s,
+        );
+        expect(copilotUiReducer(s, { type: "focusNit", nit: null })).toBe(s);
+        expect(
+            copilotUiReducer(s, { type: "focusFinding", findingId: null }),
+        ).toBe(s);
+    });
+
+    it("still returns a new state when the value changes", () => {
+        const s = copilotUiReducer(initialCopilotUiState, {
+            type: "setSelectedFinding",
+            findingId: "f-1",
+        });
+        expect(s).not.toBe(initialCopilotUiState);
+        expect(
+            copilotUiReducer(s, {
+                type: "setSelectedFinding",
+                findingId: "f-2",
+            }),
+        ).not.toBe(s);
+    });
+
+    it("tracks the finding open in the Informe", () => {
+        const next = copilotUiReducer(initialCopilotUiState, {
+            type: "setSelectedFinding",
+            findingId: "f-7",
+        });
+        expect(next.selectedFindingId).toBe("f-7");
+        expect(next.focusFindingId).toBeNull(); // selection ≠ copilot command
     });
 
     it("tracks the watchlist the Panel is showing", () => {

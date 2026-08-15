@@ -42,6 +42,24 @@ export function useCopilotAppContext() {
         value: state,
     });
 
+    // The finding open in the Informe — what "este proceso" refers to.
+    const openFinding = (feed?.items ?? []).find(
+        (f) => f.id === state.selectedFindingId,
+    );
+    useAgentContext({
+        description:
+            "HALLAZGO ABIERTO ahora mismo en el Informe del Panel. Cuando el usuario diga 'este proceso', 'este hallazgo' o pregunte sin nombrar cuál, se refiere a ESTE. Pásale su id a explainFinding en vez de preguntarle cuál es.",
+        value: openFinding
+            ? {
+                  id: openFinding.id,
+                  title: openFinding.title,
+                  entityName: openFinding.entityName,
+                  kind: openFinding.kind,
+                  score: openFinding.score,
+              }
+            : null,
+    });
+
     // Contractor network of the watchlist on screen, condensed for the prompt.
     const { data: graph } = useGraph(state.selectedWatchlistId ?? undefined);
     const { data: selectedWatchlist } = useWatchlist(

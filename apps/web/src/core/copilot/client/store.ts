@@ -36,6 +36,11 @@ export type CopilotUiState = {
     chatOpen: boolean;
     /** Which watchlist the Panel is showing, so the copilot sees what you see. */
     selectedWatchlistId: string | null;
+    /**
+     * The finding open in the Informe. Distinct from `focusFindingId`: this is
+     * what the user is looking at, that is a one-shot copilot command.
+     */
+    selectedFindingId: string | null;
 };
 
 export const initialCopilotUiState: CopilotUiState = {
@@ -44,6 +49,7 @@ export const initialCopilotUiState: CopilotUiState = {
     focusNit: null,
     chatOpen: true,
     selectedWatchlistId: null,
+    selectedFindingId: null,
 };
 
 export type CopilotUiAction =
@@ -51,7 +57,21 @@ export type CopilotUiAction =
     | { type: "focusFinding"; findingId: string | null }
     | { type: "focusNit"; nit: string | null }
     | { type: "setChatOpen"; open: boolean }
-    | { type: "setSelectedWatchlist"; watchlistId: string | null };
+    | { type: "setSelectedWatchlist"; watchlistId: string | null }
+    | { type: "setSelectedFinding"; findingId: string | null };
+
+/**
+ * Panels publish their selection from effects, so a no-op update MUST return
+ * the identical state object — otherwise the new state re-runs the effect that
+ * dispatched it and the render loop never settles.
+ */
+function set<K extends keyof CopilotUiState>(
+    state: CopilotUiState,
+    key: K,
+    value: CopilotUiState[K],
+): CopilotUiState {
+    return state[key] === value ? state : { ...state, [key]: value };
+}
 
 export function copilotUiReducer(
     state: CopilotUiState,
@@ -61,13 +81,15 @@ export function copilotUiReducer(
         case "setFindingFilter":
             return { ...state, findingFilter: action.filter };
         case "focusFinding":
-            return { ...state, focusFindingId: action.findingId };
+            return set(state, "focusFindingId", action.findingId);
         case "focusNit":
-            return { ...state, focusNit: action.nit };
+            return set(state, "focusNit", action.nit);
         case "setChatOpen":
-            return { ...state, chatOpen: action.open };
+            return set(state, "chatOpen", action.open);
         case "setSelectedWatchlist":
-            return { ...state, selectedWatchlistId: action.watchlistId };
+            return set(state, "selectedWatchlistId", action.watchlistId);
+        case "setSelectedFinding":
+            return set(state, "selectedFindingId", action.findingId);
         default:
             return state;
     }
@@ -118,6 +140,7 @@ export type CopilotUiApi = {
     focusNit(nit: string | null): void;
     setChatOpen(open: boolean): void;
     setSelectedWatchlist(watchlistId: string | null): void;
+    setSelectedFinding(findingId: string | null): void;
 };
 
 const CopilotUiContext = createContext<CopilotUiApi | null>(null);
@@ -127,19 +150,29 @@ export function CopilotUiProvider({ children }: { children: ReactNode }) {
         copilotUiReducer,
         initialCopilotUiState,
     );
-    const api = useMemo<CopilotUiApi>(
+    // Setter identities must NOT change with state: components publish their
+    // selection from effects that depend on these, and a new identity on every
+    // state change would re-fire them in a loop. `dispatch` is already stable.
+    const actions = useMemo(
         () => ({
-            state,
-            setFindingFilter: (filter) =>
+            setFindingFilter: (filter: FindingFilter | null) =>
                 dispatch({ type: "setFindingFilter", filter }),
-            focusFinding: (findingId) =>
+            focusFinding: (findingId: string | null) =>
                 dispatch({ type: "focusFinding", findingId }),
-            focusNit: (nit) => dispatch({ type: "focusNit", nit }),
-            setChatOpen: (open) => dispatch({ type: "setChatOpen", open }),
-            setSelectedWatchlist: (watchlistId) =>
+            focusNit: (nit: string | null) =>
+                dispatch({ type: "focusNit", nit }),
+            setChatOpen: (open: boolean) =>
+                dispatch({ type: "setChatOpen", open }),
+            setSelectedWatchlist: (watchlistId: string | null) =>
                 dispatch({ type: "setSelectedWatchlist", watchlistId }),
+            setSelectedFinding: (findingId: string | null) =>
+                dispatch({ type: "setSelectedFinding", findingId }),
         }),
-        [state],
+        [],
+    );
+    const api = useMemo<CopilotUiApi>(
+        () => ({ state, ...actions }),
+        [state, actions],
     );
     return createElement(CopilotUiContext.Provider, { value: api }, children);
 }

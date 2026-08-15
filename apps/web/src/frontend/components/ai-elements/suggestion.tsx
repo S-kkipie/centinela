@@ -30,3 +30,24 @@ export function Suggestion({
         </button>
     );
 }
+
+/**
+ * Placeholder chips shown while the model writes the real ones, so the row
+ * doesn't collapse and reflow the panel each time the context changes.
+ */
+export function SuggestionSkeleton({ count = 3 }: { count?: number }) {
+    const widths = ["w-28", "w-36", "w-24"];
+    return (
+        <div aria-hidden className="flex flex-wrap gap-2">
+            {Array.from({ length: count }, (_, i) => (
+                <span
+                    className={cn(
+                        "h-7 animate-pulse rounded-[var(--radius)] border border-rule bg-panel/60",
+                        widths[i % widths.length],
+                    )}
+                    key={`sk-${i}`}
+                />
+            ))}
+        </div>
+    );
+}

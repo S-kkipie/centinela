@@ -5,6 +5,7 @@ import {
     useAgent,
     useCopilotKit,
     useRenderToolCall,
+    useSuggestions,
 } from "@copilotkit/react-core/v2";
 import { MessageSquareIcon, XIcon } from "lucide-react";
 import { type FormEvent, Fragment, useEffect, useRef, useState } from "react";
@@ -14,6 +15,7 @@ import {
     SEED_SUGGESTIONS,
 } from "@/core/copilot/client/config";
 import { useCopilotUi } from "@/core/copilot/client/store";
+import { dedupeSuggestions } from "@/core/copilot/client/suggestions/dedupe";
 import { useCentinelaCopilot } from "@/core/copilot/client/use-centinela-copilot";
 import {
     Conversation,
@@ -23,6 +25,7 @@ import {
 import {
     Message,
     MessageContent,
+    MessageThinking,
 } from "@/frontend/components/ai-elements/message";
 import {
     PromptInput,
@@ -31,6 +34,7 @@ import {
 } from "@/frontend/components/ai-elements/prompt-input";
 import {
     Suggestion,
+    SuggestionSkeleton,
     Suggestions,
 } from "@/frontend/components/ai-elements/suggestion";
 import { cn } from "@/frontend/lib/utils";
@@ -72,6 +76,22 @@ export function ChatPanel() {
 
     const messages = agent.messages as unknown as RawMessage[];
     const running = agent.isRunning;
+
+    // Model-written chips, with the static seeds as the cold-start fallback.
+    const { suggestions, isLoading: suggestionsLoading } = useSuggestions();
+    // Cap the row: a stale batch that slips past the clear must never turn the
+    // panel into a wall of chips.
+    const generated = dedupeSuggestions(
+        suggestions
+            .map((s) => s.title || s.message)
+            .filter((s): s is string => Boolean(s)),
+    ).slice(-3);
+    const chips =
+        generated.length > 0
+            ? generated
+            : suggestionsLoading || messages.length > 0
+              ? []
+              : [...SEED_SUGGESTIONS];
 
     // Stick to bottom as the thread grows / streams.
     // biome-ignore lint/correctness/useExhaustiveDependencies: length + running drive scroll
@@ -145,15 +165,6 @@ export function ChatPanel() {
                     {isEmpty ? (
                         <ConversationEmptyState>
                             <p>{CHAT_LABELS.empty}</p>
-                            <Suggestions className="mt-3">
-                                {SEED_SUGGESTIONS.map((s) => (
-                                    <Suggestion
-                                        key={s}
-                                        suggestion={s}
-                                        onSelect={send}
-                                    />
-                                ))}
-                            </Suggestions>
                         </ConversationEmptyState>
                     ) : (
                         messages.map((m) => {
@@ -194,8 +205,43 @@ export function ChatPanel() {
                             );
                         })
                     )}
+                    {running && !isEmpty && (
+                        <MessageThinking label={CHAT_LABELS.thinking} />
+                    )}
                 </ConversationContent>
             </Conversation>
+
+            {/* AI-written chips that follow whatever the user is looking at.
+                They sit above the input so they stay reachable mid-thread. */}
+            {!running && (suggestionsLoading || chips.length > 0) && (
+                <div className="border-rule border-t px-3 py-2">
+                    {suggestionsLoading && chips.length === 0 ? (
+                        <div className="space-y-1.5">
+                            <span className="label-ops text-muted-foreground">
+                                {CHAT_LABELS.suggesting}
+                            </span>
+                            <SuggestionSkeleton />
+                        </div>
+                    ) : (
+                        <Suggestions
+                            className={cn(
+                                suggestionsLoading &&
+                                    "animate-pulse opacity-60",
+                            )}
+                        >
+                            {/* The model can repeat itself, so the text alone
+                                is not a stable key. */}
+                            {chips.map((s, i) => (
+                                <Suggestion
+                                    key={`${i}-${s}`}
+                                    onSelect={send}
+                                    suggestion={s}
+                                />
+                            ))}
+                        </Suggestions>
+                    )}
+                </div>
+            )}
 
             <PromptInput onSubmit={onSubmit}>
                 <PromptInputTextarea

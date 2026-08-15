@@ -2,6 +2,7 @@
 
 import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 import type { z } from "zod";
 import { useCopilotUi } from "@/core/copilot/client/store";
 import {
@@ -11,8 +12,10 @@ import {
     resolveFinding,
     toFindingFilter,
 } from "@/core/copilot/client/tools/finding-tools-core";
+import { parseToolResult } from "@/core/copilot/client/tools/tool-result";
 import { EvidenceCard } from "@/core/copilot/client/ui/evidence-card";
 import { useFindingsFeed } from "@/core/finding/client/hooks";
+import type { Finding } from "@/core/finding/domain/types";
 
 function filterLabel(args: z.infer<typeof filterFindingsParams>): string {
     const parts = [
@@ -35,6 +38,16 @@ export function useFindingTools() {
     const router = useRouter();
     const { setFindingFilter, focusFinding } = useCopilotUi();
     const { data: feed } = useFindingsFeed();
+
+    // `useFrontendTool` registers the tool object once, so a handler that closes
+    // over `feed` keeps the first render's value — undefined, before react-query
+    // resolves — and every lookup fails with "hallazgo no encontrado". Read the
+    // feed through a ref that each render refreshes instead.
+    const feedRef = useRef(feed);
+    useEffect(() => {
+        feedRef.current = feed;
+    }, [feed]);
+    const currentItems = () => feedRef.current?.items ?? [];
 
     useFrontendTool({
         name: "filterFindings",
@@ -62,7 +75,7 @@ export function useFindingTools() {
             "Abre un hallazgo en el Panel (lo selecciona y muestra su informe). Recibe el id del hallazgo.",
         parameters: openFindingParams,
         handler: async ({ findingId }) => {
-            const finding = resolveFinding(feed?.items ?? [], findingId);
+            const finding = resolveFinding(currentItems(), findingId);
             if (!finding) return { error: "hallazgo no encontrado" };
             focusFinding(finding.id);
             router.push("/dashboard");
@@ -76,23 +89,20 @@ export function useFindingTools() {
             "Explica un hallazgo con su veredicto y la cadena de evidencia citada (fuentes oficiales con enlaces). Úsalo cuando pregunten por qué un proceso es bandera roja u oportunidad.",
         parameters: explainFindingParams,
         handler: async ({ findingId }) => {
-            const finding = resolveFinding(feed?.items ?? [], findingId);
+            const finding = resolveFinding(currentItems(), findingId);
             if (!finding) return { error: "hallazgo no encontrado" };
             return { finding };
         },
         render: ({ result }) => {
-            const r = result as
-                | { finding?: unknown; error?: string }
-                | undefined;
-            if (!r) return null;
+            const r = parseToolResult<{ finding: Finding }>(result);
+            if (!r) return null; // still running
             if (r.error || !r.finding)
                 return (
                     <p className="label-ops my-1 text-flag">
                         Hallazgo no encontrado.
                     </p>
                 );
-            // biome-ignore lint/suspicious/noExplicitAny: shape validated by handler
-            return <EvidenceCard finding={r.finding as any} />;
+            return <EvidenceCard finding={r.finding} />;
         },
     });
 }
