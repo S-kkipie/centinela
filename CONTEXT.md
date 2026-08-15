@@ -69,6 +69,26 @@ In `apps/web/.env` and `apps/agent/.dev.vars` — **git-ignored, never commit**.
 Keys were pasted in chat → **rotate before real production** (Croma, Gemini,
 Supabase password).
 
+## Done (2026-08-15, parallel build — 3 peer sessions + orchestrator)
+
+All three workstreams merged to main; gate `pnpm turbo test typecheck` 8/8 green:
+
+- `packages/contracts` (@centinela/contracts): shared FindingIngest +
+  validateFindingIngest, CromaClient interface. Contracts are code; orchestrator
+  owns changes.
+- `packages/croma` (@centinela/croma): typed client, 9 endpoints, zod edges,
+  token-bucket + retry/backoff, typed errors. Verified live. Real API shape:
+  **POST /co/<source>/<name>/v1, 500 req/24h PER endpoint**, rama-judicial by
+  entity NAME (resolve NIT→name via RUES first).
+- `apps/web`: watchlists/watchlist_entities/findings/graph_edges schema
+  (migration applied to Supabase), ingest `POST /api/agent/findings`
+  (x-agent-key, outside /api/v1), read APIs, dashboard feed + React Flow graph.
+- `apps/agent`: heartbeat → sweep → Queue (1 msg = 1 tender) → Workflow
+  investigation (Croma cross-ref → Gemini Flash-Lite triage + Pro scoring,
+  structured output) → POST ingest. Real croma client wired; `CROMA_STUB=1`
+  runs offline empresa-fantasma demo. `wrangler deploy --dry-run` OK.
+- graphEdges convention: from/to are NITs/documents, never display names.
+
 ## Next steps (in order)
 
 1. **`packages/croma`** — typed REST client for the 9 Colombia endpoints
