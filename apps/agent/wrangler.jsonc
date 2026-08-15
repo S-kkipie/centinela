@@ -6,20 +6,46 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
 
+  // The Agents SDK lazily imports the optional `ai` package in a chat path we
+  // don't use; alias it to a local stub so it stays out of the bundle.
+  "alias": { "ai": "./src/shims/ai.ts" },
+
   // Durable Object = the living agent (per-user watchlist instance).
-  // SQLite-backed for persistent memory across heartbeats.
+  // SQLite-backed for persistent memory (seen tenders) across heartbeats.
   "durable_objects": {
-    "bindings": [
-      { "name": "CentinelaAgent", "class_name": "CentinelaAgent" }
+    "bindings": [{ "name": "CentinelaAgent", "class_name": "CentinelaAgent" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CentinelaAgent"] }],
+
+  // Fan-out: the sweep enqueues one message per new tender; the same Worker's
+  // queue() consumer turns each into an InvestigateTender Workflow run.
+  "queues": {
+    "producers": [{ "queue": "centinela-crawl", "binding": "CRAWL_QUEUE" }],
+    "consumers": [
+      {
+        "queue": "centinela-crawl",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+        "max_retries": 3,
+        "dead_letter_queue": "centinela-crawl-dlq"
+      }
     ]
   },
-  "migrations": [
-    { "tag": "v1", "new_sqlite_classes": ["CentinelaAgent"] }
-  ]
 
-  // TODO bindings to wire when building:
-  // - Queues (fan-out crawl of watched entities)
-  // - Workflows (durable multi-step Croma investigation)
-  // - Secrets: CROMA_API_KEY, GEMINI_API_KEY, WEB_API_URL (via `wrangler secret put`)
-  // App data lives in CockroachDB owned by apps/web; agent persists via web API.
+  // Durable per-tender investigation (each Croma/Gemini call is a retriable step).
+  "workflows": [
+    {
+      "name": "centinela-investigate",
+      "binding": "INVESTIGATE",
+      "class_name": "InvestigateTender"
+    }
+  ],
+
+  // Non-secret vars. Secrets (CROMA_API_KEY, GEMINI_API_KEY, AGENT_INGEST_KEY)
+  // go via `.dev.vars` locally and `wrangler secret put` in prod.
+  "vars": {
+    "WEB_API_URL": "http://localhost:3000",
+    "GEMINI_SWEEP_MODEL": "gemini-3.5-flash-lite",
+    "GEMINI_SCORING_MODEL": "gemini-3.1-pro-preview"
+  }
 }
