@@ -1,6 +1,9 @@
 "use client";
 
+import { RadarIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { SweepError, useTriggerSweep } from "@/core/agent/client/hooks";
 import { useCopilotUiOptional } from "@/core/copilot/client/store";
 import { pickDefaultWatchlist } from "@/core/finding/client/default-watchlist";
 import { useFindingsFeed } from "@/core/finding/client/hooks";
@@ -9,6 +12,7 @@ import { TriageRow } from "@/core/finding/client/ui/triage-row";
 import { useWatchlists } from "@/core/watchlist/client/hooks";
 import { NumberTicker } from "@/frontend/components/aceternity/number-ticker";
 import { ConsolaShader } from "@/frontend/components/aceternity/shader-fields";
+import { Button } from "@/frontend/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -16,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/frontend/components/ui/select";
+import { Spinner } from "@/frontend/components/ui/spinner";
 import { cn } from "@/frontend/lib/utils";
 
 const ALL = "__all__";
@@ -81,28 +86,36 @@ export function Dashboard() {
                                 Sala de vigilancia
                             </h1>
                         </div>
-                        <div className="w-full space-y-1 sm:w-64">
-                            <span className="label-ops text-muted-foreground">
-                                Frente
-                            </span>
-                            <Select
-                                onValueChange={setSelected}
-                                value={selected}
-                            >
-                                <SelectTrigger className="w-full rounded-sm border-rule bg-panel font-mono text-xs">
-                                    <SelectValue placeholder="Frente" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-sm border-rule font-mono text-xs">
-                                    <SelectItem value={ALL}>
-                                        Todos los frentes
-                                    </SelectItem>
-                                    {watchlists?.map((wl) => (
-                                        <SelectItem key={wl.id} value={wl.id}>
-                                            {wl.name}
+                        <div className="flex w-full items-end gap-2 sm:w-auto">
+                            <div className="w-full space-y-1 sm:w-56">
+                                <span className="label-ops text-muted-foreground">
+                                    Frente
+                                </span>
+                                <Select
+                                    onValueChange={setSelected}
+                                    value={selected}
+                                >
+                                    <SelectTrigger className="w-full rounded-sm border-rule bg-panel font-mono text-xs">
+                                        <SelectValue placeholder="Frente" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-sm border-rule font-mono text-xs">
+                                        <SelectItem value={ALL}>
+                                            Todos los frentes
                                         </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                        {watchlists?.map((wl) => (
+                                            <SelectItem
+                                                key={wl.id}
+                                                value={wl.id}
+                                            >
+                                                {wl.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <SweepButton
+                                hasWatchlists={(watchlists?.length ?? 0) > 0}
+                            />
                         </div>
                     </div>
                     {/* Telemetría en una banda, no en un bloque: la mitad
@@ -136,6 +149,57 @@ export function Dashboard() {
                 <FindingsFeed watchlistId={watchlistId} />
             </div>
         </div>
+    );
+}
+
+/**
+ * Runs the agent's heartbeat on demand — "show me now" instead of waiting for
+ * the two-hour cron. The sweep only enqueues; investigations land over the next
+ * seconds, so the copy promises "en camino", not instant results.
+ */
+function SweepButton({ hasWatchlists }: { hasWatchlists: boolean }) {
+    const sweep = useTriggerSweep();
+    const run = () => {
+        sweep.mutate(undefined, {
+            onSuccess: (r) => {
+                toast.success(
+                    r.enqueued > 0
+                        ? `Barrido lanzado: ${r.enqueued} proceso${r.enqueued === 1 ? "" : "s"} en investigación.`
+                        : `Barrido hecho sobre ${r.targets} objetivo${r.targets === 1 ? "" : "s"}: sin procesos nuevos por ahora.`,
+                );
+            },
+            onError: (e) => {
+                const noTargets = e instanceof SweepError && e.status === 400;
+                toast.error(
+                    noTargets
+                        ? "Crea un frente con una entidad antes de barrer."
+                        : "No se pudo lanzar el barrido. Intenta de nuevo.",
+                );
+            },
+        });
+    };
+    return (
+        <Button
+            className="label-ops h-9 shrink-0 gap-1.5"
+            disabled={sweep.isPending || !hasWatchlists}
+            onClick={run}
+            size="sm"
+            title={
+                hasWatchlists
+                    ? "Ejecuta un barrido ahora"
+                    : "Crea un frente primero"
+            }
+        >
+            {sweep.isPending ? (
+                <>
+                    <Spinner className="size-3.5" /> Barriendo…
+                </>
+            ) : (
+                <>
+                    <RadarIcon className="size-3.5" /> Barrer ahora
+                </>
+            )}
+        </Button>
     );
 }
 

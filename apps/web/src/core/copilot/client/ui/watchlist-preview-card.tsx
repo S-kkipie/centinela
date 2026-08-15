@@ -83,7 +83,7 @@ export function WatchlistPreviewCard({
                         Cancelar
                     </Button>
                     <Button
-                        className="label-ops h-8 px-4 text-signal"
+                        className="label-ops h-8 px-4"
                         disabled={pending}
                         onClick={onConfirm}
                         size="sm"

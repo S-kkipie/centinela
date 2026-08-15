@@ -10,6 +10,7 @@ import { useEntityTools } from "@/core/copilot/client/tools/use-entity-tools";
 import { useFindingTools } from "@/core/copilot/client/tools/use-finding-tools";
 import { useGraphTools } from "@/core/copilot/client/tools/use-graph-tools";
 import { useNetworkTools } from "@/core/copilot/client/tools/use-network-tools";
+import { useSweepTools } from "@/core/copilot/client/tools/use-sweep-tools";
 import { useWatchlistTools } from "@/core/copilot/client/tools/use-watchlist-tools";
 import { useRevealTarget } from "@/core/copilot/client/ui/use-reveal-target";
 
@@ -29,6 +30,7 @@ export function useCentinelaCopilot() {
     useAnalysisTools();
     useDocumentTools();
     useEntityTools();
+    useSweepTools();
     // The copilot acting on its own: it speaks first, and it interrupts.
     useAgentBriefing();
     useFeedWatcher();
