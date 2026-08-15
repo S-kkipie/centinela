@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 256">
+  <path fill="#F4F7F5" d="M20 119 72 68h96l52 51-17 17-43-42H80l-43 42Z"/>
+  <path fill="#F4F7F5" d="m20 137 17-17 43 42h80l43-42 17 17-52 51H72Z"/>
+  <path fill="#0C7A57" fill-rule="evenodd" d="M120 96a32 32 0 1 1 0 64 32 32 0 0 1 0-64Zm-4 12h8v40h-8Z"/>
+  <path fill="#F4F7F5" d="M350 72h-40q-28 0-28 28v56q0 28 28 28h40v-16h-34q-16 0-16-16v-48q0-16 16-16h34Z"/>
+  <path fill="#F4F7F5" d="M367 72h62v16h-44v29h38v16h-38v35h44v16h-62Z"/>
+  <path fill="#F4F7F5" d="M446 184V72h18l32 56 18 32V72h18v112h-18l-32-56-18-32v88Z"/>
+  <path fill="#F4F7F5" d="M549 72h72v16h-27v96h-18V88h-27Z"/>
+  <path fill="#F4F7F5" d="M638 72h60v16h-21v80h21v16h-60v-16h21V88h-21Z"/>
+  <path fill="#F4F7F5" d="M715 184V72h18l32 56 18 32V72h18v112h-18l-32-56-18-32v88Z"/>
+  <path fill="#F4F7F5" d="M818 72h62v16h-44v29h38v16h-38v35h44v16h-62Z"/>
+  <path fill="#F4F7F5" d="M897 72h18v96h44v16h-62Z"/>
+  <path fill="#F4F7F5" fill-rule="evenodd" d="m968 184 36-112h20l36 112h-19l-9-28h-36l-9 28Zm33-44h26l-13-43Z"/>
+  <path fill="#0C7A57" d="M1082 174h76v10h-76Z">
+    <animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" dur="1.2s" calcMode="discrete" repeatCount="indefinite"/>
+  </path>
+</svg>

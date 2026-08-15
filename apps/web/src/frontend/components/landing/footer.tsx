@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "@/frontend/components/brand/brand-mark";
 
 const enlaces = [
     { href: "#oportunidad", label: "Oportunidades" },
@@ -12,8 +13,11 @@ export function LandingFooter() {
         <footer className="border-t border-rule bg-secondary">
             <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-10">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-6">
-                    <span className="font-display text-2xl leading-none font-bold tracking-[0.04em]">
-                        CENTINELA<span className="text-signal">_</span>
+                    <span className="flex items-center gap-2 font-display text-2xl leading-none font-bold tracking-[0.04em]">
+                        <BrandMark className="size-7 shrink-0 text-foreground" />
+                        <span>
+                            CENTINELA<span className="text-signal">_</span>
+                        </span>
                     </span>
                     <nav className="flex flex-wrap gap-x-8 gap-y-3">
                         {enlaces.map((e) => (

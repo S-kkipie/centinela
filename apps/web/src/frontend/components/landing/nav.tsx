@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "@/frontend/components/brand/brand-mark";
 
 export function LandingNav() {
     return (
@@ -6,9 +7,12 @@ export function LandingNav() {
             <div className="mx-auto flex min-h-[60px] w-full max-w-6xl items-center gap-6 px-4 py-3 sm:px-10">
                 <Link
                     href="/"
-                    className="whitespace-nowrap font-display text-xl leading-none font-bold tracking-[0.04em]"
+                    className="flex items-center gap-2 whitespace-nowrap font-display text-xl leading-none font-bold tracking-[0.04em]"
                 >
-                    CENTINELA<span className="text-signal">_</span>
+                    <BrandMark className="size-6 shrink-0 text-foreground" />
+                    <span>
+                        CENTINELA<span className="text-signal">_</span>
+                    </span>
                 </Link>
                 <span className="label-ops hidden items-center gap-2 text-signal sm:inline-flex">
                     <span className="relative flex h-[7px] w-[7px]">

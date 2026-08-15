@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 import { CopilotUiProvider } from "@/core/copilot/client/store";
 import { AppShell } from "@/core/copilot/client/ui/app-shell";
 import { ChatPanel } from "@/core/copilot/client/ui/chat-panel";
+import { BrandMark } from "@/frontend/components/brand/brand-mark";
 import { requireAuth } from "@/server/auth/require-auth";
 import { AppNav } from "./app-nav";
 import { SignOutButton } from "./sign-out-button";
@@ -22,11 +23,16 @@ export default async function AppLayout({ children }: PropsWithChildren) {
                             <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-2.5 md:px-6">
                                 <div className="flex min-w-0 items-center gap-5">
                                     <Link
-                                        className="font-display font-semibold text-foreground text-sm tracking-tight"
+                                        className="flex items-center gap-2 font-display font-semibold text-foreground text-sm tracking-tight"
                                         href="/dashboard"
                                     >
-                                        CENTINELA
-                                        <span className="text-signal">_</span>
+                                        <BrandMark className="size-5 shrink-0" />
+                                        <span>
+                                            CENTINELA
+                                            <span className="text-signal">
+                                                _
+                                            </span>
+                                        </span>
                                     </Link>
                                     <span
                                         aria-hidden
