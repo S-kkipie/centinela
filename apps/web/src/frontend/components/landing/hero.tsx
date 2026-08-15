@@ -30,10 +30,10 @@ function CicloPanel() {
 
     return (
         <figure
-            className="relative z-10 rounded-md border border-rule bg-card shadow-sm"
+            className="relative z-10 w-full rounded-md border border-rule bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_40px_-16px_rgb(0_0_0/0.15)]"
             aria-label="Registro esquemático de un ciclo del agente"
         >
-            <figcaption className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 leading-none">
+            <figcaption className="flex items-center justify-between gap-3 border-b border-border px-5 py-4 leading-none">
                 <span className="label-ops text-muted-foreground">
                     centinela / ciclo
                 </span>
@@ -45,15 +45,15 @@ function CicloPanel() {
                     Cada 2 h
                 </span>
             </figcaption>
-            <div className="p-4">
-                <ul className="font-mono text-xs leading-[2]">
+            <div className="p-5">
+                <ul className="font-mono text-[13px] leading-[2.2]">
                     {ciclo.map((row, i) => {
                         const isActive = !reduceMotion && i === active;
                         return (
                             <li
                                 key={row.n}
                                 className={cn(
-                                    "grid grid-cols-[1rem_2rem_6.5rem_minmax(0,1fr)] items-baseline gap-2 whitespace-nowrap rounded-sm px-1 transition-colors duration-[220ms]",
+                                    "grid grid-cols-[1.1rem_2.2rem_7.5rem_minmax(0,1fr)] items-baseline gap-2 whitespace-nowrap rounded-sm px-2 transition-colors duration-[220ms]",
                                     isActive && "bg-accent",
                                 )}
                             >
@@ -79,9 +79,9 @@ function CicloPanel() {
                         );
                     })}
                 </ul>
-                <hr className="my-2 border-t border-dashed border-rule" />
-                <ul className="font-mono text-xs leading-[2]">
-                    <li className="grid grid-cols-[1rem_2rem_minmax(0,1fr)] items-baseline gap-2 whitespace-nowrap px-1">
+                <hr className="my-3 border-t border-dashed border-rule" />
+                <ul className="font-mono text-[13px] leading-[2.2]">
+                    <li className="grid grid-cols-[1.1rem_2.2rem_minmax(0,1fr)] items-baseline gap-2 whitespace-nowrap px-2">
                         <span aria-hidden="true" className="text-signal">
                             →
                         </span>
@@ -98,7 +98,7 @@ function CicloPanel() {
                             </span>
                         </span>
                     </li>
-                    <li className="grid grid-cols-[1rem_2rem_minmax(0,1fr)] items-baseline gap-2 whitespace-nowrap px-1">
+                    <li className="grid grid-cols-[1.1rem_2.2rem_minmax(0,1fr)] items-baseline gap-2 whitespace-nowrap px-2">
                         <span aria-hidden="true" className="text-flag">
                             →
                         </span>
@@ -125,16 +125,16 @@ export function LandingHero() {
     return (
         <section className="relative overflow-hidden">
             <Spotlight className="-top-40 left-0 md:-top-24 md:left-40" />
-            <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-4 pt-16 pb-24 sm:px-10 md:pt-24 lg:grid-cols-[7fr_5fr]">
+            <div className="mx-auto grid w-full max-w-6xl items-center gap-14 px-4 py-20 sm:px-10 md:min-h-[calc(100svh-61px)] md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
                 <div className="relative z-10">
-                    <p className="label-ops mb-6 text-signal">
+                    <p className="label-ops mb-7 text-signal">
                         Agente autónomo · Contratación pública
                     </p>
-                    <h1 className="max-w-[16ch] text-4xl sm:text-5xl lg:text-6xl">
+                    <h1 className="max-w-[15ch] text-[2.6rem] leading-[1.05] sm:text-6xl lg:text-[4.4rem]">
                         Tu próximo contrato con el Estado{" "}
                         <Highlight>ya está publicado.</Highlight>
                     </h1>
-                    <p className="mt-6 max-w-[54ch] text-lg text-secondary-foreground">
+                    <p className="mt-7 max-w-[52ch] text-lg text-secondary-foreground sm:text-xl">
                         Centinela vigila el SECOP día y noche, cruza cada
                         licitación nueva contra 9 fuentes oficiales y te dice
                         cuál puedes ganar — antes que tu competencia.
@@ -142,7 +142,7 @@ export function LandingHero() {
                     <div className="mt-10 flex flex-wrap items-center gap-6">
                         <Link
                             href="/dashboard"
-                            className="rounded-md border border-foreground bg-foreground px-6 py-3 font-mono text-sm leading-none font-semibold tracking-[0.06em] whitespace-nowrap text-background uppercase transition-colors hover:border-secondary-foreground hover:bg-secondary-foreground"
+                            className="rounded-md border border-foreground bg-foreground px-7 py-3.5 font-mono text-sm leading-none font-semibold tracking-[0.06em] whitespace-nowrap text-background uppercase transition-colors hover:border-secondary-foreground hover:bg-secondary-foreground"
                         >
                             Ver el agente en vivo
                         </Link>

@@ -9,20 +9,20 @@ const cadena = [
 export function LandingBanderaRoja() {
     return (
         <section className="border-t border-rule bg-secondary" id="bandera">
-            <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-24 sm:px-10 lg:grid-cols-[6fr_6fr]">
+            <div className="mx-auto grid w-full max-w-6xl items-center gap-14 px-4 py-28 sm:px-10 lg:grid-cols-[7fr_5fr] lg:gap-20">
                 <div className="lg:order-2">
                     <p className="label-ops text-flag">
                         Beneficio 02 · Bandera roja
                     </p>
-                    <h2 className="mt-4 max-w-[20ch] text-3xl sm:text-4xl">
+                    <h2 className="mt-5 max-w-[18ch] text-3xl sm:text-4xl lg:text-5xl">
                         Lo que el pliego no te cuenta.
                     </h2>
-                    <p className="mt-4 max-w-[50ch] text-lg text-secondary-foreground">
+                    <p className="mt-6 max-w-[46ch] text-lg text-secondary-foreground">
                         Historial judicial, sanciones y vínculos del
                         adjudicatario — citados expediente por expediente, antes
                         de que sean escándalo.
                     </p>
-                    <p className="mt-6 font-mono text-xs tracking-[0.04em] text-muted-foreground">
+                    <p className="mt-8 font-mono text-xs tracking-[0.04em] text-muted-foreground">
                         Hallazgo real del agente →
                     </p>
                 </div>

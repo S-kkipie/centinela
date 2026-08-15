@@ -17,8 +17,10 @@ export const Highlight = ({
     const reduceMotion = useReducedMotion();
     return (
         <motion.span
-            initial={{ backgroundSize: reduceMotion ? "100% 100%" : "0% 100%" }}
-            animate={{ backgroundSize: "100% 100%" }}
+            initial={{
+                backgroundSize: reduceMotion ? "100% 0.32em" : "0% 0.32em",
+            }}
+            animate={{ backgroundSize: "100% 0.32em" }}
             transition={{
                 duration: 1,
                 ease: [0.16, 1, 0.3, 1],
@@ -26,14 +28,16 @@ export const Highlight = ({
             }}
             style={{
                 backgroundRepeat: "no-repeat",
-                backgroundPosition: "left center",
+                backgroundPosition: "left 88%",
+                // marker-style underline sweep: strong enough to survive on
+                // near-white paper, still leaves the ink text untouched
                 backgroundImage:
-                    "linear-gradient(var(--color-accent-signal-soft), var(--color-accent-signal-soft))",
+                    "linear-gradient(color-mix(in oklab, var(--color-accent-signal) 38%, transparent), color-mix(in oklab, var(--color-accent-signal) 38%, transparent))",
                 display: "inline",
                 boxDecorationBreak: "clone",
                 WebkitBoxDecorationBreak: "clone",
             }}
-            className={cn("relative rounded-sm px-1", className)}
+            className={cn("relative px-1", className)}
         >
             {children}
         </motion.span>

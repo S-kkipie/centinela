@@ -1,0 +1,220 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - banner [ref=f1e3]:
+      - generic [ref=f1e4]:
+        - link "CENTINELA_" [ref=f1e5] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f1e6]: En vivo
+        - link "Ver el agente en vivo" [ref=f1e10] [cursor=pointer]:
+          - /url: /dashboard
+    - main [ref=f1e11]:
+      - generic [ref=f1e13]:
+        - generic [ref=f1e14]:
+          - paragraph [ref=f1e15]: Agente autónomo · Contratación pública
+          - heading "Tu próximo contrato con el Estado ya está publicado." [level=1] [ref=f1e16]
+          - paragraph [ref=f1e17]: Centinela vigila el SECOP día y noche, cruza cada licitación nueva contra 9 fuentes oficiales y te dice cuál puedes ganar — antes que tu competencia.
+          - generic [ref=f1e18]:
+            - link "Ver el agente en vivo" [ref=f1e19] [cursor=pointer]:
+              - /url: /dashboard
+            - generic [ref=f1e20]: Sin registro. El agente ya está corriendo.
+        - figure "Registro esquemático de un ciclo del agente" [ref=f1e21]:
+          - generic [ref=f1e22]:
+            - generic [ref=f1e23]: centinela / ciclo
+            - generic [ref=f1e24]: Cada 2 h
+          - generic [ref=f1e28]:
+            - list [ref=f1e29]:
+              - listitem [ref=f1e30]:
+                - generic [ref=f1e31]: ▸
+                - generic [ref=f1e32]: "01"
+                - generic [ref=f1e33]: BARRIDO
+                - generic [ref=f1e34]: SECOP · procesos nuevos
+              - listitem [ref=f1e35]:
+                - generic [ref=f1e36]: ▸
+                - generic [ref=f1e37]: "02"
+                - generic [ref=f1e38]: COLA
+                - generic [ref=f1e39]: encolados sin perder ninguno
+              - listitem [ref=f1e40]:
+                - generic [ref=f1e41]: ▸
+                - generic [ref=f1e42]: "03"
+                - generic [ref=f1e43]: WORKFLOW
+                - generic [ref=f1e44]: 9 endpoints oficiales
+              - listitem [ref=f1e45]:
+                - generic [ref=f1e46]: ▸
+                - generic [ref=f1e47]: "04"
+                - generic [ref=f1e48]: SCORING
+                - generic [ref=f1e49]: Gemini pondera evidencia
+              - listitem [ref=f1e50]:
+                - generic [ref=f1e51]: ▸
+                - generic [ref=f1e52]: "05"
+                - generic [ref=f1e53]: HALLAZGO
+                - generic [ref=f1e54]: veredicto en tu panel
+            - separator [ref=f1e55]
+            - list [ref=f1e56]:
+              - listitem [ref=f1e57]:
+                - generic [ref=f1e58]: →
+                - generic [ref=f1e59]: out
+                - generic [ref=f1e60]:
+                  - text: OPORTUNIDAD · 85
+                  - generic [ref=f1e61]: — ganable
+              - listitem [ref=f1e62]:
+                - generic [ref=f1e63]: →
+                - generic [ref=f1e64]: out
+                - generic [ref=f1e65]:
+                  - text: BANDERA_ROJA · 65
+                  - generic [ref=f1e66]: — evidencia citada
+      - generic [ref=f1e68]:
+        - paragraph [ref=f1e69]: Caudal real · medido por el agente
+        - generic "111" [ref=f1e71]: "703"
+        - heading "licitaciones nuevas en 3 días. Una sola entidad." [level=2] [ref=f1e72]
+        - paragraph [ref=f1e73]: Publicadas mientras leías esto. Nadie puede revisarlas todas a mano — y las que no lees, las gana otro.
+        - generic [ref=f1e74]:
+          - generic [ref=f1e75]:
+            - term [ref=f1e76]: LATIDO
+            - definition [ref=f1e77]: CADA 2 H
+          - generic [ref=f1e78]:
+            - term [ref=f1e79]: FUENTES
+            - definition [ref=f1e80]: 9 OFICIALES
+          - generic [ref=f1e81]:
+            - term [ref=f1e82]: DATOS
+            - definition [ref=f1e83]: 100 % CROMA
+      - generic [ref=f1e85]:
+        - generic [ref=f1e86]:
+          - paragraph [ref=f1e87]: Beneficio 01 · Oportunidad
+          - heading "Encuentra contratos que sí puedes ganar." [level=2] [ref=f1e88]
+          - paragraph [ref=f1e89]: "El agente descarta el ruido y te deja solo procesos a tu alcance: cuantía, requisitos y riesgo del contratante, ya analizados."
+          - paragraph [ref=f1e90]: Hallazgo real del agente →
+        - generic [ref=f1e92]:
+          - generic [ref=f1e93]:
+            - generic [ref=f1e94]: OPORTUNIDAD · 85
+            - generic [ref=f1e95]: "85"
+          - heading "Contrato de servicios de bajo riesgo" [level=3] [ref=f1e96]
+          - paragraph [ref=f1e97]: "Proceso ganable para una PYME: cuantía alcanzable, requisitos proporcionados y un contratante sin señales de riesgo."
+          - list [ref=f1e98]:
+            - listitem [ref=f1e99]:
+              - generic [ref=f1e100]: RUES
+              - generic [ref=f1e101]: ok · matrícula mercantil vigente
+            - listitem [ref=f1e102]:
+              - generic [ref=f1e103]: SUPERSOCIEDADES
+              - generic [ref=f1e104]: ok · situación societaria normal
+            - listitem [ref=f1e105]:
+              - generic [ref=f1e106]: RAMA JUDICIAL
+              - generic [ref=f1e107]: ok · sin procesos por NIT
+            - listitem [ref=f1e108]:
+              - generic [ref=f1e109]: SANCIONES
+              - generic [ref=f1e110]: ok · Procuraduría y Contraloría limpias
+            - listitem [ref=f1e111]:
+              - generic [ref=f1e112]: VEREDICTO
+              - generic [ref=f1e113]: presentarse — riesgo bajo
+      - generic [ref=f1e115]:
+        - generic [ref=f1e116]:
+          - paragraph [ref=f1e117]: Beneficio 02 · Bandera roja
+          - heading "Lo que el pliego no te cuenta." [level=2] [ref=f1e118]
+          - paragraph [ref=f1e119]: Historial judicial, sanciones y vínculos del adjudicatario — citados expediente por expediente, antes de que sean escándalo.
+          - paragraph [ref=f1e120]: Hallazgo real del agente →
+        - generic [ref=f1e123]:
+          - generic [ref=f1e124]:
+            - generic [ref=f1e125]: BANDERA_ROJA · 65
+            - generic [ref=f1e126]: "65"
+          - heading "Historial judicial acumulado del contratista" [level=3] [ref=f1e127]
+          - paragraph [ref=f1e128]: El adjudicatario arrastra procesos en la Rama Judicial que el pliego nunca miró. Centinela los cita, expediente por expediente.
+          - list [ref=f1e129]:
+            - listitem [ref=f1e130]:
+              - generic [ref=f1e131]: RAMA JUDICIAL
+              - generic [ref=f1e132]: procesos vinculados al NIT
+            - listitem [ref=f1e133]:
+              - generic [ref=f1e134]: EXPEDIENTES
+              - generic [ref=f1e135]: citados uno por uno en el hallazgo
+            - listitem [ref=f1e136]:
+              - generic [ref=f1e137]: GRAFO
+              - generic [ref=f1e138]: el NIT queda como nodo con su historial
+            - listitem [ref=f1e139]:
+              - generic [ref=f1e140]: VEREDICTO
+              - generic [ref=f1e141]: revisar — evidencia citada
+      - generic [ref=f1e143]:
+        - generic [ref=f1e144]:
+          - generic [ref=f1e145]:
+            - paragraph [ref=f1e146]: Cómo funciona
+            - heading "De la publicación al veredicto en un solo ciclo." [level=2] [ref=f1e147]
+            - paragraph [ref=f1e148]: "Estado durable, colas y workflows: ningún proceso se pierde, ninguna fuente se salta. Diseñado para operar años, no demos."
+          - generic [ref=f1e150]:
+            - generic [ref=f1e154]:
+              - generic [ref=f1e155]:
+                - generic [ref=f1e156]: "01"
+                - heading "Barrido SECOP" [level=3] [ref=f1e157]
+              - generic [ref=f1e158]:
+                - paragraph [ref=f1e159]: El latido despierta al agente y consulta los procesos nuevos.
+                - generic [ref=f1e160]: Durable Object · alarma 2 h
+            - generic [ref=f1e164]:
+              - generic [ref=f1e165]:
+                - generic [ref=f1e166]: "02"
+                - heading "Cola" [level=3] [ref=f1e167]
+              - generic [ref=f1e168]:
+                - paragraph [ref=f1e169]: Cada proceso se encola sin perder ninguno.
+                - generic [ref=f1e170]: Cloudflare Queues
+            - generic [ref=f1e174]:
+              - generic [ref=f1e175]:
+                - generic [ref=f1e176]: "03"
+                - heading "Workflow" [level=3] [ref=f1e177]
+              - generic [ref=f1e178]:
+                - paragraph [ref=f1e179]: Los 9 endpoints oficiales se consultan con reintentos durables.
+                - generic [ref=f1e180]: Cloudflare Workflows
+            - generic [ref=f1e184]:
+              - generic [ref=f1e185]:
+                - generic [ref=f1e186]: "04"
+                - heading "Scoring" [level=3] [ref=f1e187]
+              - generic [ref=f1e188]:
+                - paragraph [ref=f1e189]: Gemini pondera la evidencia y asigna el puntaje.
+                - generic [ref=f1e190]: Gemini
+            - generic [ref=f1e194]:
+              - generic [ref=f1e195]:
+                - generic [ref=f1e196]: "05"
+                - heading "Hallazgo en tu panel" [level=3] [ref=f1e197]
+              - generic [ref=f1e198]:
+                - paragraph [ref=f1e199]: OPORTUNIDAD o BANDERA_ROJA, con la cadena de evidencia citada.
+                - generic [ref=f1e200]: Dashboard en vivo
+        - generic [ref=f1e201]:
+          - generic [ref=f1e202]:
+            - generic [ref=f1e203]: Las fuentes · vía Croma
+            - paragraph [ref=f1e204]: "Ninguna fuente inventada: todo veredicto cita de dónde salió."
+          - generic [ref=f1e205]:
+            - generic [ref=f1e206]:
+              - term [ref=f1e207]: SECOP
+              - definition [ref=f1e208]: procesos, pliegos y adjudicaciones
+              - definition [ref=f1e209]: Vía Croma
+            - generic [ref=f1e210]:
+              - term [ref=f1e211]: RUES
+              - definition [ref=f1e212]: existencia y matrícula mercantil
+              - definition [ref=f1e213]: Vía Croma
+            - generic [ref=f1e214]:
+              - term [ref=f1e215]: Supersociedades
+              - definition [ref=f1e216]: situación societaria
+              - definition [ref=f1e217]: Vía Croma
+            - generic [ref=f1e218]:
+              - term [ref=f1e219]: Rama Judicial
+              - definition [ref=f1e220]: procesos judiciales por NIT
+              - definition [ref=f1e221]: Vía Croma
+            - generic [ref=f1e222]:
+              - term [ref=f1e223]: Procuraduría · Contraloría
+              - definition [ref=f1e224]: sanciones y responsabilidad fiscal
+              - definition [ref=f1e225]: Vía Croma
+      - generic [ref=f1e229]:
+        - heading "Empieza con una entidad. El agente hace el resto." [level=2] [ref=f1e230]
+        - paragraph [ref=f1e231]: "Hoy vigila Bogotá. La meta: cada peso público bajo vigilancia."
+        - link "Ver el agente en vivo" [ref=f1e232] [cursor=pointer]:
+          - /url: /dashboard
+    - contentinfo [ref=f1e237]:
+      - generic [ref=f1e238]:
+        - generic [ref=f1e239]:
+          - generic [ref=f1e240]: CENTINELA_
+          - navigation [ref=f1e241]:
+            - link "Oportunidades" [ref=f1e242] [cursor=pointer]:
+              - /url: "#oportunidad"
+            - link "Banderas rojas" [ref=f1e243] [cursor=pointer]:
+              - /url: "#bandera"
+            - link "Cómo funciona" [ref=f1e244] [cursor=pointer]:
+              - /url: "#como-funciona"
+            - link "Panel en vivo" [ref=f1e245] [cursor=pointer]:
+              - /url: /dashboard
+        - paragraph [ref=f1e246]: "CENTINELA — la capa de inteligencia sobre la contratación pública. Vigilancia autónoma, veredictos con evidencia citada, cero datos inventados. Fuentes: SECOP, RUES, Supersociedades, Rama Judicial, Procuraduría y Contraloría, vía la API Croma. El agente opera de forma continua, con latido cada 2 horas. Bogotá, Colombia — 2026."
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f1e252] [cursor=pointer]

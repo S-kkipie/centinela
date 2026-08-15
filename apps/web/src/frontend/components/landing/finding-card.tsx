@@ -26,7 +26,7 @@ export function FindingCard({
     const isFlag = tone === "flag";
     return (
         <CardSpotlight
-            className="p-6"
+            className="p-7 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_48px_-20px_rgb(0_0_0/0.18)] sm:p-9"
             color={
                 isFlag
                     ? "color-mix(in oklab, var(--color-flag) 8%, transparent)"
@@ -47,18 +47,18 @@ export function FindingCard({
                     </span>
                     <span
                         className={cn(
-                            "font-mono text-3xl leading-none font-semibold tabular-nums",
+                            "font-mono text-4xl leading-none font-semibold tabular-nums sm:text-5xl",
                             isFlag ? "text-flag" : "text-signal",
                         )}
                     >
                         {score}
                     </span>
                 </div>
-                <h3 className="mt-5 text-xl">{titulo}</h3>
-                <p className="mt-2 max-w-[48ch] text-sm text-secondary-foreground">
+                <h3 className="mt-6 text-xl sm:text-2xl">{titulo}</h3>
+                <p className="mt-3 max-w-[52ch] text-[15px] text-secondary-foreground">
                     {resumen}
                 </p>
-                <ul className="mt-5 border-t border-border font-mono text-xs">
+                <ul className="mt-6 border-t border-border font-mono text-[13px]">
                     {cadena.map((c) => (
                         <li
                             key={c.fuente}

@@ -19,11 +19,12 @@ const MeshGradient = dynamic(
     { ssr: false },
 );
 
+// dark-ops set (landing renders inside `.dark`):
 const TOKEN_COLORS = [
-    "#f1f6f4", // --color-paper
-    "#e8efec", // --color-paper-2
-    "#d6efe3", // --color-accent-signal-soft
-    "#f8fcfa", // --color-panel
+    "#121715", // --color-paper (dark)      oklch(16% 0.012 170)
+    "#171d1a", // --color-paper-2 (dark)    oklch(19% 0.012 170)
+    "#1d3a2f", // --color-accent-signal-soft (dark) oklch(30% 0.045 165)
+    "#1a201d", // --color-panel (dark)      oklch(20% 0.012 170)
 ];
 
 export function ShaderBackdrop() {

@@ -9,7 +9,7 @@ import { LandingProblema } from "@/frontend/components/landing/problema";
 
 export default function HomePage() {
     return (
-        <div className="bg-grid-ops min-h-svh">
+        <div className="dark bg-grid-ops min-h-svh bg-background text-foreground">
             <LandingNav />
             <main>
                 <LandingHero />

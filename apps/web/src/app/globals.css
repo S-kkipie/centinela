@@ -72,7 +72,27 @@
     --color-focus: oklch(72% 0.16 165);
     --grid-line: color-mix(in oklab, oklch(100% 0 0) 5%, transparent);
 
+    /* re-declare the semantic mapping here: custom properties resolve at
+     * computed-value time, so the :root chain would otherwise keep the
+     * light palette baked in for .dark subtrees */
+    --background: var(--color-paper);
+    --foreground: var(--color-ink);
+    --card: var(--color-panel);
+    --card-foreground: var(--color-ink);
+    --popover: var(--color-panel);
+    --popover-foreground: var(--color-ink);
+    --primary: var(--color-accent-signal);
     --primary-foreground: oklch(16% 0.012 170);
+    --secondary: var(--color-paper-2);
+    --secondary-foreground: var(--color-ink-2);
+    --muted: var(--color-paper-2);
+    --muted-foreground: var(--color-muted-ink);
+    --accent: var(--color-accent-signal-soft);
+    --accent-foreground: var(--color-ink);
+    --destructive: var(--color-flag);
+    --border: var(--color-rule-2);
+    --input: var(--color-rule-2);
+    --ring: var(--color-focus);
 }
 
 @theme inline {
