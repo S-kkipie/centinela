@@ -38,10 +38,14 @@ export class InvestigateTender extends WorkflowEntrypoint<Env, InvestigateParams
     // step.do requires a Serializable return; our Croma/dossier types carry
     // `raw: unknown` which TS can't prove serializable, though it JSON-round-trips
     // fine across steps — so we cast at the boundary.
-    const detail = (await step.do("secop-detail", async () =>
+    // Not every sweep id is a notice UID the process endpoint accepts (e.g.
+    // CO1.REQ.* request ids) — investigate without the detail instead of
+    // letting the step retry a permanent rejection.
+    const detail = (await step.do("secop-detail", async () => {
+      if (!/^CO1\.NTC\./.test(tender.noticeUid)) return null;
       // biome-ignore lint/suspicious/noExplicitAny: serializable-boundary cast
-      (await croma.secopProcessByNotice(tender.noticeUid)) as any,
-    )) as TenderDetail | null;
+      return (await croma.secopProcessByNotice(tender.noticeUid)) as any;
+    })) as TenderDetail | null;
 
     const sweep = await step.do("gemini-sweep", async () => {
       const text = await callGemini(
