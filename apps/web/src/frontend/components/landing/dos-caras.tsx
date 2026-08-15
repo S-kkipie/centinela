@@ -24,7 +24,8 @@ export function LandingDosCaras() {
                         Cada proceso recibe un puntaje y un veredicto. La misma
                         cadena de evidencia que le muestra a una PYME honesta
                         qué licitación puede ganar es la que expone una
-                        adjudicación amañada.
+                        adjudicación amañada. Para la empresa es ventaja
+                        competitiva; para el ciudadano, una garantía.
                     </p>
                 </header>
 

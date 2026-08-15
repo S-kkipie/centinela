@@ -25,10 +25,11 @@ export function LandingHero() {
                         />
                     </h1>
                     <p className="mt-6 max-w-[54ch] text-lg text-secondary-foreground">
-                        Un agente vivo, con latido cada 2 horas: barre las
-                        licitaciones nuevas del SECOP vía la API Croma, cruza
-                        cada proceso contra 9 fuentes estatales y emite un
-                        veredicto con la evidencia citada.
+                        Colombia adjudica billones de pesos al año a través del
+                        SECOP. Centinela es la capa de inteligencia que lo
+                        vigila: un agente vivo que barre cada licitación nueva,
+                        la cruza contra 9 fuentes estatales y emite un veredicto
+                        con la evidencia citada.
                     </p>
                     <div className="mt-10 flex flex-wrap items-center gap-6">
                         <Link

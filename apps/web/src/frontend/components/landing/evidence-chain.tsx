@@ -109,12 +109,13 @@ export function LandingEvidenceChain() {
 
                 <header className="mt-24 max-w-[60ch]">
                     <h2 className="text-3xl sm:text-4xl">
-                        La arquitectura es parte del pitch
+                        Infraestructura, no un experimento
                     </h2>
                     <p className="mt-3 text-secondary-foreground">
-                        Un agente vivo, no un cron con esteroides: estado
-                        durable, colas y workflows sobre Cloudflare, con Gemini
-                        como juez.
+                        Un agente vivo con estado durable, colas y workflows:
+                        ningún proceso se pierde, ninguna fuente se salta, y
+                        cada veredicto sobrevive a reinicios y fallas. Diseñado
+                        para operar años, no demos.
                     </p>
                 </header>
                 <ol className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
