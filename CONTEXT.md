@@ -89,6 +89,22 @@ All three workstreams merged to main; gate `pnpm turbo test typecheck` 8/8 green
   runs offline empresa-fantasma demo. `wrangler deploy --dry-run` OK.
 - graphEdges convention: from/to are NITs/documents, never display names.
 
+## Smoke E2E (2026-08-15) — GREEN
+
+Local: web :3000 + wrangler dev :8788 (8787 busy — unrelated bun service),
+`CROMA_STUB=1` (offline fixtures) + REAL Gemini. Flow verified end-to-end:
+signup → watchlist + entity NIT 899999061 → `POST
+/agents/centinela-agent/<instance>/watch` + `/sweep` (x-agent-key) → queue →
+workflow → Gemini scored BANDERA_ROJA 95 → ingest → finding + graph edges in
+Supabase, readable via `/api/v1/findings` + `/api/v1/graph`. Second sweep:
+enqueued 0 (seen-map dedup), still 1 finding (idempotent upsert).
+
+Known noise: one "Workers runtime canceled this request … hung" log line after
+the queue consumer in local dev — workflow completed and persisted fine; local
+workflows-emulation noise, watch it on real deploy. Agent HTTP surface
+(watch/sweep/status) added in a51bc0e. Pending: live-Croma smoke (drop
+CROMA_STUB), deploy, pitch.
+
 ## Next steps (in order)
 
 1. **`packages/croma`** — typed REST client for the 9 Colombia endpoints
