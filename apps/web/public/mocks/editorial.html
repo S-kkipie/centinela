@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centinela — Vigilancia de la contratación pública</title>
+<meta name="description" content="Agente autónomo que vigila la contratación pública colombiana vía la API Croma. Un motor, dos caras: oportunidad y bandera roja.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · genre: editorial · macrostructure: Long Document · theme: Newsprint · enrichment: none · nav: N6 · footer: Ft5 · tone: periodismo de investigación (es-CO, sobrio) */
+/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V5 */
+/* N6 knobs: issue-line=above wordmark · wordmark=2xl · rule=double | Ft5 knobs: sentence=28ch · wordmark=under sentence · rule above meta=hairline */
+/* contrast: pass (40–41) · nav: N6 · footer: Ft5 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
+
+:root {
+  /* — Newsprint · light paper, roman serif, warm restrained accent (anchor hue 85, oxide accent hue 32) — */
+  --color-paper:      oklch(96% 0.010 85);
+  --color-paper-2:    oklch(93.5% 0.012 85);
+  --color-rule:       oklch(81% 0.012 85);
+  --color-neutral:    oklch(48% 0.010 80);
+  --color-muted:      oklch(38% 0.012 78);
+  --color-ink:        oklch(21% 0.012 70);
+  --color-accent:     oklch(44% 0.145 32);
+  --color-focus:      oklch(50% 0.155 32);
+
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-body:    "Newsreader", ui-serif, Georgia, serif;
+  --font-outlier: "JetBrains Mono", ui-monospace, monospace; /* score lines of the two fichas ONLY */
+
+  --text-xs:   0.8rem;
+  --text-sm:   0.9rem;
+  --text-base: 1.0625rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-display: clamp(2.25rem, 4.4vw + 0.9rem, 4.25rem);
+
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+
+  --rule-hair: 1px;
+  --page-gutter: clamp(1rem, 4vw, 1.5rem);
+  --measure: 64ch;
+
+  --dur-micro: 120ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --z-base: 1;
+  --z-raised: 10;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { overflow-x: clip; }
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  font-variant-numeric: oldstyle-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ——— links · one interaction signal, instant focus ——— */
+a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: text-decoration-thickness var(--dur-micro) var(--ease-out);
+}
+a:hover { text-decoration-thickness: 2px; }
+a:active { color: var(--color-muted); }
+a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+::selection { background: var(--color-paper-2); color: var(--color-accent); }
+
+/* ═══ N6 · Newspaper masthead ═══ */
+.nav-mast {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-md) var(--page-gutter) 0;
+  text-align: center;
+}
+.mast-line {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.09em;
+  font-size: var(--text-xs);
+  color: var(--color-neutral);
+  margin: 0;
+}
+.mast-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: normal;
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin: 0;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.mast-nav ul {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-xs) var(--space-lg);
+  list-style: none;
+  padding: 0;
+  margin: var(--space-2xs) 0 0;
+}
+.mast-nav a {
+  color: var(--color-ink);
+  text-decoration: none;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.07em;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  line-height: 1;
+  padding: var(--space-sm) var(--space-2xs); /* ≥44px hit target with line box */
+}
+.mast-nav a:hover { color: var(--color-accent); text-decoration: underline; text-decoration-thickness: 1px; }
+.mast-rule {
+  border: 0;
+  border-top: 3px solid var(--color-ink);
+  border-bottom: var(--rule-hair) solid var(--color-ink);
+  height: 5px;
+  margin: var(--space-sm) 0 0;
+  background: none;
+}
+
+/* ═══ Long Document · front page ═══ */
+.prose {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding: var(--space-xl) var(--page-gutter) var(--space-3xl);
+}
+
+.dateline {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.09em;
+  font-size: var(--text-sm);
+  color: var(--color-neutral);
+  margin: 0 0 var(--space-lg);
+}
+
+/* Front-page head — left-biased, not centred */
+.headline {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: normal;
+  font-size: var(--text-display);
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--space-lg);
+  max-width: 18ch;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  font-variant-numeric: lining-nums;
+}
+
+.lede {
+  font-size: var(--text-md);
+  line-height: 1.55;
+  color: var(--color-muted);
+  margin: 0 0 var(--space-lg);
+  max-width: 58ch;
+}
+
+p { margin: 0 0 var(--space-md); }
+
+/* C3 · typographic CTA — a word, an arrow, a rule. No box. */
+.cta {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-md);
+  white-space: nowrap;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.cta:hover { text-decoration-thickness: 3px; }
+
+.cta-final {
+  font-size: var(--text-lg);
+  display: inline-block;
+  margin-top: var(--space-xs);
+}
+
+/* Inline section heads — emerge from the flow. Roman, never italic. */
+h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: normal;
+  font-size: var(--text-lg);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: var(--space-2xl) 0 var(--space-md);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+h2::before {
+  content: "";
+  display: inline-block;
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  background: var(--color-accent);
+  margin-inline-end: var(--space-sm);
+}
+
+/* section rules vary the rhythm — some hairline, one ornament */
+.rule-section {
+  border: 0;
+  border-top: var(--rule-hair) solid var(--color-rule);
+  margin: var(--space-2xl) 0 0;
+}
+.ornament {
+  text-align: center;
+  color: var(--color-neutral);
+  font-size: var(--text-md);
+  letter-spacing: 0.6em;
+  margin: var(--space-2xl) 0;
+  user-select: none;
+}
+
+/* Evidence chain — genuinely ordinal steps, vertical stack */
+.chain {
+  list-style: none;
+  counter-reset: paso;
+  margin: var(--space-lg) 0;
+  padding: 0;
+}
+.chain li {
+  counter-increment: paso;
+  position: relative;
+  padding: var(--space-md) 0 var(--space-md) var(--space-2xl);
+  border-top: var(--rule-hair) solid var(--color-rule);
+}
+.chain li:last-child { border-bottom: var(--rule-hair) solid var(--color-rule); }
+.chain li::before {
+  content: counter(paso);
+  position: absolute;
+  left: 0;
+  top: var(--space-md);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  line-height: 1.3;
+  color: var(--color-neutral);
+  font-variant-numeric: lining-nums;
+}
+.chain strong { font-weight: 700; }
+.chain p { margin: 0; color: var(--color-muted); font-size: var(--text-base); }
+
+/* Las dos caras — asymmetric diptych, hairline borders, no card-in-card */
+.caras {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+  gap: var(--space-lg);
+  margin: var(--space-lg) 0 var(--space-xl);
+}
+.ficha {
+  border-top: 3px solid var(--color-ink);
+  padding: var(--space-md) 0 var(--space-xs);
+}
+.ficha--roja { border-top-color: var(--color-accent); }
+.ficha__score {
+  font-family: var(--font-outlier);
+  font-weight: 500;
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--color-muted);
+  margin: 0 0 var(--space-xs);
+}
+.ficha--roja .ficha__score { color: var(--color-accent); }
+.ficha h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: normal;
+  font-size: var(--text-md);
+  line-height: 1.25;
+  margin: 0 0 var(--space-xs);
+}
+.ficha p { color: var(--color-muted); font-size: var(--text-sm); line-height: 1.55; margin: 0; }
+
+/* El agente vive — spec sheet, key/value, tabular numerals */
+.vivo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0 var(--space-md);
+}
+.vivo__dot {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex: none;
+  animation: latido 2s var(--ease-out) infinite; /* functional status indicator */
+}
+@keyframes latido {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.vivo__label {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.09em;
+  font-size: var(--text-sm);
+  color: var(--color-neutral);
+  line-height: 1;
+  margin: 0;
+}
+.spec {
+  margin: 0 0 var(--space-xl);
+  font-variant-numeric: tabular-nums;
+}
+.spec > div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-top: var(--rule-hair) solid var(--color-rule);
+}
+.spec > div:last-child { border-bottom: var(--rule-hair) solid var(--color-rule); }
+.spec dt {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.07em;
+  color: var(--color-neutral);
+}
+.spec dd { margin: 0; }
+
+/* ═══ Ft5 · Statement footer ═══ */
+.foot-stmt {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding: var(--space-2xl) var(--page-gutter) var(--space-xl);
+  display: grid;
+  gap: var(--space-lg);
+}
+.foot-stmt__line {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: normal;
+  font-size: clamp(1.6rem, 4.5vw, 2.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 24ch;
+  margin: 0;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.foot-stmt__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xs) var(--space-md);
+  padding-block-start: var(--space-sm);
+  border-top: var(--rule-hair) solid var(--color-rule);
+  font-size: var(--text-sm);
+  color: var(--color-neutral);
+}
+.foot-stmt__meta .wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ——— mobile collapse ——— */
+@media (max-width: 60rem) {
+  .caras { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 40rem) {
+  .mast-name { font-size: clamp(1.8rem, 8vw, 2.1rem); }
+  .prose { padding-block: var(--space-lg) var(--space-2xl); }
+  .spec > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-2xs); }
+  .chain li { padding-left: var(--space-xl); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+  }
+  .vivo__dot { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav-mast" role="banner">
+  <p class="mast-line">Edición continua · Bogotá, Colombia · IA-Hackathon GOV-TECH by Croma</p>
+  <p class="mast-name">CENTINELA</p>
+  <nav class="mast-nav" aria-label="Principal">
+    <ul>
+      <li><a href="#firehose">El problema</a></li>
+      <li><a href="#investiga">La investigación</a></li>
+      <li><a href="#caras">Los hallazgos</a></li>
+      <li><a href="#vivo">El agente</a></li>
+    </ul>
+  </nav>
+  <hr class="mast-rule" aria-hidden="true">
+</header>
+
+<main>
+  <article class="prose">
+
+    <p class="dateline">Bogotá — Vigilancia autónoma de la contratación pública</p>
+
+    <h1 class="headline">111 licitaciones en tres días. Una sola entidad.</h1>
+
+    <p class="lede">Eso publicó la Alcaldía de Bogotá en una ventana de 72 horas, medido en una prueba real sobre el SECOP. Ningún funcionario, ningún periodista, ninguna PYME puede leerlas todas. Centinela sí — y no espera a que nadie se lo pida.</p>
+
+    <p>Centinela es un agente autónomo que late cada 2 horas: barre las entidades vigiladas, cruza cada licitación nueva contra los registros públicos del Estado y emite dos tipos de hallazgo desde un solo motor. <a class="cta" href="/dashboard">Ver el agente en vivo →</a></p>
+
+    <hr class="rule-section" aria-hidden="true">
+
+    <h2 id="firehose">El firehose</h2>
+
+    <p>El SECOP no descansa. Cada día, cientos de entidades publican pliegos, adendas y adjudicaciones que nadie alcanza a revisar. La corrupción no se esconde: se publica a un volumen que ningún humano puede seguir. La prueba de humo lo midió — 111 procesos nuevos en tres días para una sola alcaldía. Multiplíquelo por las entidades del país y el problema deja de ser de acceso a la información y pasa a ser de <em>atención</em>.</p>
+
+    <p>La respuesta no es otro buscador. Es un vigilante que no duerme.</p>
+
+    <h2 id="investiga">Cómo investiga</h2>
+
+    <p>Cada licitación nueva recorre una cadena de evidencia de cinco pasos, cruzada contra 9 endpoints de la API Croma. Cada conclusión cita su fuente.</p>
+
+    <ol class="chain">
+      <li><strong>SECOP.</strong>
+        <p>Detecta el proceso: objeto, cuantía, modalidad, plazos y adjudicatario si ya existe.</p>
+      </li>
+      <li><strong>RUES.</strong>
+        <p>Verifica la existencia y la matrícula mercantil del contratista: antigüedad, actividad declarada, domicilio.</p>
+      </li>
+      <li><strong>Supersociedades.</strong>
+        <p>Revisa la situación societaria y financiera de la empresa detrás del NIT.</p>
+      </li>
+      <li><strong>Rama Judicial.</strong>
+        <p>Consulta procesos judiciales asociados al contratista y a sus vinculados.</p>
+      </li>
+      <li><strong>Procuraduría y Contraloría.</strong>
+        <p>Cierra con sanciones disciplinarias y fiscales: inhabilidades, multas, responsabilidades.</p>
+      </li>
+    </ol>
+
+    <p>Con el expediente armado, Gemini puntúa el proceso. El grafo de red conecta contratistas entre sí — cada nodo es un NIT — y deja ver lo que una consulta aislada no muestra: los mismos nombres, rotando.</p>
+
+    <p class="ornament" aria-hidden="true">❦</p>
+
+    <h2 id="caras">Las dos caras</h2>
+
+    <p>Un solo motor, dos lecturas del mismo expediente. La evidencia decide cuál cara mostrar.</p>
+
+    <div class="caras">
+      <article class="ficha ficha--roja">
+        <p class="ficha__score">BANDERA ROJA · 65</p>
+        <h3>Historial judicial acumulado del contratista</h3>
+        <p>El expediente expone una adjudicación con señales de riesgo y cita la cadena completa: proceso en SECOP, matrícula en RUES, situación en Supersociedades, antecedentes en la Rama Judicial. Nada se afirma sin fuente.</p>
+      </article>
+      <article class="ficha">
+        <p class="ficha__score">OPORTUNIDAD · 85</p>
+        <h3>Contrato de servicios de bajo riesgo</h3>
+        <p>La misma cadena, leída al revés: un proceso limpio y ganable, servido a una PYME honesta antes de que se cierre la ventana para competir.</p>
+      </article>
+    </div>
+
+    <h2 id="vivo">El agente vive</h2>
+
+    <div class="vivo">
+      <span class="vivo__dot" aria-hidden="true"></span>
+      <p class="vivo__label">Latido cada 2 horas — no responde a demanda, vigila por cuenta propia</p>
+    </div>
+
+    <p>Centinela no es un chatbot que espera preguntas. Es un proceso persistente que despierta solo, barre, cruza, puntúa y publica. Entre latido y latido, el expediente crece.</p>
+
+    <dl class="spec">
+      <div><dt>Latido</dt><dd>Cada 2 horas, autónomo</dd></div>
+      <div><dt>Motor</dt><dd>Agente en Cloudflare Durable Objects</dd></div>
+      <div><dt>Puntaje</dt><dd>Scoring con Gemini, evidencia citada</dd></div>
+      <div><dt>Fuentes</dt><dd>9 endpoints de la API Croma — datos 100 % Croma</dd></div>
+      <div><dt>Red</dt><dd>Grafo de contratistas; cada nodo, un NIT</dd></div>
+    </dl>
+
+    <p>El jurado no tiene que creer esta página. Puede abrir el tablero y ver el último latido. <a class="cta cta-final" href="/dashboard">Ver el agente en vivo →</a></p>
+
+  </article>
+</main>
+
+<footer class="foot-stmt">
+  <p class="foot-stmt__line">Lo público se vigila en público.</p>
+  <div class="foot-stmt__meta">
+    <span class="wordmark">Centinela</span>
+    <span>IA-Hackathon GOV-TECH by Croma · Bogotá · 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>

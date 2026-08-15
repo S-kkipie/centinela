@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centinela — el agente que vigila el SECOP</title>
+<meta name="description" content="Agente autónomo que vigila la contratación pública colombiana cada dos horas. Oportunidades para la PYME honesta, banderas rojas con evidencia citada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;800&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · macrostructure: Workbench · H2 knobs: ratio=7/5, right=proof-panel (bitácora), divider=negative-space · T4 knobs: 3-up, number=display, qualifier=under · F4 knobs: numbering=1.0/2.0/3.0, layout=vertical, connector=line · C4 knobs: reveal=after-fold, anchor=viewport-bottom, shadow=hairline
+ * theme: custom · vibe: "institucional moderno colombiano, confianza estatal digital" · paper: oklch(97.5% 0.006 255) · accent: oklch(40% 0.12 255)
+ * semantic hues: amber oklch(52% 0.12 70) SOLO oportunidad · red oklch(48% 0.17 25) SOLO bandera-roja
+ * display: Libre Franklin 800 · body: Public Sans · mono: IBM Plex Mono (machine data only) · axes: light / geometric-sans / cool
+ * nav: N9 edge-aligned · footer: Ft4 dense colophon
+ * pre-emit critique: risk = gov page defaulting to bureaucratic table-soup or SaaS 3-col grid; countered with asymmetric 7/5 diptych, typographic veredicto panels (no fake chrome, no invented metrics — only the 4 verified numbers), tricolor kept strictly semantic, zero eyebrows, one reveal orchestration, headings roman throughout.
+ * pre-emit scores: P4 H5 E4 S5 R4 V5 · contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
+ * studied: no · context: user-provided · v0.8.0 */
+
+:root{
+  --color-paper:oklch(97.5% 0.006 255);
+  --color-paper-2:oklch(94.8% 0.008 255);
+  --color-rule:oklch(84% 0.012 255);
+  --color-rule-2:oklch(89% 0.009 255);
+  --color-muted:oklch(43% 0.018 255);
+  --color-ink:oklch(20% 0.02 255);
+  --color-ink-2:oklch(29% 0.018 255);
+  --color-accent:oklch(40% 0.12 255);
+  --color-accent-ink:oklch(97.5% 0.006 255);
+  --color-focus:oklch(45% 0.18 255);
+  --color-amber:oklch(45% 0.11 70);          /* OPORTUNIDAD únicamente */
+  --color-amber-soft:oklch(93% 0.035 80);
+  --color-red:oklch(44% 0.16 25);            /* BANDERA_ROJA únicamente */
+  --color-red-soft:oklch(94% 0.02 25);
+  --color-live:oklch(52% 0.13 150);
+
+  --font-display:"Libre Franklin",ui-sans-serif,system-ui,sans-serif;
+  --font-body:"Public Sans",ui-sans-serif,system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,monospace;
+
+  --text-sm:0.8rem;
+  --text-base:1rem;
+  --text-md:1.25rem;
+  --text-lg:1.5625rem;
+  --text-xl:1.9531rem;
+  --text-2xl:2.4414rem;
+  --text-display:clamp(2.1rem,4.2vw + 0.7rem,3.4rem);
+
+  --space-2xs:0.25rem; --space-xs:0.5rem; --space-sm:0.75rem; --space-md:1rem;
+  --space-lg:1.5rem; --space-xl:2.5rem; --space-2xl:4rem; --space-3xl:6rem;
+
+  --page-gutter:clamp(1rem,4.5vw,3.5rem);
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --dur-long:420ms;
+  --z-sticky:200;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0}
+html{overflow-x:clip;scroll-behavior:smooth}
+body{
+  overflow-x:clip;
+  background:var(--color-paper);
+  color:var(--color-ink);
+  font-family:var(--font-body);
+  font-size:var(--text-base);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--color-accent)}
+:focus-visible{outline:3px solid var(--color-focus);outline-offset:2px}
+img,svg{max-width:100%}
+
+/* ---------- nav · N9 edge-aligned ---------- */
+.nav-edge{
+  display:flex;justify-content:space-between;align-items:center;gap:var(--space-md);
+  padding:var(--space-md) var(--page-gutter);
+  border-bottom:1px solid var(--color-rule-2);
+}
+.wordmark{
+  font-family:var(--font-display);font-weight:800;font-size:var(--text-md);
+  letter-spacing:-0.01em;color:var(--color-ink);text-decoration:none;
+}
+.wordmark b{color:var(--color-accent);font-weight:800}
+.cta-outline{
+  display:inline-block;white-space:nowrap;
+  font-family:var(--font-body);font-weight:600;font-size:0.9375rem;
+  color:var(--color-accent);text-decoration:none;
+  border:1.5px solid var(--color-accent);
+  padding:var(--space-sm) var(--space-lg);border-radius:4px;
+  min-height:44px;display:inline-flex;align-items:center;
+  transition:background-color 120ms var(--ease-out),color 120ms var(--ease-out);
+}
+.cta-outline:hover{background:var(--color-accent);color:var(--color-accent-ink)}
+.cta-outline:active{background:var(--color-ink);border-color:var(--color-ink);color:var(--color-accent-ink)}
+
+/* ---------- hero · H2 split diptych ---------- */
+.hero{
+  display:grid;grid-template-columns:7fr 5fr;gap:var(--space-2xl);
+  align-items:start;
+  padding:var(--space-2xl) var(--page-gutter) var(--space-3xl);
+  max-width:76rem;margin-inline:auto;
+}
+.hero > *{min-width:0}
+.hero h1{
+  font-family:var(--font-display);font-weight:800;font-style:normal;
+  font-size:var(--text-display);line-height:1.08;letter-spacing:-0.022em;
+  max-width:18ch;overflow-wrap:anywhere;
+}
+.hero .lede{
+  margin-top:var(--space-lg);
+  font-size:var(--text-md);line-height:1.55;color:var(--color-ink-2);
+  max-width:52ch;
+}
+.hero .lede strong{font-weight:600;color:var(--color-ink)}
+.hero-cta{margin-top:var(--space-xl)}
+.hero-note{
+  margin-top:var(--space-sm);
+  font-family:var(--font-mono);font-size:var(--text-sm);color:var(--color-muted);
+}
+
+/* bitácora panel — typographic document, not fake chrome */
+.panel{
+  border:1px solid var(--color-rule);border-radius:6px;
+  background:var(--color-paper);
+}
+.panel-head{
+  display:flex;align-items:center;gap:var(--space-xs);
+  padding:var(--space-sm) var(--space-md);
+  border-bottom:1px solid var(--color-rule);
+  font-family:var(--font-mono);font-size:var(--text-sm);font-weight:500;
+  letter-spacing:0.06em;text-transform:uppercase;color:var(--color-muted);
+}
+.dot-live{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--color-live);flex:none;
+  animation:pulse 2.4s var(--ease-out) infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+.log{
+  list-style:none;padding:var(--space-md);
+  font-family:var(--font-mono);font-size:0.85rem;line-height:1.8;
+  color:var(--color-ink-2);
+  font-variant-numeric:tabular-nums;
+  overflow-wrap:anywhere;
+}
+.log .k{color:var(--color-accent);font-weight:500}
+.log-caption{
+  padding:var(--space-sm) var(--space-md);
+  border-top:1px solid var(--color-rule-2);
+  font-size:var(--text-sm);color:var(--color-muted);
+}
+
+/* one orchestrated reveal, hero only */
+.reveal{opacity:0;transform:translateY(8px);animation:reveal var(--dur-long) var(--ease-out) forwards;animation-delay:calc(var(--i,0)*70ms)}
+@keyframes reveal{to{opacity:1;transform:none}}
+
+/* ---------- stat strip · T4 ---------- */
+.stats{
+  border-block:1px solid var(--color-rule);
+  background:var(--color-paper-2);
+}
+.stats-inner{
+  max-width:76rem;margin-inline:auto;
+  display:grid;grid-template-columns:1.2fr 1fr 1fr;
+  padding:0 var(--page-gutter);
+}
+.stat{
+  padding:var(--space-xl) var(--space-lg) var(--space-xl) 0;
+}
+.stat + .stat{border-left:1px solid var(--color-rule);padding-left:var(--space-lg)}
+.stat .n{
+  font-family:var(--font-display);font-weight:800;
+  font-size:var(--text-2xl);letter-spacing:-0.02em;line-height:1.05;
+  font-variant-numeric:tabular-nums;
+}
+.stat .q{margin-top:var(--space-xs);font-size:0.9375rem;color:var(--color-muted);max-width:26ch}
+
+/* ---------- veredictos · workbench panels ---------- */
+.section{max-width:76rem;margin-inline:auto;padding:var(--space-3xl) var(--page-gutter) 0}
+.section > h2{
+  font-family:var(--font-display);font-weight:800;font-style:normal;
+  font-size:var(--text-xl);letter-spacing:-0.015em;line-height:1.15;
+  max-width:24ch;
+}
+.section > .sub{margin-top:var(--space-sm);color:var(--color-ink-2);max-width:58ch}
+
+.veredictos{
+  display:grid;grid-template-columns:1fr 1fr;gap:var(--space-lg);
+  margin-top:var(--space-xl);
+}
+.veredicto{border:1px solid var(--color-rule);border-radius:6px;overflow:hidden}
+.veredicto .v-head{
+  display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-sm);
+  padding:var(--space-sm) var(--space-md);
+  font-family:var(--font-mono);font-size:var(--text-sm);font-weight:500;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+.veredicto .score{
+  font-family:var(--font-mono);font-weight:500;font-size:var(--text-md);
+  font-variant-numeric:tabular-nums;letter-spacing:0;
+}
+.v-oportunidad .v-head{background:var(--color-amber-soft);color:var(--color-amber);border-bottom:1px solid var(--color-rule)}
+.v-bandera .v-head{background:var(--color-red-soft);color:var(--color-red);border-bottom:1px solid var(--color-rule)}
+.veredicto .v-body{padding:var(--space-md) var(--space-md) var(--space-lg)}
+.veredicto h3{
+  font-family:var(--font-display);font-weight:600;font-style:normal;
+  font-size:var(--text-md);line-height:1.3;letter-spacing:-0.01em;
+}
+.veredicto p{margin-top:var(--space-xs);color:var(--color-ink-2);font-size:0.9375rem}
+.cadena{
+  margin-top:var(--space-md);padding-top:var(--space-sm);
+  border-top:1px dashed var(--color-rule);
+  font-family:var(--font-mono);font-size:0.8rem;line-height:1.9;
+  color:var(--color-muted);list-style:none;padding-left:0;
+  overflow-wrap:anywhere;
+}
+.cadena .src{color:var(--color-accent)}
+
+/* ---------- pipeline · F4 step sequence ---------- */
+.steps{
+  list-style:none;padding:0;margin-top:var(--space-xl);
+  max-width:44rem; /* left-biased: deliberately narrower than the section */
+}
+.steps li{
+  position:relative;
+  padding:0 0 var(--space-xl) calc(3.5rem + var(--space-md));
+}
+.steps li::before{
+  content:"";position:absolute;left:1.7rem;top:2.2rem;bottom:0;
+  width:1px;background:var(--color-rule);
+}
+.steps li:last-child::before{display:none}
+.steps li:last-child{padding-bottom:0}
+.stage{
+  position:absolute;left:0;top:0.1rem;
+  width:3.5rem;
+  font-family:var(--font-mono);font-weight:500;font-size:var(--text-sm);
+  color:var(--color-accent);font-variant-numeric:tabular-nums;
+}
+.steps h3{
+  font-family:var(--font-display);font-weight:600;font-style:normal;
+  font-size:var(--text-md);letter-spacing:-0.01em;line-height:1.3;
+}
+.steps p{margin-top:var(--space-2xs);color:var(--color-ink-2);max-width:52ch}
+.steps .mono-line{
+  margin-top:var(--space-xs);
+  font-family:var(--font-mono);font-size:0.8rem;color:var(--color-muted);
+  overflow-wrap:anywhere;
+}
+
+/* ---------- cierre ---------- */
+.cierre{
+  max-width:76rem;margin-inline:auto;
+  padding:var(--space-3xl) var(--page-gutter);
+}
+.cierre p{
+  font-family:var(--font-display);font-weight:600;font-size:var(--text-lg);
+  letter-spacing:-0.01em;line-height:1.3;max-width:30ch;
+}
+.cierre .hero-cta{margin-top:var(--space-lg)}
+
+/* ---------- sticky CTA · C4 ---------- */
+.cta-sticky{
+  position:fixed;left:0;right:0;bottom:0;z-index:var(--z-sticky);
+  display:flex;justify-content:space-between;align-items:center;gap:var(--space-md);
+  padding:var(--space-sm) var(--page-gutter);
+  background:var(--color-paper);
+  border-top:1px solid var(--color-rule);
+  transform:translateY(110%);
+  transition:transform 300ms var(--ease-out);
+}
+.cta-sticky.is-visible{transform:none}
+.cta-sticky .msg{
+  font-family:var(--font-mono);font-size:var(--text-sm);color:var(--color-muted);
+  display:flex;align-items:center;gap:var(--space-xs);min-width:0;
+}
+.cta-sticky .msg span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- footer · Ft4 dense colophon ---------- */
+.foot-dense{
+  border-top:1px solid var(--color-rule);
+  background:var(--color-paper-2);
+  padding:var(--space-xl) var(--page-gutter) calc(var(--space-2xl) + 3.5rem);
+}
+.foot-dense p{
+  max-width:76rem;margin-inline:auto;
+  font-family:var(--font-mono);font-size:0.8rem;line-height:1.9;
+  color:var(--color-muted);
+}
+.foot-dense a{color:var(--color-accent);text-decoration-thickness:1px;white-space:nowrap}
+
+/* ---------- responsive ---------- */
+@media (max-width:60rem){
+  .hero{grid-template-columns:1fr;gap:var(--space-xl);padding-bottom:var(--space-2xl)}
+  .stats-inner{grid-template-columns:1fr}
+  .stat{padding:var(--space-lg) 0}
+  .stat + .stat{border-left:0;border-top:1px solid var(--color-rule);padding-left:0;padding-top:var(--space-lg)}
+  .veredictos{grid-template-columns:1fr}
+}
+@media (max-width:40rem){
+  .hero h1{font-size:clamp(1.9rem,7.5vw,2.4rem)}
+  .hero .lede{font-size:1.0625rem}
+  .stat .n{font-size:var(--text-xl)}
+  .steps li{padding-left:0;padding-top:2rem}
+  .nav-edge .cta-outline{padding-inline:var(--space-sm);font-size:0.875rem}
+  .stage{position:absolute;top:0;left:0;width:auto}
+  .steps li::before{display:none}
+  .cta-sticky .msg{display:none}
+  .cta-sticky{justify-content:center}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:150ms !important;animation-iteration-count:1 !important;transition-duration:150ms !important}
+  .reveal{animation:reveal-reduced 150ms linear forwards}
+  @keyframes reveal-reduced{to{opacity:1;transform:none}}
+  .dot-live{animation:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="nav-edge">
+  <a class="wordmark" href="/">Centinela<b>.</b></a>
+  <a class="cta-outline" href="/dashboard">Ver el agente en vivo</a>
+</header>
+
+<main>
+  <!-- hero · H2 split diptych 7/5 -->
+  <section class="hero">
+    <div>
+      <h1 class="reveal" style="--i:0">Un agente vigila el SECOP cada dos horas.</h1>
+      <p class="lede reveal" style="--i:1">Centinela cruza cada licitación nueva contra nueve fuentes públicas —del RUES a la Rama Judicial— y emite dos veredictos desde un mismo motor: <strong>oportunidad</strong> para la PYME honesta, <strong>bandera roja</strong> para la adjudicación amañada. Cada hallazgo cita su cadena de evidencia.</p>
+      <div class="hero-cta reveal" style="--i:2">
+        <a class="cta-outline" href="/dashboard">Ver el agente en vivo</a>
+        <p class="hero-note">agente autónomo · latido cada 2&nbsp;h · API Croma</p>
+      </div>
+    </div>
+    <figure class="panel reveal" style="--i:3">
+      <div class="panel-head"><span class="dot-live" aria-hidden="true"></span> bitácora del agente</div>
+      <ul class="log">
+        <li><span class="k">[latido]</span> cada 2&nbsp;h — consulta SECOP</li>
+        <li><span class="k">[cruce]</span> 9 endpoints Croma por licitación</li>
+        <li><span class="k">[grafo]</span> contratistas — nodos = NIT</li>
+        <li><span class="k">[puntaje]</span> Gemini — evidencia citada</li>
+        <li><span class="k">[emite]</span> OPORTUNIDAD | BANDERA_ROJA</li>
+      </ul>
+      <figcaption class="log-caption">Un solo motor. Dos caras del mismo dato público.</figcaption>
+    </figure>
+  </section>
+
+  <!-- proof · T4 stat strip — solo cifras verificadas -->
+  <section class="stats" aria-label="Cifras verificadas">
+    <div class="stats-inner">
+      <div class="stat">
+        <div class="n">111</div>
+        <p class="q">licitaciones nuevas en 3&nbsp;días, en una sola entidad: la Alcaldía de Bogotá.</p>
+      </div>
+      <div class="stat">
+        <div class="n">2&nbsp;h</div>
+        <p class="q">intervalo del latido: el agente nunca deja de mirar.</p>
+      </div>
+      <div class="stat">
+        <div class="n">9</div>
+        <p class="q">endpoints Croma cruzados por cada licitación.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- workbench · los dos veredictos, salida real del agente -->
+  <section class="section" id="veredictos">
+    <h2>Dos veredictos, salida real del agente.</h2>
+    <p class="sub">No son maquetas: son hallazgos emitidos por Centinela sobre licitaciones reales del SECOP, con las fuentes consultadas en cada cruce.</p>
+
+    <div class="veredictos">
+      <article class="veredicto v-oportunidad">
+        <div class="v-head"><span>oportunidad</span><span class="score">85</span></div>
+        <div class="v-body">
+          <h3>Contrato de servicios de bajo riesgo.</h3>
+          <p>Licitación ganable para una PYME honesta: el cruce completo no elevó ninguna alerta y el puntaje habilita postularse con confianza.</p>
+          <ul class="cadena">
+            <li>fuentes: <span class="src">SECOP → RUES → Supersociedades → Rama Judicial → Procuraduría → Contraloría</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="veredicto v-bandera">
+        <div class="v-head"><span>bandera_roja</span><span class="score">65</span></div>
+        <div class="v-body">
+          <h3>Historial judicial acumulado del contratista.</h3>
+          <p>El cruce contra la Rama Judicial expuso antecedentes acumulados del contratista. El hallazgo sale con su cadena de evidencia citada, lista para auditar.</p>
+          <ul class="cadena">
+            <li>evidencia: <span class="src">Rama Judicial</span> — procesos del NIT</li>
+            <li>grafo: nodo del contratista y sus vínculos</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- pipeline · F4 step sequence -->
+  <section class="section" id="pipeline">
+    <h2>Del latido al veredicto.</h2>
+    <ol class="steps">
+      <li>
+        <span class="stage">1.0</span>
+        <h3>Latido.</h3>
+        <p>Cada dos horas, el agente despierta y consulta el SECOP: toda licitación nueva entra a la fila.</p>
+        <p class="mono-line">Cloudflare Durable Objects — el agente vive, no se ejecuta por demanda.</p>
+      </li>
+      <li>
+        <span class="stage">2.0</span>
+        <h3>Cruce.</h3>
+        <p>Cada licitación se cruza contra nueve endpoints Croma: identidad mercantil, estados financieros, procesos judiciales y sanciones.</p>
+        <p class="mono-line">SECOP → RUES → Supersociedades → Rama Judicial → Procuraduría / Contraloría</p>
+      </li>
+      <li>
+        <span class="stage">3.0</span>
+        <h3>Puntaje.</h3>
+        <p>Gemini puntúa el expediente completo y cita cada pieza de evidencia. El grafo de contratistas —nodos = NIT— conserva los vínculos entre empresas.</p>
+      </li>
+      <li>
+        <span class="stage">4.0</span>
+        <h3>Veredicto.</h3>
+        <p>Un solo motor emite dos caras: oportunidad para quien puede ganar limpio, bandera roja para lo que merece escrutinio.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- cierre -->
+  <section class="cierre">
+    <p>La contratación pública ya es dato abierto. Centinela la mira por usted.</p>
+    <div class="hero-cta">
+      <a class="cta-outline" href="/dashboard">Ver el agente en vivo</a>
+    </div>
+  </section>
+</main>
+
+<!-- C4 sticky bottom CTA — aparece pasado el fold -->
+<aside class="cta-sticky" id="sticky-cta" aria-hidden="true">
+  <p class="msg"><span class="dot-live" aria-hidden="true"></span> <span>El agente está corriendo ahora — latido cada 2&nbsp;h.</span></p>
+  <a class="cta-outline" href="/dashboard" tabindex="-1">Ver el agente en vivo</a>
+</aside>
+
+<!-- footer · Ft4 dense colophon -->
+<footer class="foot-dense">
+  <p>Centinela — agente autónomo de vigilancia de la contratación pública colombiana. Construido para la IA-Hackathon GOV-TECH by Croma. Motor: Cloudflare Durable Objects + Gemini + <a href="https://croma.gov.co">API Croma</a> (9 endpoints: SECOP, RUES, Supersociedades, Rama Judicial, Procuraduría, Contraloría). Tipografías: Libre Franklin, Public Sans, IBM Plex Mono. Bogotá, 2026.</p>
+</footer>
+
+<script>
+(function(){
+  var bar=document.getElementById('sticky-cta');
+  var hero=document.querySelector('.hero');
+  var cta=bar.querySelector('a');
+  if(!('IntersectionObserver' in window)){return}
+  var io=new IntersectionObserver(function(entries){
+    var pastFold=!entries[0].isIntersecting;
+    bar.classList.toggle('is-visible',pastFold);
+    bar.setAttribute('aria-hidden',String(!pastFold));
+    cta.setAttribute('tabindex',pastFold?'0':'-1');
+  },{threshold:0});
+  io.observe(hero);
+})();
+</script>
+</body>
+</html>

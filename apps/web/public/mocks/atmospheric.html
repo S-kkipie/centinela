@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centinela — el agente nunca duerme</title>
+<meta name="description" content="Agente autónomo que vigila la contratación pública colombiana vía la API Croma. Heartbeat cada 2 horas, cadena de evidencia citada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Geist:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · genre: atmospheric · macrostructure: Marquee Hero · theme: Midnight · enrichment: E-bloom×2 · nav: N5 Floating pill (width=content-sized, backdrop=blur+saturate, anchor=top-centred) · footer: Ft1 Mast-headed (wordmark=xl, tagline=roman body, links=inline) · H1 Marquee knobs: display=xxl, alignment=left-bias, underlay=rule-below · tone: atmosférico/técnico · pre-emit critique: P4 H4 E4 S5 R4 V5 · contrast: pass (40–41) · nav/footer/hero: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
+
+/* ---------- Tokens ---------- */
+:root {
+  /* Midnight — anclaje frío (250), acento ámbar (75), secundario rojo (25) */
+  --color-paper:      oklch(13% 0.012 250);
+  --color-paper-2:    oklch(17% 0.014 250);
+  --color-paper-3:    oklch(20% 0.014 250);
+  --color-rule:       oklch(32% 0.012 250);
+  --color-rule-soft:  oklch(24% 0.010 250);
+  --color-neutral:    oklch(62% 0.010 250);
+  --color-muted:      oklch(74% 0.008 250);
+  --color-ink:        oklch(94% 0.006 250);
+  --color-accent:     oklch(78% 0.140 75);   /* ámbar — lámpara de sala de control */
+  --color-accent-dim: oklch(78% 0.140 75 / 0.14);
+  --color-accent-ink: oklch(16% 0.030 75);
+  --color-flag:       oklch(66% 0.170 25);   /* rojo — bandera roja */
+  --color-flag-text:  oklch(78% 0.130 25);
+  --color-flag-dim:   oklch(66% 0.170 25 / 0.12);
+  --color-focus:      oklch(80% 0.150 75);
+  --color-bloom:      oklch(60% 0.110 75 / 0.16);
+  --color-bloom-2:    oklch(50% 0.080 250 / 0.22);
+  --color-shadow:     oklch(5% 0.01 250 / 0.5);
+
+  --font-display: "Bricolage Grotesque", ui-sans-serif, sans-serif;
+  --font-body:    "Geist", ui-sans-serif, sans-serif;
+  --font-outlier: "JetBrains Mono", ui-monospace, monospace; /* rol único: salida del agente (chips de puntaje + reloj del latido) */
+
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-stat: clamp(3.5rem, 9vw, 7rem);
+  --text-display: clamp(2.875rem, 10.5vw, 9rem);
+
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --page-gutter: clamp(1rem, 4.5vw, 3.5rem);
+  --rule-hair: 1px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  420ms;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky-nav: 300;
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+html { overflow-x: clip; scroll-behavior: smooth; }
+body {
+  overflow-x: clip;
+  background-color: var(--color-paper);
+  /* Dos bloom cálidos, fijos, sin animación — la atmósfera es el diseño */
+  background-image:
+    radial-gradient(42rem 30rem at 82% -6%, var(--color-bloom), transparent 68%),
+    radial-gradient(50rem 36rem at 8% 104%, var(--color-bloom-2), transparent 70%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: 1.55;
+}
+h1, h2, h3 { font-family: var(--font-display); font-style: normal; font-weight: 700; letter-spacing: -0.025em; overflow-wrap: anywhere; min-width: 0; }
+p { max-width: 62ch; }
+a { color: var(--color-ink); }
+::selection { background: var(--color-accent); color: var(--color-accent-ink); }
+
+/* Estados interactivos — foco instantáneo, siempre */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+a:active, button:active { transform: translateY(1px); }
+button:disabled, a[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---------- Nav — N5 floating pill ---------- */
+.nav-pill {
+  position: fixed;
+  inset: var(--space-md) auto auto 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-xs) var(--space-sm) var(--space-xs) var(--space-md);
+  background: color-mix(in oklch, var(--color-paper-2) 76%, transparent);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border: var(--rule-hair) solid var(--color-rule-soft);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px -12px var(--color-shadow);
+  z-index: var(--z-sticky-nav);
+  white-space: nowrap;
+}
+.nav-pill a { text-decoration: none; line-height: 1; }
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: -0.02em;
+}
+.nav-pill__links {
+  display: flex;
+  gap: var(--space-md);
+  list-style: none;
+  padding: 0;
+  align-items: center;
+}
+.nav-pill__links a {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  transition: color var(--dur-micro) var(--ease-out);
+}
+.nav-pill__links a:hover { color: var(--color-ink); }
+.cta-fill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 999px;
+  min-height: 2.25rem;
+  transition: background-color var(--dur-micro) var(--ease-out);
+}
+.cta-fill:hover { background: color-mix(in oklch, var(--color-accent) 88%, var(--color-ink)); }
+
+/* ---------- Hero — H1 Marquee, sesgo izquierdo ---------- */
+.hero-marquee {
+  min-height: 82dvh;
+  display: grid;
+  align-content: end;
+  padding: var(--space-2xl) var(--page-gutter) var(--space-3xl);
+}
+.hero-marquee h1 {
+  font-size: var(--text-display);
+  line-height: 0.97;
+  max-width: 11ch;
+}
+.hero-marquee .hero__resto { color: var(--color-neutral); }
+.rule-thick {
+  border: 0;
+  border-top: 3px solid var(--color-accent);
+  margin: 0 var(--page-gutter);
+  opacity: 0.85;
+}
+
+/* ---------- Secciones ---------- */
+.section { padding: var(--space-3xl) var(--page-gutter); }
+.section--tight { padding-block: var(--space-2xl) var(--space-3xl); }
+.section--deep { padding-block: var(--space-4xl) var(--space-3xl); }
+.section h2 { font-size: var(--text-2xl); line-height: 1.1; max-width: 22ch; }
+.section .lede { color: var(--color-muted); font-size: var(--text-md); margin-top: var(--space-md); }
+
+/* Firehose — número real, con titular que lo explica */
+.firehose { border-bottom: var(--rule-hair) solid var(--color-rule-soft); }
+.firehose__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: var(--space-2xl);
+  align-items: end;
+  margin-top: var(--space-xl);
+}
+.firehose__stat {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-stat);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+}
+.firehose__qual { color: var(--color-muted); margin-top: var(--space-sm); }
+.firehose__nota { color: var(--color-neutral); font-size: var(--text-sm); max-width: 42ch; }
+
+/* Cadena de evidencia — F4 secuencia vertical, conector de línea */
+ol.cadena {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--space-2xl);
+  max-width: 40rem;
+}
+.cadena li {
+  position: relative;
+  padding: 0 0 var(--space-xl) var(--space-xl);
+  border-left: var(--rule-hair) solid var(--color-rule);
+}
+.cadena li:last-child { padding-bottom: 0; border-left-color: transparent; }
+.cadena li::before {
+  content: "";
+  position: absolute;
+  left: -0.3125rem;
+  top: 0.4rem;
+  width: 0.5625rem;
+  height: 0.5625rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+.cadena h3 { font-size: var(--text-md); letter-spacing: -0.01em; }
+.cadena p { color: var(--color-muted); margin-top: var(--space-2xs); font-size: var(--text-sm); max-width: 52ch; }
+
+/* Las dos caras — díptico asimétrico, superficies elevadas */
+.caras__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-2xl);
+}
+.cara {
+  background: var(--color-paper-2);
+  border: var(--rule-hair) solid var(--color-rule-soft);
+  border-radius: 0.75rem;
+  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+  transition: background-color var(--dur-short) var(--ease-out);
+}
+.cara:hover { background: var(--color-paper-3); }
+.cara__chip {
+  font-family: var(--font-outlier);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: 0.375rem;
+  line-height: 1.4;
+}
+.cara--op .cara__chip { background: var(--color-accent-dim); color: var(--color-accent); }
+.cara--flag .cara__chip { background: var(--color-flag-dim); color: var(--color-flag-text); }
+.cara h3 { font-size: var(--text-lg); margin-top: var(--space-md); line-height: 1.15; }
+.cara p { color: var(--color-muted); margin-top: var(--space-sm); font-size: var(--text-sm); }
+.cara__pie { color: var(--color-neutral); margin-top: var(--space-lg); font-size: var(--text-sm); }
+
+/* Latido — el pulso es funcional: señala que el agente está vivo */
+.latido { border-top: var(--rule-hair) solid var(--color-rule-soft); }
+.latido__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xl);
+}
+.latido__dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: latir 2.4s var(--ease-out) infinite;
+}
+@keyframes latir {
+  0%   { opacity: 1; transform: scale(1); }
+  18%  { opacity: 0.45; transform: scale(0.72); }
+  36%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.latido__reloj {
+  font-family: var(--font-outlier);
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.latido__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-2xl);
+  margin-top: var(--space-xl);
+}
+.latido__cols p { color: var(--color-muted); font-size: var(--text-base); }
+.latido__cols p + p { margin-top: var(--space-md); }
+
+/* CTA final — un solo botón */
+.cierre { padding-block: var(--space-3xl) var(--space-4xl); }
+.cierre p { color: var(--color-muted); font-size: var(--text-md); }
+.cierre .cta-fill {
+  margin-top: var(--space-lg);
+  font-size: var(--text-base);
+  padding: var(--space-sm) var(--space-lg);
+  min-height: 2.75rem;
+  white-space: nowrap;
+}
+
+/* ---------- Footer — Ft1 mast-headed ---------- */
+.foot-mast {
+  border-top: var(--rule-hair) solid var(--color-rule-soft);
+  padding: var(--space-2xl) var(--page-gutter) var(--space-xl);
+}
+.foot-mast .wordmark { font-size: var(--text-xl); }
+.foot-mast .tagline { color: var(--color-muted); margin-top: var(--space-xs); }
+.foot-mast .meta {
+  color: var(--color-neutral);
+  font-size: var(--text-sm);
+  margin-top: var(--space-lg);
+  max-width: none;
+}
+.foot-mast .meta a { color: var(--color-neutral); }
+.foot-mast .meta a:hover { color: var(--color-ink); }
+
+/* ---------- Revelado de carga — una sola orquesta ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: reveal var(--dur-long) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes reveal { to { opacity: 1; transform: none; } }
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+  }
+  .latido__dot { animation: none; }
+  .reveal { animation: reveal-reduced 150ms linear forwards; }
+  @keyframes reveal-reduced { to { opacity: 1; transform: none; } }
+}
+
+/* ---------- Colapso móvil ---------- */
+@media (max-width: 60rem) {
+  .firehose__grid, .caras__grid, .latido__cols { grid-template-columns: minmax(0, 1fr); }
+  .firehose__grid { gap: var(--space-lg); align-items: start; }
+}
+@media (max-width: 40rem) {
+  .nav-pill { gap: var(--space-md); }
+  .nav-pill__links { display: none; }
+  :root { --text-display: clamp(2.5rem, 13.5vw, 4rem); --text-stat: clamp(3rem, 15vw, 4.5rem); }
+  .section { padding-block: var(--space-2xl); }
+  .cierre { padding-block: var(--space-2xl) var(--space-3xl); }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav-pill" aria-label="Principal">
+  <a class="wordmark" href="#" aria-label="Centinela, inicio">Centinela</a>
+  <ul class="nav-pill__links">
+    <li><a href="#firehose">El firehose</a></li>
+    <li><a href="#evidencia">Evidencia</a></li>
+    <li><a href="#caras">Dos caras</a></li>
+  </ul>
+  <a class="cta-fill" href="/dashboard">Ver el agente en vivo</a>
+</nav>
+
+<!-- Marquee: la declaración llena el pliegue. Sin subtítulo, sin CTA a la vista. -->
+<section class="hero-marquee">
+  <h1 class="reveal" style="--i: 0">El agente <span class="hero__resto">nunca duerme.</span></h1>
+</section>
+<hr class="rule-thick" aria-hidden="true">
+
+<section class="section section--tight firehose reveal" id="firehose" style="--i: 1">
+  <h2>El firehose que ningún humano puede seguir</h2>
+  <p class="lede">Centinela vigila la contratación pública colombiana en SECOP a través de la API Croma — vivo, con latido propio, no bajo demanda.</p>
+  <div class="firehose__grid">
+    <div>
+      <p class="firehose__stat">111</p>
+      <p class="firehose__qual">licitaciones nuevas en una ventana de tres días, para una sola entidad vigilada: la Alcaldía de Bogotá. Detección real, verificada en un barrido del agente.</p>
+    </div>
+    <p class="firehose__nota">Multiplica eso por cada alcaldía, gobernación y ministerio del país. Nadie lee ese volumen. Un agente que barre cada dos horas, sí.</p>
+  </div>
+</section>
+
+<section class="section" id="evidencia">
+  <h2>Cadena de evidencia, cinco pasos Croma</h2>
+  <p class="lede">Cada licitación nueva se cruza contra nueve endpoints de Croma. Nada se afirma sin cita.</p>
+  <ol class="cadena">
+    <li>
+      <h3>SECOP</h3>
+      <p>La licitación entra al barrido: entidad, objeto, cuantía, adjudicatario.</p>
+    </li>
+    <li>
+      <h3>RUES</h3>
+      <p>Verificación del registro mercantil del contratista y su vigencia.</p>
+    </li>
+    <li>
+      <h3>Supersociedades</h3>
+      <p>Estados y antecedentes societarios de la empresa adjudicataria.</p>
+    </li>
+    <li>
+      <h3>Rama Judicial</h3>
+      <p>Procesos judiciales que acumula el contratista y sus vinculados.</p>
+    </li>
+    <li>
+      <h3>Sanciones — Procuraduría y Contraloría</h3>
+      <p>Inhabilidades, sanciones disciplinarias y fiscales. Gemini puntúa con la evidencia completa sobre la mesa.</p>
+    </li>
+  </ol>
+</section>
+
+<section class="section section--deep" id="caras">
+  <h2>Dos caras, un solo motor</h2>
+  <p class="lede">El mismo puntaje sirve a la PYME honesta y expone la adjudicación amañada. Ejemplos reales de la salida del agente:</p>
+  <div class="caras__grid">
+    <article class="cara cara--op">
+      <span class="cara__chip">OPORTUNIDAD · 85</span>
+      <h3>Una licitación ganable para una PYME honesta</h3>
+      <p>Contrato de servicios de bajo riesgo: sin señales judiciales ni sancionatorias en la cadena, competencia abierta. Centinela lo señala para que una empresa pequeña llegue a tiempo, con los requisitos claros.</p>
+      <p class="cara__pie">La cara que ayuda a ganar.</p>
+    </article>
+    <article class="cara cara--flag">
+      <span class="cara__chip">BANDERA_ROJA · 65</span>
+      <h3>Historial judicial acumulado del contratista</h3>
+      <p>La adjudicación cruza con procesos en la Rama Judicial atribuibles al contratista. El puntaje llega con su cadena de evidencia citada, endpoint por endpoint — lista para el escrutinio.</p>
+      <p class="cara__pie">La cara que expone.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section latido">
+  <h2>El latido del agente</h2>
+  <div class="latido__fila">
+    <span class="latido__dot" aria-hidden="true"></span>
+    <span class="latido__reloj">cada 2 h</span>
+  </div>
+  <div class="latido__cols">
+    <div>
+      <p>Centinela no es un chatbot que espera preguntas. Es un agente autónomo con latido: cada dos horas despierta en un Durable Object de Cloudflare, barre las entidades vigiladas y cruza lo nuevo contra los nueve endpoints Croma.</p>
+    </div>
+    <div>
+      <p>De cada barrido crece un grafo de red de contratistas — cada nodo es un NIT — donde las relaciones entre empresas y adjudicaciones se vuelven visibles.</p>
+      <p>Datos 100 % Croma. Puntaje con Gemini. Sin métricas inventadas: lo que ves es lo que el agente encontró.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section cierre">
+  <h2>Está barriendo ahora mismo</h2>
+  <p class="lede">El agente no se detuvo para esta demo. Abre el tablero y míralo trabajar.</p>
+  <a class="cta-fill" href="/dashboard">Ver el agente en vivo</a>
+</section>
+
+<footer class="foot-mast">
+  <p class="wordmark">Centinela</p>
+  <p class="tagline">Vigilancia viva de la contratación pública colombiana.</p>
+  <p class="meta">IA-Hackathon GOV-TECH by Croma · Datos 100 % Croma · <a href="/dashboard">Tablero</a></p>
+</footer>
+
+</body>
+</html>

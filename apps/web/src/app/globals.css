@@ -3,53 +3,82 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Centinela · design system "intel" — ops-grade govtech (see /design.md)
+ * paper oklch(97% 0.006 170) · accent esmeralda oklch(47% 0.135 165) · flag oklch(48% 0.17 25)
+ * display Space Grotesk · body Inter Tight · mono IBM Plex Mono
+ */
 :root {
-    --radius: 0.625rem;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
+    --radius: 0.25rem;
+
+    /* intel palette */
+    --color-paper: oklch(97% 0.006 170);
+    --color-paper-2: oklch(94.5% 0.008 170);
+    --color-panel: oklch(98.8% 0.005 170);
+    --color-rule: oklch(85% 0.012 170);
+    --color-rule-2: oklch(90% 0.009 170);
+    --color-muted-ink: oklch(44% 0.014 170);
+    --color-neutral-ink: oklch(34% 0.014 170);
+    --color-ink: oklch(18% 0.012 170);
+    --color-ink-2: oklch(30% 0.013 170);
+    --color-accent-signal: oklch(47% 0.135 165);
+    --color-accent-signal-soft: oklch(93% 0.03 165);
+    --color-flag: oklch(48% 0.17 25);
+    --color-flag-soft: oklch(94% 0.03 25);
+    --color-focus: oklch(45% 0.19 165);
+    --grid-line: color-mix(in oklab, var(--color-rule) 42%, transparent);
+
+    /* shadcn mapping */
+    --background: var(--color-paper);
+    --foreground: var(--color-ink);
+    --card: var(--color-panel);
+    --card-foreground: var(--color-ink);
+    --popover: var(--color-panel);
+    --popover-foreground: var(--color-ink);
+    --primary: var(--color-accent-signal);
+    --primary-foreground: oklch(97% 0.006 170);
+    --secondary: var(--color-paper-2);
+    --secondary-foreground: var(--color-ink-2);
+    --muted: var(--color-paper-2);
+    --muted-foreground: var(--color-muted-ink);
+    --accent: var(--color-accent-signal-soft);
+    --accent-foreground: var(--color-ink);
+    --destructive: var(--color-flag);
+    --border: var(--color-rule-2);
+    --input: var(--color-rule-2);
+    --ring: var(--color-focus);
+
+    /* motion */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --dur-micro: 120ms;
+    --dur-short: 220ms;
+    --dur-long: 420ms;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
+    --color-paper: oklch(16% 0.012 170);
+    --color-paper-2: oklch(19% 0.012 170);
+    --color-panel: oklch(20% 0.012 170);
+    --color-rule: oklch(100% 0 0 / 14%);
+    --color-rule-2: oklch(100% 0 0 / 9%);
+    --color-muted-ink: oklch(70% 0.012 170);
+    --color-neutral-ink: oklch(78% 0.01 170);
+    --color-ink: oklch(94% 0.008 170);
+    --color-ink-2: oklch(85% 0.01 170);
+    --color-accent-signal: oklch(72% 0.135 165);
+    --color-accent-signal-soft: oklch(30% 0.045 165);
+    --color-flag: oklch(66% 0.17 25);
+    --color-flag-soft: oklch(28% 0.05 25);
+    --color-focus: oklch(72% 0.16 165);
+    --grid-line: color-mix(in oklab, oklch(100% 0 0) 5%, transparent);
+
+    --primary-foreground: oklch(16% 0.012 170);
 }
 
 @theme inline {
-    --radius-sm: calc(var(--radius) - 4px);
-    --radius-md: calc(var(--radius) - 2px);
-    --radius-lg: var(--radius);
+    --radius-sm: calc(var(--radius) - 2px);
+    --radius-md: var(--radius);
+    --radius-lg: calc(var(--radius) + 2px);
     --radius-xl: calc(var(--radius) + 4px);
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -69,6 +98,18 @@
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
+    /* semantic extras */
+    --color-signal: var(--color-accent-signal);
+    --color-signal-soft: var(--color-accent-signal-soft);
+    --color-flag: var(--color-flag);
+    --color-flag-soft: var(--color-flag-soft);
+    --color-panel: var(--color-panel);
+    --color-rule: var(--color-rule);
+    --color-ink: var(--color-ink);
+    /* fonts (variables set by next/font in layout.tsx) */
+    --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
 }
 
 @layer base {
@@ -77,5 +118,36 @@
     }
     body {
         @apply bg-background text-foreground;
+        font-family: var(--font-sans);
+    }
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        font-style: normal;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+    }
+    ::selection {
+        background: var(--color-accent-signal-soft);
+        color: var(--color-ink);
+    }
+}
+
+@layer utilities {
+    /* signature: faint 32px engineering grid substrate */
+    .bg-grid-ops {
+        background-image:
+            linear-gradient(var(--grid-line) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+        background-size: 32px 32px;
+    }
+    /* machine-data register: mono, uppercase, tracked */
+    .label-ops {
+        font-family: var(--font-mono);
+        font-size: 0.6875rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
     }
 }

@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centinela — el agente que vigila SECOP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · genre: modern-minimal · macrostructure: Stat-Led · theme: Cobalt · nav: N1b (3 links · no dropdowns · frost-on-scroll · fill-only CTA) · footer: Ft2 · tone: technical · pre-emit critique: P4 H5 E4 S5 R4 V5 · contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
+
+:root {
+  /* ---- Cobalt token block · OKLCH only ---- */
+  --color-paper:      oklch(98% 0.004 245);
+  --color-paper-2:    oklch(95.5% 0.006 245);
+  --color-rule:       oklch(88% 0.008 245);
+  --color-rule-soft:  oklch(92% 0.006 245);
+  --color-neutral:    oklch(48% 0.014 250);
+  --color-muted:      oklch(36% 0.02 252);
+  --color-ink:        oklch(19% 0.025 258);
+  --color-accent:     oklch(45% 0.2 262);    /* cobalt eléctrico */
+  --color-accent-ink: oklch(98% 0.004 245);
+  --color-accent-dim: oklch(93% 0.03 262);
+  --color-flag:       oklch(45% 0.17 27);    /* bandera roja */
+  --color-flag-dim:   oklch(94% 0.025 27);
+  --color-focus:      oklch(52% 0.2 262);
+  --color-shadow:     oklch(25% 0.03 258);
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  --text-xs:   0.8rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-display: clamp(2rem, 3.2vw + 0.75rem, 3.25rem);
+  --text-figure:  clamp(5rem, 13vw, 10.5rem);
+
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --radius: 6px;
+  --page-max: 68rem;
+  --page-gutter: clamp(1rem, 4vw, 2.5rem);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+
+  --z-raised: 10;
+  --z-sticky-nav: 300;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+html { overflow-x: clip; scroll-behavior: smooth; }
+body {
+  overflow-x: clip;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+a { color: var(--color-accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.wrap { max-width: var(--page-max); margin-inline: auto; padding-inline: var(--page-gutter); }
+
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 2.75rem;
+  padding: 0 var(--space-lg);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+}
+.btn:hover { background: var(--color-muted); border-color: var(--color-muted); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+
+/* ---------- Nav · N1b canonical SaaS ---------- */
+.nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--z-sticky-nav);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color 240ms var(--ease-out), border-color 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
+}
+.nav.is-scrolled {
+  background: color-mix(in oklch, var(--color-paper) 78%, transparent);
+  backdrop-filter: blur(16px) saturate(150%);
+  border-bottom-color: var(--color-rule);
+  box-shadow: 0 8px 28px -20px var(--color-shadow);
+}
+.nav__inner {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+  height: 4rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  column-gap: var(--space-sm);
+  align-items: center;
+}
+.nav__brand {
+  justify-self: start;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  text-decoration: none;
+  line-height: 1;
+}
+.nav__brand-dot { color: var(--color-accent); }
+.nav__center { justify-self: center; display: flex; align-items: center; gap: var(--space-xs); }
+.nav__link {
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  line-height: 1;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius);
+  white-space: nowrap;
+  transition: color var(--dur-micro) var(--ease-out);
+}
+.nav__link:hover { color: var(--color-ink); }
+.nav__link:active { color: var(--color-accent); }
+.nav__right { justify-self: end; display: flex; align-items: center; }
+
+/* ---------- Hero · Stat-Led ---------- */
+.hero { padding-block: calc(4rem + var(--space-2xl)) var(--space-3xl); }
+.hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.6fr);
+  gap: var(--space-2xl);
+  align-items: end;
+}
+.hero__figure {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-figure);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--color-accent);
+}
+.hero__title {
+  font-size: var(--text-display);
+  max-width: 18ch;
+  margin-block-start: var(--space-md);
+}
+.hero__lede {
+  color: var(--color-neutral);
+  max-width: 52ch;
+  margin-block-start: var(--space-lg);
+}
+.hero__cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-block-start: var(--space-xl);
+}
+.hero__cta-note { font-size: var(--text-xs); color: var(--color-neutral); line-height: 1; }
+
+.hero__meta {
+  border-top: 1px solid var(--color-rule);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xs);
+}
+.hero__meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-block: var(--space-sm);
+  border-bottom: 1px solid var(--color-rule-soft);
+}
+.hero__meta dt { color: var(--color-neutral); }
+.hero__meta dd { color: var(--color-ink); text-align: right; }
+
+/* ---------- Firehose ---------- */
+.firehose { padding-block: var(--space-2xl) var(--space-3xl); border-top: 1px solid var(--color-rule); }
+.firehose__title { font-size: var(--text-xl); max-width: 24ch; }
+.firehose__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: var(--space-2xl);
+  margin-block-start: var(--space-xl);
+}
+.firehose__copy p { max-width: 58ch; color: var(--color-muted); }
+.firehose__copy p + p { margin-block-start: var(--space-md); }
+
+.statgrid { border-top: 1px solid var(--color-rule); }
+.statgrid__row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.55fr) minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: baseline;
+  padding-block: var(--space-md);
+  border-bottom: 1px solid var(--color-rule-soft);
+}
+.statgrid__num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  font-size: var(--text-lg);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.statgrid__label { font-size: var(--text-sm); color: var(--color-neutral); }
+
+/* ---------- Pipeline ---------- */
+.pipeline { padding-block: var(--space-3xl); background: var(--color-paper-2); border-block: 1px solid var(--color-rule); }
+.pipeline__title { font-size: var(--text-xl); }
+.pipeline__lede { color: var(--color-neutral); max-width: 58ch; margin-block-start: var(--space-md); }
+.pipeline__list { list-style: none; padding: 0; margin-block-start: var(--space-xl); border-top: 1px solid var(--color-rule); }
+.pipeline__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr);
+  gap: var(--space-lg);
+  padding-block: var(--space-lg);
+  border-bottom: 1px solid var(--color-rule);
+}
+.pipeline__tag {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+.pipeline__tag .idx { color: var(--color-neutral); margin-inline-end: var(--space-xs); }
+.pipeline__stage p { color: var(--color-muted); max-width: 62ch; font-size: var(--text-sm); }
+.pipeline__stack {
+  margin-block-start: var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-neutral);
+}
+
+/* ---------- Las dos caras ---------- */
+.caras { padding-block: var(--space-3xl) var(--space-2xl); }
+.caras__title { font-size: var(--text-xl); }
+.caras__lede { color: var(--color-neutral); max-width: 56ch; margin-block-start: var(--space-md); }
+.caras__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: var(--space-lg);
+  margin-block-start: var(--space-xl);
+}
+.cara {
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+}
+.cara__score {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius);
+}
+.cara--flag .cara__score { background: var(--color-flag-dim); color: var(--color-flag); }
+.cara--opp  .cara__score { background: var(--color-accent-dim); color: var(--color-accent); }
+.cara h3 { font-size: var(--text-md); margin-block-start: var(--space-md); }
+.cara p { color: var(--color-muted); font-size: var(--text-sm); margin-block-start: var(--space-sm); max-width: 52ch; }
+.cara__cite {
+  margin-block-start: var(--space-md);
+  padding-block-start: var(--space-sm);
+  border-top: 1px solid var(--color-rule-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-neutral);
+}
+
+.grafo {
+  margin-block-start: var(--space-xl);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
+  gap: var(--space-xl);
+  align-items: center;
+  padding-block-start: var(--space-lg);
+  border-top: 1px solid var(--color-rule);
+}
+.grafo p { color: var(--color-muted); font-size: var(--text-sm); max-width: 52ch; }
+.grafo svg { width: 100%; height: auto; display: block; }
+.grafo .edge { stroke: var(--color-rule); stroke-width: 1; }
+.grafo .node { fill: var(--color-neutral); }
+.grafo .node--flag { fill: var(--color-flag); }
+.grafo .node--opp { fill: var(--color-accent); }
+
+/* ---------- CTA final ---------- */
+.final { border-top: 1px solid var(--color-rule); padding-block: var(--space-2xl) var(--space-3xl); }
+.final__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+.final__title { font-size: var(--text-lg); max-width: 26ch; }
+
+/* ---------- Footer · Ft2 ---------- */
+.foot { border-top: 1px solid var(--color-rule); padding-block: var(--space-lg) var(--space-xl); }
+.foot p {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-neutral);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 56rem) {
+  .nav__center { display: none; }
+  .hero__grid, .firehose__body, .caras__grid, .grafo { grid-template-columns: minmax(0, 1fr); }
+  .hero__grid { gap: var(--space-xl); }
+  .pipeline__stage { grid-template-columns: minmax(0, 1fr); gap: var(--space-xs); }
+}
+@media (max-width: 24rem) {
+  .hero__cta-note { display: none; }
+  .nav__brand { font-size: var(--text-base); }
+  .nav__right .btn { padding-inline: var(--space-sm); font-size: var(--text-xs); }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="nav__brand" href="#">Centinela<span class="nav__brand-dot">.</span></a>
+    <nav class="nav__center" aria-label="Secciones">
+      <a class="nav__link" href="#firehose">El firehose</a>
+      <a class="nav__link" href="#pipeline">Pipeline</a>
+      <a class="nav__link" href="#caras">Hallazgos</a>
+    </nav>
+    <div class="nav__right">
+      <a class="btn" href="/dashboard">Ver el agente en vivo</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div class="hero__grid">
+      <div>
+        <p class="hero__figure" id="figure" aria-label="111">111</p>
+        <h1 class="hero__title">licitaciones nuevas en 3&nbsp;días, en una sola entidad.</h1>
+        <p class="hero__lede">Un barrido real sobre la Alcaldía de Bogotá vía la API Croma. Ese es el firehose de SECOP que ningún humano puede seguir — y Centinela lo lee cada 2&nbsp;horas, sin que nadie se lo pida.</p>
+        <div class="hero__cta">
+          <a class="btn" href="/dashboard">Ver el agente en vivo</a>
+          <span class="hero__cta-note mono">→ /dashboard</span>
+        </div>
+      </div>
+      <dl class="hero__meta">
+        <div><dt>entidad</dt><dd>Alcaldía de Bogotá</dd></div>
+        <div><dt>ventana</dt><dd>3 días</dd></div>
+        <div><dt>procesos nuevos</dt><dd>111</dd></div>
+        <div><dt>heartbeat</dt><dd>cada 2 h</dd></div>
+        <div><dt>fuente</dt><dd>100 % API Croma</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="firehose wrap" id="firehose">
+    <h2 class="firehose__title">Un agente vivo, no un buscador.</h2>
+    <div class="firehose__body">
+      <div class="firehose__copy">
+        <p>Centinela no espera a que alguien pregunte. Cada 2&nbsp;horas despierta, barre las entidades vigiladas y cruza cada licitación nueva contra los 9 endpoints de Croma: SECOP, RUES, Supersociedades, Rama Judicial y las sanciones de Procuraduría y Contraloría.</p>
+        <p>Gemini puntúa cada proceso y el motor emite una de dos caras. Un solo pipeline, dos lecturas: la que ayuda a competir y la que expone.</p>
+      </div>
+      <dl class="statgrid">
+        <div class="statgrid__row"><dt class="statgrid__num">cada 2&nbsp;h</dt><dd class="statgrid__label">heartbeat autónomo — el agente vive, no responde on-demand</dd></div>
+        <div class="statgrid__row"><dt class="statgrid__num">9</dt><dd class="statgrid__label">endpoints Croma cruzados por cada licitación nueva</dd></div>
+        <div class="statgrid__row"><dt class="statgrid__num">111 / 3&nbsp;días</dt><dd class="statgrid__label">procesos nuevos detectados en el smoke real, una sola entidad</dd></div>
+        <div class="statgrid__row"><dt class="statgrid__num">1 → 2</dt><dd class="statgrid__label">un motor de scoring, dos caras: oportunidad y bandera roja</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="pipeline" id="pipeline">
+    <div class="wrap">
+      <h2 class="pipeline__title">Del barrido al hallazgo.</h2>
+      <p class="pipeline__lede">La arquitectura es parte del pitch. Cinco etapas, todas en producción sobre Cloudflare, todas alimentadas por datos Croma.</p>
+      <ol class="pipeline__list">
+        <li class="pipeline__stage">
+          <span class="pipeline__tag"><span class="idx">01</span>sweep</span>
+          <p>Un Durable Object despierta cada 2&nbsp;horas y barre SECOP por cada entidad vigilada. Lo nuevo desde el último latido entra al sistema.</p>
+        </li>
+        <li class="pipeline__stage">
+          <span class="pipeline__tag"><span class="idx">02</span>queue</span>
+          <p>Cada licitación detectada se encola en Cloudflare Queues. Nada se pierde, nada se procesa dos veces.</p>
+        </li>
+        <li class="pipeline__stage">
+          <span class="pipeline__tag"><span class="idx">03</span>workflow</span>
+          <p>Un Workflow cruza el proceso contra los 9 endpoints: SECOP → RUES → Supersociedades → Rama Judicial → sanciones de Procuraduría y Contraloría.</p>
+        </li>
+        <li class="pipeline__stage">
+          <span class="pipeline__tag"><span class="idx">04</span>scoring</span>
+          <p>Gemini puntúa cada proceso: Flash-Lite hace el triage masivo, Pro examina a fondo los casos que lo ameritan.</p>
+        </li>
+        <li class="pipeline__stage">
+          <span class="pipeline__tag"><span class="idx">05</span>hallazgo</span>
+          <p>El motor emite una de dos caras — oportunidad o bandera roja — con su cadena de evidencia citada, fuente por fuente.</p>
+        </li>
+      </ol>
+      <p class="pipeline__stack">stack: Cloudflare Durable Objects + Queues + Workflows · scoring: Gemini Flash-Lite + Pro · datos: 100 % API Croma</p>
+    </div>
+  </section>
+
+  <section class="caras wrap" id="caras">
+    <h2 class="caras__title">Dos caras, un solo motor.</h2>
+    <p class="caras__lede">El mismo pipeline que ayuda a una PYME honesta a ganar es el que expone una adjudicación amañada. Dos hallazgos reales del smoke:</p>
+    <div class="caras__grid">
+      <article class="cara cara--flag">
+        <span class="cara__score">BANDERA_ROJA · 65</span>
+        <h3>Historial judicial acumulado del contratista.</h3>
+        <p>La cara que expone: adjudicaciones amañadas señaladas con cadena de evidencia citada — cada afirmación con su fuente en Croma, del expediente SECOP al registro de la Rama Judicial.</p>
+        <p class="cara__cite">evidencia: SECOP → Rama Judicial → sanciones</p>
+      </article>
+      <article class="cara cara--opp">
+        <span class="cara__score">OPORTUNIDAD · 85</span>
+        <h3>Contrato de servicios de bajo riesgo.</h3>
+        <p>La cara que ayuda: una licitación ganable, puntuada y entregada a la PYME honesta antes de que se cierre la ventana para participar.</p>
+        <p class="cara__cite">evidencia: SECOP → RUES → Supersociedades</p>
+      </article>
+    </div>
+    <div class="grafo">
+      <p>Debajo de los hallazgos, Centinela mantiene un grafo de red de contratistas — cada nodo es un NIT. Las relaciones entre adjudicatarios que ningún PDF de SECOP muestra.</p>
+      <svg viewBox="0 0 320 120" aria-hidden="true">
+        <line class="edge" x1="40" y1="90" x2="120" y2="40"/>
+        <line class="edge" x1="120" y1="40" x2="200" y2="80"/>
+        <line class="edge" x1="200" y1="80" x2="272" y2="30"/>
+        <line class="edge" x1="120" y1="40" x2="272" y2="30"/>
+        <line class="edge" x1="40" y1="90" x2="200" y2="80"/>
+        <line class="edge" x1="200" y1="80" x2="252" y2="102"/>
+        <circle class="node" cx="40" cy="90" r="5"/>
+        <circle class="node node--flag" cx="120" cy="40" r="7"/>
+        <circle class="node" cx="200" cy="80" r="5"/>
+        <circle class="node node--opp" cx="272" cy="30" r="6"/>
+        <circle class="node" cx="252" cy="102" r="4"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="final wrap">
+    <div class="final__row">
+      <h2 class="final__title">El agente ya está despierto. Su próximo barrido es en menos de 2&nbsp;horas.</h2>
+      <a class="btn" href="/dashboard">Ver el agente en vivo</a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot wrap">
+  <p>© 2026 Centinela · IA-Hackathon GOV-TECH by Croma · datos 100 % API Croma — 9 endpoints públicos</p>
+</footer>
+
+<script>
+(function () {
+  // Nav frost-on-scroll — rAF-throttled
+  var nav = document.getElementById('nav');
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      nav.classList.toggle('is-scrolled', window.scrollY > 24);
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Hero figure tick 0 → 111 (~500 ms), skipped under reduced motion
+  var fig = document.getElementById('figure');
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var target = 111, dur = 500, t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      fig.textContent = String(Math.round(eased * target));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    fig.textContent = '0';
+    requestAnimationFrame(step);
+  }
+})();
+</script>
+
+</body>
+</html>
