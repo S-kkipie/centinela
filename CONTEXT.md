@@ -105,6 +105,21 @@ workflows-emulation noise, watch it on real deploy. Agent HTTP surface
 (watch/sweep/status) added in a51bc0e. Pending: live-Croma smoke (drop
 CROMA_STUB), deploy, pitch.
 
+## Live-Croma smoke (2026-08-15) — GREEN
+
+`CROMA_STUB` removed (note: wrangler dev does NOT hot-reload .dev.vars —
+restart it). Real sweep on Alcaldía de Bogotá (899999061): **111 tenders
+detected in a 3-day window**, capped at 25 investigations
+(SWEEP_WINDOW_DAYS=3, MAX_ENQUEUE_PER_SWEEP=25 — cold-start guards, commit
+0f07561). Real findings persisted end-to-end, both faces, e.g. BANDERA_ROJA 65
+"historial judicial acumulado del contratista" and OPORTUNIDAD 85 low-risk
+service contracts. Gemini triage skips boring tenders (skipped:true → no
+ingest), so ingest count < enqueued is expected.
+
+Fixed live: CO1.REQ.* sweep ids aren't valid notice UIDs for
+/co/secop/process/v1 → secop-detail step now skips non-CO1.NTC.* ids (d72ef70).
+Starter's Project domain removed entirely (19a5efc, migration 0002 applied).
+
 ## Next steps (in order)
 
 1. **`packages/croma`** — typed REST client for the 9 Colombia endpoints
