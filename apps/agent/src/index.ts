@@ -15,7 +15,9 @@ import type { Env, TenderMessage } from "./env.ts";
 export { InvestigateTender } from "./workflow.ts";
 
 /** Heartbeat cadence. */
-const HEARTBEAT_CRON = "*/15 * * * *";
+// Croma caps each endpoint at 500 req/24h. 12 sweeps/day × ~40 entities stays
+// inside the sweep endpoint's budget; every-15-min would blow it at 6 entities.
+const HEARTBEAT_CRON = "0 */2 * * *";
 /** One sendBatch = one subrequest; keep batches well under the 100-msg limit. */
 const QUEUE_BATCH_SIZE = 100;
 
