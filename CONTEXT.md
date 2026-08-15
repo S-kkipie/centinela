@@ -120,6 +120,18 @@ Fixed live: CO1.REQ.* sweep ids aren't valid notice UIDs for
 /co/secop/process/v1 → secop-detail step now skips non-CO1.NTC.* ids (d72ef70).
 Starter's Project domain removed entirely (19a5efc, migration 0002 applied).
 
+## Design system "intel" (2026-08-15) — applied repo-wide
+
+Locked in `/design.md` (source of truth; Hallmark-derived, chosen from 6 mocks
+kept under `apps/web/public/mocks/`). Ops-grade govtech: light engineering-gray
+paper, esmeralda accent (OPORTUNIDAD/primary), red reserved for BANDERA_ROJA,
+Space Grotesk / Inter Tight / IBM Plex Mono (next/font), 32px grid substrate
+(`.bg-grid-ops`), mono machine-data register (`.label-ops`). Tokens mapped onto
+shadcn vars in globals.css (light + dark ops). Aceternity free components
+(recolored to tokens) live in `src/frontend/components/aceternity/`; approved/
+banned list in design.md. Landing pública en `/`; consola + auth + watchlists
+restyled. biome ignores `public/mocks/**`. Commits 4feed22 + ab1517a.
+
 ## Next steps (in order)
 
 1. **`packages/croma`** — typed REST client for the 9 Colombia endpoints
