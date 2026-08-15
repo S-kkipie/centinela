@@ -1,9 +1,16 @@
 "use client";
 
-import { Controls, type Edge, type Node, ReactFlow } from "@xyflow/react";
+import {
+    Controls,
+    type Edge,
+    type Node,
+    ReactFlow,
+    useReactFlow,
+} from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import type { CSSProperties } from "react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { useCopilotUiOptional } from "@/core/copilot/client/store";
 import { useFindingsFeed, useGraph } from "@/core/finding/client/hooks";
 import type { GraphEdge } from "@/core/finding/domain/types";
 import { Spinner } from "@/frontend/components/ui/spinner";
@@ -19,14 +26,18 @@ const flowTheme = {
     "--xy-attribution-background-color": "transparent",
 } as CSSProperties;
 
-const nodeStyle = (flagged: boolean): CSSProperties => ({
-    background: "var(--color-panel)",
-    border: `1px solid ${flagged ? "var(--color-flag)" : "var(--color-accent-signal)"}`,
+const nodeStyle = (flagged: boolean, focused: boolean): CSSProperties => ({
+    background: focused ? "var(--color-paper-2)" : "var(--color-panel)",
+    border: `${focused ? 2 : 1}px solid ${flagged ? "var(--color-flag)" : "var(--color-accent-signal)"}`,
     borderRadius: 4,
+    boxShadow: focused
+        ? "0 0 0 3px color-mix(in srgb, var(--color-accent-signal) 35%, transparent)"
+        : undefined,
     color: flagged ? "var(--color-flag)" : "var(--color-ink)",
     fontFamily: "var(--font-mono)",
     fontSize: 11,
     letterSpacing: "0.04em",
+    opacity: focused ? 1 : undefined,
     padding: 6,
 });
 
@@ -38,6 +49,7 @@ const nodeStyle = (flagged: boolean): CSSProperties => ({
 function toFlow(
     edges: GraphEdge[],
     flaggedFindingIds: Set<string>,
+    focusNit: string | null,
 ): { nodes: Node[]; edges: Edge[] } {
     const nitSet = new Set<string>();
     const flaggedNits = new Set<string>();
@@ -60,13 +72,16 @@ function toFlow(
                 y: radius + radius * Math.sin(angle),
             },
             data: { label: nit },
-            style: nodeStyle(flaggedNits.has(nit)),
+            style: nodeStyle(flaggedNits.has(nit), nit === focusNit),
         };
     });
     const flowEdges: Edge[] = edges.map((e, i) => {
         const flagged = Boolean(
             e.findingId && flaggedFindingIds.has(e.findingId),
         );
+        const touchesFocus =
+            focusNit != null &&
+            (e.fromNit === focusNit || e.toNit === focusNit);
         return {
             id: e.id || `edge-${i}`,
             source: e.fromNit,
@@ -74,8 +89,12 @@ function toFlow(
             label: e.relation,
             animated: true,
             style: {
-                stroke: flagged ? "var(--color-flag)" : "var(--color-rule)",
-                strokeWidth: 1.25,
+                stroke: touchesFocus
+                    ? "var(--color-accent-signal)"
+                    : flagged
+                      ? "var(--color-flag)"
+                      : "var(--color-rule)",
+                strokeWidth: touchesFocus ? 2 : 1.25,
             },
             labelStyle: {
                 fill: flagged ? "var(--color-flag)" : "var(--color-muted-ink)",
@@ -90,6 +109,25 @@ function toFlow(
     return { nodes, edges: flowEdges };
 }
 
+/**
+ * Pans/zooms to the copilot-focused NIT once its node exists. Lives inside
+ * <ReactFlow> so it can use the flow instance; renders nothing.
+ */
+function FocusController({ focusNit }: { focusNit: string | null }) {
+    const flow = useReactFlow();
+    useEffect(() => {
+        if (!focusNit) return;
+        const node = flow.getNode(focusNit);
+        if (!node) return;
+        flow.setCenter(
+            node.position.x + (node.measured?.width ?? 0) / 2,
+            node.position.y + (node.measured?.height ?? 0) / 2,
+            { zoom: 1.4, duration: 600 },
+        );
+    }, [focusNit, flow]);
+    return null;
+}
+
 export function ContractorGraph({
     watchlistId,
     findingId,
@@ -101,6 +139,9 @@ export function ContractorGraph({
     const { data, isLoading } = useGraph(watchlistId);
     // Shares the feed's react-query cache; used to flag BANDERA_ROJA relations.
     const { data: feed } = useFindingsFeed({ watchlistId });
+    // Copilot-driven focus; null (or no provider) = no highlight.
+    const copilotUi = useCopilotUiOptional();
+    const focusNit = copilotUi?.state.focusNit ?? null;
 
     const flaggedFindingIds = useMemo(
         () =>
@@ -115,8 +156,8 @@ export function ContractorGraph({
         const edges = (data?.edges ?? []).filter(
             (e) => !findingId || e.findingId === findingId,
         );
-        return toFlow(edges, flaggedFindingIds);
-    }, [data, flaggedFindingIds, findingId]);
+        return toFlow(edges, flaggedFindingIds, focusNit);
+    }, [data, flaggedFindingIds, findingId, focusNit]);
 
     if (!watchlistId)
         return (
@@ -150,6 +191,7 @@ export function ContractorGraph({
             >
                 <ReactFlow edges={flow.edges} fitView nodes={flow.nodes}>
                     <Controls showInteractive={false} />
+                    <FocusController focusNit={focusNit} />
                 </ReactFlow>
             </div>
             <p className="label-ops flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground">
