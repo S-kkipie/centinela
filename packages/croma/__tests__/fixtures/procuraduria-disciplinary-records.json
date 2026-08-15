@@ -1,0 +1,14 @@
+{
+  "data": {
+    "found": false,
+    "document_type": "CC",
+    "document_type_label": "Cédula de ciudadanía",
+    "document_number": "1234567890",
+    "full_name": null,
+    "has_records": false,
+    "status": "EL NÚMERO DE IDENTIFICACIÓN INGRESADO NO SE ENCUENTRA REGISTRADO EN EL SISTEMA.",
+    "message": "EL NÚMERO DE IDENTIFICACIÓN INGRESADO NO SE ENCUENTRA REGISTRADO EN EL SISTEMA.",
+    "records": [],
+    "checked_at": null
+  }
+}

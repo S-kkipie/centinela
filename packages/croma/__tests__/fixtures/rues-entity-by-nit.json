@@ -1,0 +1,101 @@
+{
+  "data": {
+    "found": true,
+    "document_number": "900654922",
+    "entity": {
+      "registry_id": "270018108052",
+      "nit": "900654922",
+      "verification_digit": "7",
+      "identification_class": "NIT",
+      "secondary_identification": "00000900654922",
+      "name": "AGROINDUSTRIAS COPER S.A.S. EN LIQUIDACION",
+      "acronym": "PORCICOLA AVILONIA",
+      "chamber_code": "27",
+      "chamber_name": "PEREIRA",
+      "registration_number": "18108052",
+      "registration_status": "ACTIVA",
+      "registration_category": "SOCIEDAD ó PERSONA JURIDICA PRINCIPAL ó ESAL",
+      "legal_organization": "SOCIEDADES POR ACCIONES SIMPLIFICADAS SAS",
+      "society_type": "SOCIEDAD COMERCIAL",
+      "society_type_code": "02",
+      "registration_date": "2013-09-12",
+      "last_renewal_date": "2022-01-12",
+      "last_renewed_year": "2021",
+      "expiration_date": null,
+      "cancellation_date": null,
+      "cancellation_reason": null,
+      "updated_date": "2026-04-27",
+      "primary_activity": {
+        "code": "4620",
+        "description": "Comercio al por mayor de materias primas agropecuarias; animales vivos"
+      },
+      "secondary_activity": {
+        "code": "0144",
+        "description": "Cría de ganado porcino"
+      },
+      "ciiu_3": {
+        "code": null,
+        "description": null
+      },
+      "ciiu_4": {
+        "code": null,
+        "description": null
+      },
+      "commercial_address": null,
+      "commercial_municipality": null,
+      "commercial_phones": [],
+      "commercial_email": null,
+      "fiscal_address": null,
+      "fiscal_municipality": null,
+      "fiscal_phones": [],
+      "fiscal_email": null,
+      "is_bic": null,
+      "is_social_enterprise": null,
+      "is_law_1780": null,
+      "is_transport": null,
+      "domain_forfeiture": null,
+      "sipref_inactivation_control": null,
+      "certificates_sale_url": "https://siifront.confecamaras.co/certificados"
+    },
+    "financials": [
+      {
+        "year": "2014",
+        "current_assets": 3873000,
+        "non_current_assets": null,
+        "total_assets": 3873000,
+        "current_liabilities": 0,
+        "non_current_liabilities": 0,
+        "total_liabilities": 0,
+        "equity": 3873000,
+        "social_balance": null,
+        "ordinary_revenue": 0,
+        "other_income": 0,
+        "cost_of_sales": 0,
+        "operating_expenses": 0,
+        "other_expenses": null,
+        "tax_expenses": null,
+        "operating_profit": 0,
+        "period_result": 0
+      }
+    ],
+    "renewals": [
+      {
+        "year": "2014",
+        "renewal_date": "2014-06-20"
+      }
+    ],
+    "related_parties": [
+      {
+        "document_number": "1088004672",
+        "name": "MURILLO GRANDA SEBASTIAN",
+        "role": "Representante Legal - Principal"
+      },
+      {
+        "document_number": "1088268355",
+        "name": "SANCHEZ OSPINA MARITZA",
+        "role": "Representante Legal - Suplente"
+      }
+    ],
+    "notices": []
+  }
+}
