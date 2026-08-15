@@ -15,6 +15,13 @@
       "when": 1786773320322,
       "tag": "0001_mixed_magma",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786774287779,
+      "tag": "0002_open_doorman",
+      "breakpoints": true
     }
   ]
 }

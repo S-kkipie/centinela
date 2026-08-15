@@ -12,7 +12,7 @@ import { user } from "./auth-schema";
 /**
  * A user's set of watched SECOP contracting entities. The living agent runs one
  * sweep per watchlist. Findings and graph edges hang off a watchlist. Cloned
- * from the `projects` reference domain (user-owned, cascade delete).
+ * the starter’s reference domain pattern (user-owned, cascade delete).
  */
 export const watchlists = pgTable(
     "watchlists",

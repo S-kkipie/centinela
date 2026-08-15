@@ -3,5 +3,5 @@ import { authenticate } from "@/server/auth/auth";
 
 export default async function HomePage() {
     const session = await authenticate();
-    redirect(session ? "/projects" : "/auth/sign-in");
+    redirect(session ? "/dashboard" : "/auth/sign-in");
 }
