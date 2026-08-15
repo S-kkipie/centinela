@@ -8,11 +8,18 @@ import {
     useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { XIcon } from "lucide-react";
 import type { CSSProperties } from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCopilotUiOptional } from "@/core/copilot/client/store";
 import { useFindingsFeed, useGraph } from "@/core/finding/client/hooks";
+import {
+    buildNodeMeta,
+    type NodeMeta,
+    ROLE_LABEL,
+} from "@/core/finding/client/ui/graph-node-meta";
 import type { GraphEdge } from "@/core/finding/domain/types";
+import { useWatchlist } from "@/core/watchlist/client/hooks";
 import { Spinner } from "@/frontend/components/ui/spinner";
 import { cn } from "@/frontend/lib/utils";
 
@@ -142,9 +149,20 @@ export function ContractorGraph({
     const { data, isLoading } = useGraph(watchlistId);
     // Shares the feed's react-query cache; used to flag BANDERA_ROJA relations.
     const { data: feed } = useFindingsFeed({ watchlistId });
+    const { data: watchlist } = useWatchlist(watchlistId);
     // Copilot-driven focus; null (or no provider) = no highlight.
     const copilotUi = useCopilotUiOptional();
-    const focusNit = copilotUi?.state.focusNit ?? null;
+    const copilotFocus = copilotUi?.state.focusNit ?? null;
+
+    // Clicking a node selects it (opens the detail card + centers it). Falls
+    // back to whatever the copilot is highlighting.
+    const [selectedNit, setSelectedNit] = useState<string | null>(null);
+    const [hover, setHover] = useState<{
+        nit: string;
+        x: number;
+        y: number;
+    } | null>(null);
+    const focusNit = selectedNit ?? copilotFocus;
 
     const flaggedFindingIds = useMemo(
         () =>
@@ -155,12 +173,43 @@ export function ContractorGraph({
             ),
         [feed],
     );
-    const flow = useMemo(() => {
-        const edges = (data?.edges ?? []).filter(
-            (e) => !findingId || e.findingId === findingId,
-        );
-        return toFlow(edges, flaggedFindingIds, focusNit);
-    }, [data, flaggedFindingIds, findingId, focusNit]);
+
+    const edges = useMemo(
+        () =>
+            (data?.edges ?? []).filter(
+                (e) => !findingId || e.findingId === findingId,
+            ),
+        [data, findingId],
+    );
+
+    // NIT → readable name, from watched entities and the findings' entity names,
+    // so a node can say who it is, not just its tax id.
+    const nameByNit = useMemo(() => {
+        const map: Record<string, string> = {};
+        for (const f of feed?.items ?? []) map[f.entityId] = f.entityName;
+        for (const e of watchlist?.entities ?? []) map[e.nit] = e.name;
+        return map;
+    }, [feed, watchlist]);
+
+    const watchedNits = useMemo(
+        () => new Set((watchlist?.entities ?? []).map((e) => e.nit)),
+        [watchlist],
+    );
+
+    const meta = useMemo(
+        () =>
+            buildNodeMeta(edges, {
+                flaggedFindingIds,
+                nameByNit,
+                watchedNits,
+            }),
+        [edges, flaggedFindingIds, nameByNit, watchedNits],
+    );
+
+    const flow = useMemo(
+        () => toFlow(edges, flaggedFindingIds, focusNit),
+        [edges, flaggedFindingIds, focusNit],
+    );
 
     if (!watchlistId)
         return (
@@ -183,19 +232,51 @@ export function ContractorGraph({
             </p>
         );
 
+    const select = (nit: string) => {
+        setSelectedNit(nit);
+        copilotUi?.focusNit(nit); // keep the copilot's context in sync
+    };
+    const selected = selectedNit ? meta.get(selectedNit) : null;
+    const hovered = hover ? meta.get(hover.nit) : null;
+
     return (
         <div className="flex min-h-0 flex-1 flex-col gap-2">
             <div
                 className={cn(
-                    "bg-grid-ops w-full overflow-hidden rounded-md border border-rule bg-panel",
+                    "bg-grid-ops relative w-full overflow-hidden rounded-md border border-rule bg-panel [&_.react-flow__node]:cursor-pointer",
                     heightClass ?? (findingId ? "h-[320px]" : "h-[480px]"),
                 )}
                 style={flowTheme}
             >
-                <ReactFlow edges={flow.edges} fitView nodes={flow.nodes}>
+                <ReactFlow
+                    edges={flow.edges}
+                    fitView
+                    nodes={flow.nodes}
+                    onNodeClick={(_, node) => select(node.id)}
+                    onNodeMouseEnter={(event, node) =>
+                        setHover({
+                            nit: node.id,
+                            x: event.clientX,
+                            y: event.clientY,
+                        })
+                    }
+                    onNodeMouseLeave={() => setHover(null)}
+                    onPaneClick={() => setSelectedNit(null)}
+                >
                     <Controls showInteractive={false} />
                     <FocusController focusNit={focusNit} />
                 </ReactFlow>
+
+                {hovered && hover && (
+                    <NodeTooltip meta={hovered} x={hover.x} y={hover.y} />
+                )}
+                {selected && (
+                    <NodeDetail
+                        meta={selected}
+                        onClose={() => setSelectedNit(null)}
+                        onPick={select}
+                    />
+                )}
             </div>
             <p className="label-ops flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground">
                 <span className="flex items-center gap-1.5">
@@ -212,7 +293,113 @@ export function ContractorGraph({
                     />
                     NIT en bandera roja
                 </span>
+                <span className="text-muted-foreground/70">
+                    · pasa el cursor para ver qué es · clic para el detalle
+                </span>
             </p>
         </div>
+    );
+}
+
+/** Cursor-following "what is this" while hovering a node. */
+function NodeTooltip({ meta, x, y }: { meta: NodeMeta; x: number; y: number }) {
+    return (
+        <div
+            className="pointer-events-none fixed z-50 max-w-[16rem] rounded-md border border-rule bg-background px-2.5 py-1.5 shadow-lg"
+            style={{ left: x + 14, top: y + 14 }}
+        >
+            <p
+                className={cn(
+                    "label-ops",
+                    meta.flagged ? "text-flag" : "text-signal",
+                )}
+            >
+                {ROLE_LABEL[meta.role]}
+            </p>
+            {meta.name && (
+                <p className="font-medium text-foreground text-xs leading-snug">
+                    {meta.name}
+                </p>
+            )}
+            <p className="font-mono text-[11px] text-muted-foreground">
+                NIT {meta.nit} · {meta.degree}{" "}
+                {meta.degree === 1 ? "conexión" : "conexiones"}
+                {meta.flagged ? " · bandera roja" : ""}
+            </p>
+        </div>
+    );
+}
+
+/** Click-to-open detail panel: who the node is and everything it links to. */
+function NodeDetail({
+    meta,
+    onClose,
+    onPick,
+}: {
+    meta: NodeMeta;
+    onClose: () => void;
+    onPick: (nit: string) => void;
+}) {
+    return (
+        <aside className="absolute top-2 right-2 z-40 flex max-h-[calc(100%-1rem)] w-64 flex-col overflow-hidden rounded-md border border-rule bg-background/95 shadow-lg backdrop-blur">
+            <header className="flex items-start justify-between gap-2 border-rule border-b px-3 py-2">
+                <div className="min-w-0">
+                    <p
+                        className={cn(
+                            "label-ops",
+                            meta.flagged ? "text-flag" : "text-signal",
+                        )}
+                    >
+                        {ROLE_LABEL[meta.role]}
+                        {meta.flagged ? " · bandera roja" : ""}
+                    </p>
+                    {meta.name && (
+                        <p className="mt-0.5 truncate font-display font-medium text-foreground text-sm">
+                            {meta.name}
+                        </p>
+                    )}
+                    <p className="font-mono text-[11px] text-muted-foreground">
+                        NIT {meta.nit}
+                    </p>
+                </div>
+                <button
+                    aria-label="Cerrar"
+                    className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+                    onClick={onClose}
+                    type="button"
+                >
+                    <XIcon className="size-4" />
+                </button>
+            </header>
+            <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
+                <p className="label-ops text-muted-foreground">
+                    {meta.links.length}{" "}
+                    {meta.links.length === 1 ? "conexión" : "conexiones"}
+                </p>
+                <ul className="mt-1.5 space-y-1">
+                    {meta.links.map((l) => (
+                        <li key={`${l.nit}-${l.relation}`}>
+                            <button
+                                className="w-full rounded-sm border border-rule bg-card px-2 py-1.5 text-left transition-colors hover:border-signal/60"
+                                onClick={() => onPick(l.nit)}
+                                type="button"
+                            >
+                                <span className="block label-ops text-muted-foreground uppercase">
+                                    {l.relation}
+                                </span>
+                                <span className="block truncate font-medium text-foreground text-xs">
+                                    {l.name ?? `NIT ${l.nit}`}
+                                </span>
+                                {l.name && (
+                                    <span className="block font-mono text-[10px] text-muted-foreground">
+                                        NIT {l.nit}
+                                    </span>
+                                )}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </aside>
     );
 }
