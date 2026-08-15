@@ -6,7 +6,7 @@ import { cn } from "@/frontend/lib/utils";
 
 const links = [
     { href: "/dashboard", label: "Panel" },
-    { href: "/watchlists", label: "Vigiladas" },
+    { href: "/watchlists", label: "Frentes" },
 ] as const;
 
 export function AppNav() {

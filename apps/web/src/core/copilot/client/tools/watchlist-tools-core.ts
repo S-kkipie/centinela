@@ -9,11 +9,24 @@
  * the mutations.
  */
 
+import {
+    DEFAULT_WATCH_TARGET_KIND,
+    WATCH_TARGET_KINDS,
+    type WatchTargetKind,
+} from "@centinela/contracts/watch";
 import { z } from "zod";
 
 export const watchlistEntityInputSchema = z.object({
     nit: z.string().trim().min(1).max(50),
     entityName: z.string().trim().min(1).max(200),
+    // Defaulted, so a model that omits it still produces a valid contracting
+    // entity rather than failing validation.
+    kind: z
+        .enum(WATCH_TARGET_KINDS)
+        .default(DEFAULT_WATCH_TARGET_KIND)
+        .describe(
+            "contratante = entidad que abre procesos; contratista = empresa o persona que los gana",
+        ),
 });
 export type WatchlistEntityInput = z.infer<typeof watchlistEntityInputSchema>;
 
@@ -44,10 +57,11 @@ export function toCreateWatchlistBody(params: { name: string }): {
  */
 export function toAddEntityBodies(
     entities: WatchlistEntityInput[],
-): Array<{ nit: string; name: string }> {
+): Array<{ nit: string; name: string; kind: WatchTargetKind }> {
     return entities.map((e) => ({
         nit: e.nit.trim(),
         name: e.entityName.trim(),
+        kind: e.kind ?? DEFAULT_WATCH_TARGET_KIND,
     }));
 }
 
@@ -58,7 +72,7 @@ export interface WatchlistWriteDeps {
     }): Promise<{ id: string; name: string }>;
     addEntity(args: {
         watchlistId: string;
-        body: { nit: string; name: string };
+        body: { nit: string; name: string; kind: WatchTargetKind };
     }): Promise<unknown>;
 }
 
@@ -170,8 +184,8 @@ export function confirmSummary(result: ConfirmResult): string {
         return `No se pudo completar la operación: ${result.error}`;
     }
     const n = result.entityCount;
-    const ent = n === 1 ? "1 entidad" : `${n} entidades`;
+    const ent = n === 1 ? "1 objetivo" : `${n} objetivos`;
     return result.name
-        ? `Vigilada "${result.name}" creada con ${ent}.`
-        : `${ent} agregada${n === 1 ? "" : "s"} a la vigilada.`;
+        ? `Frente "${result.name}" creado con ${ent}.`
+        : `${ent} agregado${n === 1 ? "" : "s"} al frente.`;
 }

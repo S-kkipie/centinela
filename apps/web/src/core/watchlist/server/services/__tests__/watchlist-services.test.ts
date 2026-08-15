@@ -49,6 +49,7 @@ const entityRow = {
     watchlistId: "w1",
     nit: "900123456",
     name: "Alcaldía",
+    kind: "contratante" as const,
     createdAt: new Date("2026-08-15T00:00:00.000Z"),
 };
 
@@ -114,6 +115,7 @@ describe("addEntityService", () => {
         const r = await addEntityService("u1", "w1", {
             nit: "900123456",
             name: "Alcaldía",
+            kind: "contratante",
         });
         expect(r.ok).toBe(false);
         if (!r.ok) expect(r.error.code).toBe("NOT_FOUND");
@@ -126,6 +128,7 @@ describe("addEntityService", () => {
         const r = await addEntityService("u1", "w1", {
             nit: "900123456",
             name: "Alcaldía",
+            kind: "contratante",
         });
         expect(r.ok).toBe(true);
         if (r.ok) expect(r.data.nit).toBe("900123456");

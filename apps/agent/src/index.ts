@@ -8,6 +8,12 @@
  * Workflow run. The reasoning lives in the pure modules; this file is wiring.
  */
 import { Agent, routeAgentRequest } from "agents";
+import {
+  DEFAULT_WATCH_TARGET_KIND,
+  MAX_ENQUEUE_PER_SWEEP,
+  type WatchTarget,
+} from "@centinela/contracts/watch";
+import { contractsToTenders } from "./contractor.ts";
 import { detectNewTenders, type SeenMap } from "./detect.ts";
 import { createCromaClient } from "./croma-stub.ts";
 import type { Env, TenderMessage } from "./env.ts";
@@ -15,24 +21,39 @@ import type { Env, TenderMessage } from "./env.ts";
 export { InvestigateTender } from "./workflow.ts";
 
 /** Heartbeat cadence. */
-// Croma caps each endpoint at 500 req/24h. 12 sweeps/day × ~40 entities stays
-// inside the sweep endpoint's budget; every-15-min would blow it at 6 entities.
+// Croma caps each endpoint at 500 req/24h. 12 sweeps/day × ~40 targets stays
+// inside the sweep endpoint's budget; every-15-min would blow it at 6 targets.
+// The arithmetic lives in @centinela/contracts/watch so the console can show it.
 const HEARTBEAT_CRON = "0 */2 * * *";
 /** One sendBatch = one subrequest; keep batches well under the 100-msg limit. */
 const QUEUE_BATCH_SIZE = 100;
 /** Only sweep tenders published in this window (cold-start guard). */
 const SWEEP_WINDOW_DAYS = 3;
-/** Hard cap per tick: each investigation spends ~7 Croma calls + 2 Gemini. */
-const MAX_ENQUEUE_PER_SWEEP = 25;
 
 type State = {
-  /** SECOP entity NITs to sweep each heartbeat. */
-  watchedEntities: string[];
+  /**
+   * Legacy field: entity NITs, before targets could be contractors. Kept so a
+   * Durable Object that has been alive across the deploy is migrated on read
+   * instead of silently losing everything it was watching.
+   */
+  watchedEntities?: string[];
+  /** What to sweep, and how. */
+  targets?: WatchTarget[];
   lastSweepAt: number | null;
 };
 
+/** Reads either state shape; legacy entries become contracting entities. */
+function readTargets(state: State): WatchTarget[] {
+  if (state.targets) return state.targets;
+  return (state.watchedEntities ?? []).map((nit) => ({
+    nit,
+    name: nit,
+    kind: DEFAULT_WATCH_TARGET_KIND,
+  }));
+}
+
 export class CentinelaAgent extends Agent<Env, State> {
-  initialState: State = { watchedEntities: [], lastSweepAt: null };
+  initialState: State = { targets: [], lastSweepAt: null };
 
   async onStart() {
     this.sql`CREATE TABLE IF NOT EXISTS seen (
@@ -50,9 +71,10 @@ export class CentinelaAgent extends Agent<Env, State> {
   /**
    * HTTP surface (routed by `routeAgentRequest` to
    * `/agents/centinela-agent/<instance>/…`), guarded by the shared agent key:
-   *   POST …/watch {"entities": ["<nit>", …]} → watched list
-   *   POST …/sweep                            → {"enqueued": n}
-   *   GET  …/status                           → current state
+   *   POST …/watch {"targets": [{nit,name,kind}, …]} → watched list
+   *   POST …/watch {"entities": ["<nit>", …]}        → legacy, all contratante
+   *   POST …/sweep                                   → {"enqueued": n}
+   *   GET  …/status                                  → current state
    */
   async onRequest(request: Request): Promise<Response> {
     if (request.headers.get("x-agent-key") !== this.env.AGENT_INGEST_KEY) {
@@ -60,9 +82,18 @@ export class CentinelaAgent extends Agent<Env, State> {
     }
     const path = new URL(request.url).pathname;
     if (request.method === "POST" && path.endsWith("/watch")) {
-      const body = (await request.json()) as { entities?: string[] };
-      const watched = await this.watch(body.entities ?? []);
-      return Response.json({ watched });
+      const body = (await request.json()) as {
+        targets?: WatchTarget[];
+        entities?: string[];
+      };
+      const targets =
+        body.targets ??
+        (body.entities ?? []).map((nit) => ({
+          nit,
+          name: nit,
+          kind: DEFAULT_WATCH_TARGET_KIND,
+        }));
+      return Response.json({ watched: await this.watch(targets) });
     }
     if (request.method === "POST" && path.endsWith("/sweep")) {
       return Response.json(await this.sweep());
@@ -73,11 +104,17 @@ export class CentinelaAgent extends Agent<Env, State> {
     return Response.json({ error: "not found" }, { status: 404 });
   }
 
-  /** Add entities to the watchlist (callable via the Agents RPC/HTTP surface). */
-  async watch(entityNits: string[]): Promise<string[]> {
-    const merged = new Set([...this.state.watchedEntities, ...entityNits]);
-    this.setState({ ...this.state, watchedEntities: [...merged] });
-    return this.state.watchedEntities;
+  /**
+   * Add targets to the sweep (callable via the Agents RPC/HTTP surface).
+   * Merged by NIT; a re-add updates the name and kind so a target filed under
+   * the wrong side of the contract can be corrected by adding it again.
+   */
+  async watch(targets: WatchTarget[]): Promise<WatchTarget[]> {
+    const merged = new Map(readTargets(this.state).map((t) => [t.nit, t]));
+    for (const target of targets) merged.set(target.nit, target);
+    const next = [...merged.values()];
+    this.setState({ ...this.state, targets: next, watchedEntities: undefined });
+    return next;
   }
 
   /** Heartbeat tick: diff the firehose and fan new tenders onto the queue. */
@@ -89,10 +126,22 @@ export class CentinelaAgent extends Agent<Env, State> {
       .toISOString()
       .slice(0, 10);
 
-    for (const entity of this.state.watchedEntities) {
-      const tenders = await croma.secopProcessesByEntity(entity, { from, pageSize: 500 });
-      const { newTenders, nextSeenMap } = detectNewTenders(tenders, this.loadSeen(entity));
-      this.saveSeen(entity, nextSeenMap);
+    for (const target of readTargets(this.state)) {
+      // One request per target per tick, whichever kind — the budget in
+      // @centinela/contracts/watch assumes exactly this.
+      const tenders =
+        target.kind === "contratista"
+          ? contractsToTenders(
+              await croma.secopContractsByProvider(target.nit),
+              target,
+            )
+          : await croma.secopProcessesByEntity(target.nit, { from, pageSize: 500 });
+
+      const { newTenders, nextSeenMap } = detectNewTenders(
+        tenders,
+        this.loadSeen(target.nit),
+      );
+      this.saveSeen(target.nit, nextSeenMap);
       for (const tender of newTenders) messages.push({ body: { tender } });
     }
 

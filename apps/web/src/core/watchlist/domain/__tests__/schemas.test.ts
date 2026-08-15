@@ -65,14 +65,41 @@ describe("watchlistSchema", () => {
 });
 
 describe("watchlistEntitySchema", () => {
-    it("accepts a valid entity", () => {
+    const base = {
+        id: "e1",
+        watchlistId: "w1",
+        nit: "900123456",
+        name: "Alcaldía",
+        createdAt: "2026-08-15T00:00:00.000Z",
+    };
+
+    it("accepts a contracting entity", () => {
         const ok = watchlistEntitySchema.safeParse({
-            id: "e1",
-            watchlistId: "w1",
-            nit: "900123456",
-            name: "Alcaldía",
-            createdAt: "2026-08-15T00:00:00.000Z",
+            ...base,
+            kind: "contratante",
         });
         expect(ok.success).toBe(true);
+    });
+
+    it("accepts a contractor", () => {
+        const ok = watchlistEntitySchema.safeParse({
+            ...base,
+            name: "Constructora X",
+            kind: "contratista",
+        });
+        expect(ok.success).toBe(true);
+    });
+
+    // The wire shape always carries the kind — the column is NOT NULL with a
+    // default, so a row without one means the mapper dropped it.
+    it("rejects a target with no kind", () => {
+        expect(watchlistEntitySchema.safeParse(base).success).toBe(false);
+    });
+
+    it("rejects a kind that is neither side of a contract", () => {
+        expect(
+            watchlistEntitySchema.safeParse({ ...base, kind: "proveedor" })
+                .success,
+        ).toBe(false);
     });
 });

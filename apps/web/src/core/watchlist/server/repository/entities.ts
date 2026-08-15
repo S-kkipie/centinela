@@ -7,7 +7,11 @@ import {
     watchlistEntities,
 } from "@/server/drizzle/schemas/watchlist-schema";
 
-/** Add a watched entity. Idempotent on `(watchlist_id, nit)` — re-adds refresh the name. */
+/**
+ * Add a watched target. Idempotent on `(watchlist_id, nit)` — a re-add refreshes
+ * the name and the kind, so correcting a target mistakenly filed as a
+ * contracting entity is just adding it again.
+ */
 export async function addWatchlistEntity(
     watchlistId: string,
     values: AddWatchlistEntity,
@@ -17,7 +21,7 @@ export async function addWatchlistEntity(
         .values({ watchlistId, ...values })
         .onConflictDoUpdate({
             target: [watchlistEntities.watchlistId, watchlistEntities.nit],
-            set: { name: values.name },
+            set: { name: values.name, kind: values.kind },
         })
         .returning();
     return row;

@@ -1,3 +1,7 @@
+import {
+    DEFAULT_WATCH_TARGET_KIND,
+    type WatchTargetKind,
+} from "@centinela/contracts/watch";
 import { sql } from "drizzle-orm";
 import {
     check,
@@ -40,9 +44,14 @@ export const watchlists = pgTable(
 );
 
 /**
- * The SECOP contracting entities watched by a watchlist. `nit` is the entity's
- * Colombian tax id — the key the agent sweeps and the ingest maps findings back
- * to. Unique per watchlist so an entity is not watched twice.
+ * The SECOP targets watched by a watchlist. `nit` is the Colombian tax id — the
+ * key the agent sweeps and the ingest maps findings back to. Unique per
+ * watchlist so a target is not watched twice.
+ *
+ * `kind` decides which endpoint the sweep calls, and therefore what the target
+ * buys you: a `contratante` surfaces that entity's new tenders, while a
+ * `contratista` surfaces its awards across every entity in the country —
+ * coverage the user never had to watch for.
  */
 export const watchlistEntities = pgTable(
     "watchlist_entities",
@@ -55,6 +64,11 @@ export const watchlistEntities = pgTable(
             .references(() => watchlists.id, { onDelete: "cascade" }),
         nit: text("nit").notNull(),
         name: text("name").notNull(),
+        // Defaulted so existing rows — all contracting entities — stay valid.
+        kind: text("kind")
+            .notNull()
+            .default(DEFAULT_WATCH_TARGET_KIND)
+            .$type<WatchTargetKind>(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
     },
     (table) => [
@@ -67,6 +81,10 @@ export const watchlistEntities = pgTable(
         check(
             "watchlist_entities_nit_not_empty",
             sql`length(trim(${table.nit})) > 0`,
+        ),
+        check(
+            "watchlist_entities_kind_valid",
+            sql`${table.kind} in ('contratante', 'contratista')`,
         ),
     ],
 );

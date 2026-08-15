@@ -20,6 +20,7 @@ export function toWatchlistEntity(row: WatchlistEntityRow): WatchlistEntity {
         watchlistId: row.watchlistId,
         nit: row.nit,
         name: row.name,
+        kind: row.kind,
         createdAt: row.createdAt.toISOString(),
     };
 }

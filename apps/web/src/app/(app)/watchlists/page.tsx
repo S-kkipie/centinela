@@ -13,7 +13,7 @@ export default async function WatchlistsPage() {
                         Vigilancia · Entidades
                     </p>
                     <h1 className="mt-1.5 font-display font-semibold text-2xl text-foreground tracking-tight md:text-3xl">
-                        Entidades vigiladas
+                        Frentes de vigilancia
                     </h1>
                     <p className="mt-1.5 max-w-[52ch] text-muted-foreground text-sm">
                         Dile al agente qué entidades contratantes vigilar. Cada

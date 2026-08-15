@@ -1,0 +1,2 @@
+ALTER TABLE "watchlist_entities" ADD COLUMN "kind" text DEFAULT 'contratante' NOT NULL;--> statement-breakpoint
+ALTER TABLE "watchlist_entities" ADD CONSTRAINT "watchlist_entities_kind_valid" CHECK ("watchlist_entities"."kind" in ('contratante', 'contratista'));

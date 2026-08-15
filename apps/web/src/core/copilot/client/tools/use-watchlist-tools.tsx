@@ -80,7 +80,7 @@ function completeLine(result: string) {
 
 /**
  * Copilot human-in-the-loop tools over watchlists. Registers `proposeWatchlist`
- * (create a new vigilada) and `addEntitiesToWatchlist` (extend an existing one).
+ * (create a new frente) and `addEntitiesToWatchlist` (extend an existing one).
  * Both pause the agent on a preview card until the user confirms; nothing is
  * written until then. Mount once inside the authenticated tree (the orchestrator
  * wires it into use-centinela-copilot); inert until then.
@@ -99,8 +99,11 @@ export function useWatchlistTools() {
     useHumanInTheLoop({
         name: "proposeWatchlist",
         description:
-            "Propón crear una nueva vigilada (watchlist) con entidades a vigilar. " +
-            "Cada entidad necesita su NIT y nombre. NO inventes NITs: si no tienes " +
+            "Propón crear un nuevo frente con sus objetivos. Cada objetivo lleva " +
+            "kind: 'contratante' (entidad que abre procesos) o 'contratista' " +
+            "(empresa o persona que los gana, y que el agente seguirá en TODAS " +
+            "las entidades del país, no solo en este frente). " +
+            "Cada objetivo necesita su NIT y nombre. NO inventes NITs: si no tienes " +
             "un NIT fundado en la conversación o el contexto, pregúntaselo al " +
             "usuario antes de llamar esta herramienta. No se escribe nada hasta que " +
             "el usuario confirme en la tarjeta.",
@@ -113,7 +116,7 @@ export function useWatchlistTools() {
                         execute={() =>
                             confirmProposeWatchlist(props.args, deps)
                         }
-                        heading="Vigilada propuesta"
+                        heading="Frente propuesto"
                         name={props.args.name}
                         respond={props.respond}
                     />
@@ -129,8 +132,8 @@ export function useWatchlistTools() {
     useHumanInTheLoop({
         name: "addEntitiesToWatchlist",
         description:
-            "Agrega entidades a una vigilada (watchlist) existente. Recibe el " +
-            "watchlistId y las entidades (NIT + nombre). NO inventes NITs: pídelos " +
+            "Agrega objetivos a un frente existente. Recibe el " +
+            "watchlistId y los objetivos (NIT + nombre + kind). NO inventes NITs: pídelos " +
             "al usuario si no los tienes. No se escribe nada hasta que el usuario " +
             "confirme en la tarjeta.",
         parameters: addEntitiesToWatchlistParams,
@@ -140,7 +143,7 @@ export function useWatchlistTools() {
                     <HitlConfirmCard
                         entities={props.args.entities}
                         execute={() => confirmAddEntities(props.args, deps)}
-                        heading="Agregar a vigilada"
+                        heading="Agregar al frente"
                         respond={props.respond}
                     />
                 );

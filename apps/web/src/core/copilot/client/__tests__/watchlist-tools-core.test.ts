@@ -17,8 +17,16 @@ import {
 const proposal = {
     name: "Infraestructura Medellín",
     entities: [
-        { nit: "890905211", entityName: "Alcaldía de Medellín" },
-        { nit: "800000001", entityName: "EPM" },
+        {
+            nit: "890905211",
+            entityName: "Alcaldía de Medellín",
+            kind: "contratante" as const,
+        },
+        {
+            nit: "800000001",
+            entityName: "EPM",
+            kind: "contratante" as const,
+        },
     ],
 };
 
@@ -58,6 +66,41 @@ describe("param schemas", () => {
         ).toThrowError();
     });
 
+    // A model that omits the kind must still produce a valid target rather
+    // than failing validation — contracting entity is the safe default.
+    it("defaults an omitted kind to contratante", () => {
+        const parsed = proposeWatchlistParams.parse({
+            name: "X",
+            entities: [{ nit: "900111", entityName: "Sin tipo" }],
+        });
+        expect(parsed.entities[0].kind).toBe("contratante");
+    });
+
+    it("accepts a contractor as a target", () => {
+        const parsed = proposeWatchlistParams.parse({
+            name: "X",
+            entities: [
+                {
+                    nit: "900111",
+                    entityName: "Constructora X",
+                    kind: "contratista",
+                },
+            ],
+        });
+        expect(parsed.entities[0].kind).toBe("contratista");
+    });
+
+    it("rejects a kind that is neither side of a contract", () => {
+        expect(() =>
+            proposeWatchlistParams.parse({
+                name: "X",
+                entities: [
+                    { nit: "900111", entityName: "X", kind: "proveedor" },
+                ],
+            }),
+        ).toThrowError();
+    });
+
     it("addEntitiesToWatchlist requires a watchlistId and entities", () => {
         expect(
             addEntitiesToWatchlistParams.parse({
@@ -81,9 +124,33 @@ describe("payload builders", () => {
     it("maps entityName -> name for the addEntity mutation, trimming", () => {
         expect(
             toAddEntityBodies([
-                { nit: " 890905211 ", entityName: " Alcaldía de Medellín " },
+                {
+                    nit: " 890905211 ",
+                    entityName: " Alcaldía de Medellín ",
+                    kind: "contratante",
+                },
             ]),
-        ).toEqual([{ nit: "890905211", name: "Alcaldía de Medellín" }]);
+        ).toEqual([
+            {
+                nit: "890905211",
+                name: "Alcaldía de Medellín",
+                kind: "contratante",
+            },
+        ]);
+    });
+
+    it("carries the contractor kind through to the mutation body", () => {
+        expect(
+            toAddEntityBodies([
+                {
+                    nit: "900111",
+                    entityName: "Constructora X",
+                    kind: "contratista",
+                },
+            ]),
+        ).toEqual([
+            { nit: "900111", name: "Constructora X", kind: "contratista" },
+        ]);
     });
 });
 
@@ -99,11 +166,19 @@ describe("confirmProposeWatchlist", () => {
         expect(deps.addEntity).toHaveBeenCalledTimes(2);
         expect(deps.addEntity).toHaveBeenNthCalledWith(1, {
             watchlistId: "wl-1",
-            body: { nit: "890905211", name: "Alcaldía de Medellín" },
+            body: {
+                nit: "890905211",
+                name: "Alcaldía de Medellín",
+                kind: "contratante",
+            },
         });
         expect(deps.addEntity).toHaveBeenNthCalledWith(2, {
             watchlistId: "wl-1",
-            body: { nit: "800000001", name: "EPM" },
+            body: {
+                nit: "800000001",
+                name: "EPM",
+                kind: "contratante",
+            },
         });
         expect(result).toEqual({
             ok: true,
@@ -146,7 +221,11 @@ describe("confirmAddEntities", () => {
         expect(deps.addEntity).toHaveBeenCalledTimes(2);
         expect(deps.addEntity).toHaveBeenNthCalledWith(1, {
             watchlistId: "wl-9",
-            body: { nit: "890905211", name: "Alcaldía de Medellín" },
+            body: {
+                nit: "890905211",
+                name: "Alcaldía de Medellín",
+                kind: "contratante",
+            },
         });
         expect(result).toMatchObject({
             ok: true,

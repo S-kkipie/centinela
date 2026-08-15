@@ -13,7 +13,7 @@ import { Spinner } from "@/frontend/components/ui/spinner";
 export function WatchlistPreviewCard({
     name,
     entities,
-    heading = "Vigilada propuesta",
+    heading = "Frente propuesto",
     pending = false,
     error,
     onConfirm,
@@ -21,7 +21,7 @@ export function WatchlistPreviewCard({
 }: {
     name?: string;
     entities: WatchlistEntityInput[];
-    /** "Vigilada propuesta" (create) or "Agregar a vigilada" (extend). */
+    /** "Frente propuesto" (create) or "Agregar al frente" (extend). */
     heading?: string;
     pending?: boolean;
     error?: string;
@@ -106,7 +106,7 @@ export function WatchlistPreviewCard({
 export function WatchlistPreviewSkeleton() {
     return (
         <div className="my-2 flex items-center gap-2 rounded-md border border-rule border-dashed bg-card px-3.5 py-3 font-mono text-muted-foreground text-xs">
-            <Spinner /> Preparando propuesta de vigilada…
+            <Spinner /> Preparando propuesta de frente…
         </div>
     );
 }
