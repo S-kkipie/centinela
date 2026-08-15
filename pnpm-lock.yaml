@@ -84,6 +84,9 @@ importers:
       '@logtape/logtape':
         specifier: ^2.3.1
         version: 2.3.1
+      '@paper-design/shaders-react':
+        specifier: ^0.0.80
+        version: 0.0.80(@types/react@19.2.18)(react@19.2.8)
       '@t3-oss/env-nextjs':
         specifier: ^0.13.11
         version: 0.13.11(typescript@7.0.2)(zod@4.4.3)
@@ -1661,6 +1664,18 @@ packages:
 
   '@oxc-project/types@0.144.0':
     resolution: {integrity: sha512-nuhZIOLuI6TFQ32I/WnUx+SCPY7SdSKwgnFHydAuoS1+Z4BRcaP+RRJmGzl9lw+0OFF7UmaESf7KQRXaNLHypg==}
+
+  '@paper-design/shaders-react@0.0.80':
+    resolution: {integrity: sha512-Y1oxUeh5D2AECo05O+4UYRbaMfQzKKYH3Q5jcvirOcoX0hTPYbezCLn5g94nvcuzxy5LN/uqwsL3jDUp8r3E+A==}
+    peerDependencies:
+      '@types/react': ^18 || ^19
+      react: ^18 || ^19
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  '@paper-design/shaders@0.0.80':
+    resolution: {integrity: sha512-pcabvt5xDlFoEhpjUj4b1tGJMfqb0i5mXifWMNQf6z7FoOJYxYDo7F8R6k0JAh5D/7ouxjX5+N0cIq5WURyQ1Q==}
 
   '@peculiar/asn1-android@2.9.0':
     resolution: {integrity: sha512-ErGsrDbWYhMu/H43L3qohwCwPrjdinn8GGm4Q52evA1u2juJxqkPXv+26vBC35hhMoUkzYIOTLrFzSbXanRU+A==}
@@ -5837,6 +5852,15 @@ snapshots:
   '@opentelemetry/semantic-conventions@1.43.0': {}
 
   '@oxc-project/types@0.144.0': {}
+
+  '@paper-design/shaders-react@0.0.80(@types/react@19.2.18)(react@19.2.8)':
+    dependencies:
+      '@paper-design/shaders': 0.0.80
+      react: 19.2.8
+    optionalDependencies:
+      '@types/react': 19.2.18
+
+  '@paper-design/shaders@0.0.80': {}
 
   '@peculiar/asn1-android@2.9.0':
     dependencies:

@@ -1,19 +1,20 @@
 import Link from "next/link";
+
 import { HoverBorderGradient } from "@/frontend/components/aceternity/hover-border-gradient";
+import { ShaderBackdrop } from "@/frontend/components/landing/shader-backdrop";
 
 export function LandingCierre() {
     return (
-        <section className="border-t border-rule">
-            <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-8 px-4 py-20 sm:px-10">
-                <div className="max-w-[44ch]">
-                    <h2 className="max-w-[20ch] text-2xl sm:text-3xl">
-                        El agente está corriendo ahora mismo.
-                    </h2>
-                    <p className="mt-3 text-secondary-foreground">
-                        Hoy vigila Bogotá. La meta: cada entidad del Estado, y
-                        después cada país donde exista contratación pública.
-                    </p>
-                </div>
+        <section className="relative border-t border-rule">
+            <ShaderBackdrop />
+            <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-start gap-8 px-4 py-24 sm:px-10 md:py-32">
+                <h2 className="max-w-[22ch] text-3xl sm:text-4xl">
+                    Empieza con una entidad. El agente hace el resto.
+                </h2>
+                <p className="max-w-[48ch] text-lg text-secondary-foreground">
+                    Hoy vigila Bogotá. La meta: cada peso público bajo
+                    vigilancia.
+                </p>
                 <Link href="/dashboard" className="rounded-md">
                     <HoverBorderGradient
                         as="div"

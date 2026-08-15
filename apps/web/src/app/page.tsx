@@ -1,10 +1,11 @@
+import { LandingBanderaRoja } from "@/frontend/components/landing/bandera-roja";
 import { LandingCierre } from "@/frontend/components/landing/cierre";
-import { LandingDosCaras } from "@/frontend/components/landing/dos-caras";
-import { LandingEvidenceChain } from "@/frontend/components/landing/evidence-chain";
-import { LandingFirehose } from "@/frontend/components/landing/firehose";
+import { LandingComoFunciona } from "@/frontend/components/landing/como-funciona";
 import { LandingFooter } from "@/frontend/components/landing/footer";
 import { LandingHero } from "@/frontend/components/landing/hero";
 import { LandingNav } from "@/frontend/components/landing/nav";
+import { LandingOportunidad } from "@/frontend/components/landing/oportunidad";
+import { LandingProblema } from "@/frontend/components/landing/problema";
 
 export default function HomePage() {
     return (
@@ -12,9 +13,10 @@ export default function HomePage() {
             <LandingNav />
             <main>
                 <LandingHero />
-                <LandingFirehose />
-                <LandingDosCaras />
-                <LandingEvidenceChain />
+                <LandingProblema />
+                <LandingOportunidad />
+                <LandingBanderaRoja />
+                <LandingComoFunciona />
                 <LandingCierre />
             </main>
             <LandingFooter />
