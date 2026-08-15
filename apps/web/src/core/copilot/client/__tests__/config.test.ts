@@ -25,11 +25,22 @@ describe("copilot config", () => {
         expect(SYSTEM_PROMPT).toMatch(/evidencia|contexto/i);
     });
 
+    // The cold-start chips are the user's first impression of what the copilot
+    // is for: at least one has to ask it to DO something, not explain something.
     it("seeds demo suggestion chips in Spanish", () => {
         expect(SEED_SUGGESTIONS.length).toBeGreaterThanOrEqual(3);
-        expect(SEED_SUGGESTIONS).toContain(
-            "Muéstrame las banderas rojas de esta semana",
-        );
+        expect(
+            SEED_SUGGESTIONS.some((s) => /red|dossier|patr[oó]n|gana/i.test(s)),
+        ).toBe(true);
+    });
+
+    it("tells the model it can open the network and produce documents", () => {
+        expect(SYSTEM_PROMPT).toMatch(/openNetwork/);
+        expect(SYSTEM_PROMPT).toMatch(/patternScan/);
+        expect(SYSTEM_PROMPT).toMatch(/exportDossier/);
+        expect(SYSTEM_PROMPT).toMatch(/draftDenuncia/);
+        // Legal drafts must never be presented as final.
+        expect(SYSTEM_PROMPT).toMatch(/borrador/i);
     });
 
     it("exposes es-CO chat labels", () => {

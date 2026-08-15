@@ -5,6 +5,7 @@ import { useCopilotUiOptional } from "@/core/copilot/client/store";
 import { pickDefaultWatchlist } from "@/core/finding/client/default-watchlist";
 import { useFindingsFeed } from "@/core/finding/client/hooks";
 import { FindingsFeed } from "@/core/finding/client/ui/findings-feed";
+import { TriageRow } from "@/core/finding/client/ui/triage-row";
 import { useWatchlists } from "@/core/watchlist/client/hooks";
 import { NumberTicker } from "@/frontend/components/aceternity/number-ticker";
 import { ConsolaShader } from "@/frontend/components/aceternity/shader-fields";
@@ -15,6 +16,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/frontend/components/ui/select";
+import { cn } from "@/frontend/lib/utils";
 
 const ALL = "__all__";
 
@@ -69,34 +71,30 @@ export function Dashboard() {
             {/* Cabecera de sala: banda de grano tenue + telemetría real */}
             <section className="relative border-rule border-b bg-secondary">
                 <ConsolaShader />
-                <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-8 pb-6 md:px-6">
-                    <div className="flex flex-wrap items-end justify-between gap-6">
-                        <div className="space-y-1.5">
+                <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-5 pb-4 md:px-6">
+                    <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+                        <div className="space-y-1">
                             <p className="label-ops text-signal">
                                 Consola del agente · en vivo
                             </p>
-                            <h1 className="font-display font-semibold text-2xl text-foreground tracking-tight md:text-3xl">
+                            <h1 className="font-display font-semibold text-foreground text-xl tracking-tight md:text-2xl">
                                 Sala de vigilancia
                             </h1>
-                            <p className="max-w-[46ch] text-muted-foreground text-sm">
-                                El agente barre el SECOP, cruza fuentes y
-                                publica aquí cada veredicto con su evidencia.
-                            </p>
                         </div>
                         <div className="w-full space-y-1 sm:w-64">
                             <span className="label-ops text-muted-foreground">
-                                Vigilada
+                                Frente
                             </span>
                             <Select
                                 onValueChange={setSelected}
                                 value={selected}
                             >
                                 <SelectTrigger className="w-full rounded-sm border-rule bg-panel font-mono text-xs">
-                                    <SelectValue placeholder="Vigilada" />
+                                    <SelectValue placeholder="Frente" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-sm border-rule font-mono text-xs">
                                     <SelectItem value={ALL}>
-                                        Todas las vigiladas
+                                        Todos los frentes
                                     </SelectItem>
                                     {watchlists?.map((wl) => (
                                         <SelectItem key={wl.id} value={wl.id}>
@@ -107,49 +105,65 @@ export function Dashboard() {
                             </Select>
                         </div>
                     </div>
-                    <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 border-rule border-t pt-5 sm:grid-cols-4">
-                        <div className="leading-tight">
-                            <dt className="label-ops text-muted-foreground">
-                                Hallazgos
-                            </dt>
-                            <dd className="mt-1.5 font-mono font-semibold text-2xl text-foreground tabular-nums">
-                                <NumberTicker value={stats.total} />
-                            </dd>
-                        </div>
-                        <div className="leading-tight">
-                            <dt className="label-ops text-muted-foreground">
-                                Oportunidades
-                            </dt>
-                            <dd className="mt-1.5 font-mono font-semibold text-2xl text-signal tabular-nums">
-                                <NumberTicker value={stats.oportunidades} />
-                            </dd>
-                        </div>
-                        <div className="leading-tight">
-                            <dt className="label-ops text-muted-foreground">
-                                Banderas rojas
-                            </dt>
-                            <dd className="mt-1.5 font-mono font-semibold text-2xl text-flag tabular-nums">
-                                <NumberTicker value={stats.banderas} />
-                            </dd>
-                        </div>
-                        <div className="leading-tight">
+                    {/* Telemetría en una banda, no en un bloque: la mitad
+                        superior de la consola tiene que ser accionable. */}
+                    <dl className="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2 border-rule border-t pt-3">
+                        <Metric label="Hallazgos" value={stats.total} />
+                        <Metric
+                            label="Oportunidades"
+                            tone="signal"
+                            value={stats.oportunidades}
+                        />
+                        <Metric
+                            label="Banderas rojas"
+                            tone="flag"
+                            value={stats.banderas}
+                        />
+                        <div className="flex items-baseline gap-2">
                             <dt className="label-ops text-muted-foreground">
                                 Último barrido
                             </dt>
-                            <dd className="mt-1.5 font-mono text-foreground text-sm tracking-[0.04em]">
+                            <dd className="font-mono text-foreground text-xs tracking-[0.04em] tabular-nums">
                                 {stats.latest ? formatTs(stats.latest) : "—"}
-                                <span className="mt-1 block label-ops text-muted-foreground">
-                                    sondeo cada 5 s
-                                </span>
                             </dd>
                         </div>
                     </dl>
                 </div>
             </section>
 
-            <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-6">
+            <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-5 md:px-6">
+                <TriageRow watchlistId={watchlistId} />
                 <FindingsFeed watchlistId={watchlistId} />
             </div>
+        </div>
+    );
+}
+
+/** One inline telemetry reading in the header band. */
+function Metric({
+    label,
+    tone,
+    value,
+}: {
+    label: string;
+    tone?: "signal" | "flag";
+    value: number;
+}) {
+    return (
+        <div className="flex items-baseline gap-2">
+            <dt className="label-ops text-muted-foreground">{label}</dt>
+            <dd
+                className={cn(
+                    "font-mono font-semibold text-base tabular-nums",
+                    tone === "signal"
+                        ? "text-signal"
+                        : tone === "flag"
+                          ? "text-flag"
+                          : "text-foreground",
+                )}
+            >
+                <NumberTicker value={value} />
+            </dd>
         </div>
     );
 }

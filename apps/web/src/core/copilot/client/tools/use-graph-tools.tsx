@@ -58,7 +58,13 @@ export function useGraphTools() {
                 "Centra y resalta un NIT concreto en la red de contratistas. Úsalo cuando el usuario quiera ver un contratista o entidad específica.",
             parameters: focusNodeParams,
             handler: async ({ nit }) => {
-                ui.focusNit(nit);
+                // Highlighting a node the user cannot see is not an answer:
+                // put the network on screen in the same call.
+                ui.openNetwork({ nit });
+                ui.pushActivity({
+                    kind: "copiloto",
+                    text: `NIT ${nit} resaltado en la red.`,
+                });
                 return { focused: nit };
             },
             render: ({ args }) =>
@@ -77,9 +83,14 @@ export function useGraphTools() {
                 "Encuentra la cadena de relaciones entre dos NITs en la red de contratistas ya cargada. Úsalo para '¿hay conexión entre X y Y?'.",
             parameters: traceRelationParams,
             handler: async ({ fromNit, toNit }) => {
-                ui.focusNit(fromNit);
                 const result = tracePath(readEdges(), fromNit, toNit);
                 if ("error" in result) return { error: result.error };
+                // Only open the network once there is a chain to look at.
+                ui.openNetwork({ nit: fromNit });
+                ui.pushActivity({
+                    kind: "copiloto",
+                    text: `Cadena trazada entre ${fromNit} y ${toNit}: ${result.path.length} ${result.path.length === 1 ? "relación" : "relaciones"}.`,
+                });
                 return {
                     hops: result.path.length,
                     path: result.path.map((e) => ({

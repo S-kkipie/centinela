@@ -25,6 +25,35 @@ export type FindingFilter = {
     sinceDays?: number;
 };
 
+/**
+ * Regions of the console the copilot can drive the user's eyes to. The matching
+ * DOM node carries `data-reveal="<target>"`; `useRevealTarget` does the scroll.
+ */
+export const REVEAL_TARGETS = ["triage", "inbox", "informe", "red"] as const;
+export type RevealTarget = (typeof REVEAL_TARGETS)[number];
+
+/**
+ * A scroll command with its justification. `nonce` makes repeats distinct:
+ * "take me back to the inbox" twice in a row must move the page twice.
+ */
+export type RevealCommand = {
+    target: RevealTarget;
+    /** Shown in the activity ticker — the user must know why the page moved. */
+    reason: string;
+    nonce: number;
+};
+
+/** One line in the agent's activity log. Newest first. */
+export type ActivityEntry = {
+    id: string;
+    at: string;
+    text: string;
+    kind: "barrido" | "bandera" | "copiloto";
+};
+
+/** Beyond this the ticker is scrollback nobody reads. */
+export const MAX_ACTIVITY = 30;
+
 export type CopilotUiState = {
     /** null = copilot is not overriding the feed's own filters. */
     findingFilter: FindingFilter | null;
@@ -41,6 +70,20 @@ export type CopilotUiState = {
      * what the user is looking at, that is a one-shot copilot command.
      */
     selectedFindingId: string | null;
+    /**
+     * The contractor network as an overlay. The full network used to live at the
+     * bottom of the page, below everything — nobody scrolled that far, so the
+     * copilot could never actually show it. As an overlay it needs no scroll.
+     */
+    networkOpen: boolean;
+    /** Scopes the overlay to one finding's relations; null = the whole watchlist. */
+    networkFindingId: string | null;
+    /** Pending scroll command; consumed by `useRevealTarget`. */
+    reveal: RevealCommand | null;
+    /** What the agent has done, newest first. */
+    activity: ActivityEntry[];
+    /** ISO stamp of the opening briefing, so it is delivered once per session. */
+    briefingAt: string | null;
 };
 
 export const initialCopilotUiState: CopilotUiState = {
@@ -50,6 +93,11 @@ export const initialCopilotUiState: CopilotUiState = {
     chatOpen: true,
     selectedWatchlistId: null,
     selectedFindingId: null,
+    networkOpen: false,
+    networkFindingId: null,
+    reveal: null,
+    activity: [],
+    briefingAt: null,
 };
 
 export type CopilotUiAction =
@@ -58,7 +106,13 @@ export type CopilotUiAction =
     | { type: "focusNit"; nit: string | null }
     | { type: "setChatOpen"; open: boolean }
     | { type: "setSelectedWatchlist"; watchlistId: string | null }
-    | { type: "setSelectedFinding"; findingId: string | null };
+    | { type: "setSelectedFinding"; findingId: string | null }
+    | { type: "openNetwork"; nit?: string | null; findingId?: string | null }
+    | { type: "closeNetwork" }
+    | { type: "reveal"; target: RevealTarget; reason: string }
+    | { type: "consumeReveal"; nonce: number }
+    | { type: "pushActivity"; entry: ActivityEntry }
+    | { type: "setBriefingAt"; at: string };
 
 /**
  * Panels publish their selection from effects, so a no-op update MUST return
@@ -90,6 +144,45 @@ export function copilotUiReducer(
             return set(state, "selectedWatchlistId", action.watchlistId);
         case "setSelectedFinding":
             return set(state, "selectedFindingId", action.findingId);
+        case "openNetwork":
+            return {
+                ...state,
+                networkOpen: true,
+                networkFindingId: action.findingId ?? null,
+                // A NIT is optional: "open the network" with no argument still
+                // has to keep whatever was highlighted before.
+                focusNit:
+                    action.nit === undefined ? state.focusNit : action.nit,
+            };
+        case "closeNetwork":
+            return state.networkOpen
+                ? { ...state, networkOpen: false, networkFindingId: null }
+                : state;
+        case "reveal":
+            return {
+                ...state,
+                reveal: {
+                    target: action.target,
+                    reason: action.reason,
+                    nonce: (state.reveal?.nonce ?? 0) + 1,
+                },
+            };
+        case "consumeReveal":
+            // Nonce-guarded: a command issued while the previous one was being
+            // consumed must survive, or the second scroll never happens.
+            return state.reveal?.nonce === action.nonce
+                ? { ...state, reveal: null }
+                : state;
+        case "pushActivity":
+            return {
+                ...state,
+                activity: [action.entry, ...state.activity].slice(
+                    0,
+                    MAX_ACTIVITY,
+                ),
+            };
+        case "setBriefingAt":
+            return set(state, "briefingAt", action.at);
         default:
             return state;
     }
@@ -141,6 +234,15 @@ export type CopilotUiApi = {
     setChatOpen(open: boolean): void;
     setSelectedWatchlist(watchlistId: string | null): void;
     setSelectedFinding(findingId: string | null): void;
+    openNetwork(opts?: {
+        nit?: string | null;
+        findingId?: string | null;
+    }): void;
+    closeNetwork(): void;
+    reveal(target: RevealTarget, reason: string): void;
+    consumeReveal(nonce: number): void;
+    pushActivity(entry: Omit<ActivityEntry, "id" | "at">): void;
+    setBriefingAt(at: string): void;
 };
 
 const CopilotUiContext = createContext<CopilotUiApi | null>(null);
@@ -167,6 +269,26 @@ export function CopilotUiProvider({ children }: { children: ReactNode }) {
                 dispatch({ type: "setSelectedWatchlist", watchlistId }),
             setSelectedFinding: (findingId: string | null) =>
                 dispatch({ type: "setSelectedFinding", findingId }),
+            openNetwork: (opts?: {
+                nit?: string | null;
+                findingId?: string | null;
+            }) => dispatch({ type: "openNetwork", ...opts }),
+            closeNetwork: () => dispatch({ type: "closeNetwork" }),
+            reveal: (target: RevealTarget, reason: string) =>
+                dispatch({ type: "reveal", target, reason }),
+            consumeReveal: (nonce: number) =>
+                dispatch({ type: "consumeReveal", nonce }),
+            pushActivity: (entry: Omit<ActivityEntry, "id" | "at">) =>
+                dispatch({
+                    type: "pushActivity",
+                    entry: {
+                        ...entry,
+                        id: crypto.randomUUID(),
+                        at: new Date().toISOString(),
+                    },
+                }),
+            setBriefingAt: (at: string) =>
+                dispatch({ type: "setBriefingAt", at }),
         }),
         [],
     );

@@ -9,7 +9,7 @@ import { useWatchlist, useWatchlists } from "@/core/watchlist/client/hooks";
 
 /**
  * Feeds the copilot a compact digest of app state so "este proceso" or
- * "mis vigiladas" resolve without the user repeating ids. Evidence bodies
+ * "mis frentes" resolve without the user repeating ids. Evidence bodies
  * stay out — explainFinding fetches those on demand.
  */
 export function useCopilotAppContext() {
@@ -19,7 +19,7 @@ export function useCopilotAppContext() {
 
     useAgentContext({
         description:
-            "Vigiladas (watchlists) del usuario: entidades contratantes que el agente barre cada 2 horas",
+            "Frentes del usuario: grupos con nombre de objetivos (contratantes y contratistas) que el agente barre cada 2 horas",
         value: (watchlists ?? []).map((w) => ({ id: w.id, name: w.name })),
     });
 
@@ -38,7 +38,7 @@ export function useCopilotAppContext() {
 
     useAgentContext({
         description:
-            "Estado de UI: vigilada seleccionada en el Panel, filtro activo del inbox, hallazgo enfocado y NIT resaltado en el grafo (null = ninguno)",
+            "Estado de UI: frente seleccionado en el Panel, filtro activo del inbox, hallazgo enfocado y NIT resaltado en el grafo (null = ninguno)",
         value: state,
     });
 
@@ -83,7 +83,7 @@ export function useCopilotAppContext() {
 
     useAgentContext({
         description:
-            "Red de contratistas de la vigilada seleccionada (el grafo que el usuario ve en 'Red general de contratistas'). Nodos = NIT; aristas = relación detectada entre dos NIT (adjudicatario: ganó un contrato de esa entidad; representante_legal: persona que representa a esa empresa). flagged = tocado por una BANDERA_ROJA. degree = número de conexiones. watched=true marca la ENTIDAD VIGILADA: es el centro de la red por construcción (toda adjudicación suya la toca), así que su degree alto NO es señal de nada. La concentración que importa se juzga entre contrapartes: topCounterparty es la más conectada que no es la entidad vigilada.",
+            "Red de contratistas del frente seleccionado (el grafo que el usuario ve en 'Red general de contratistas'). Nodos = NIT; aristas = relación detectada entre dos NIT (adjudicatario: ganó un contrato de esa entidad; representante_legal: persona que representa a esa empresa). flagged = tocado por una BANDERA_ROJA. degree = número de conexiones. watched=true marca un OBJETIVO del frente: es el centro de la red por construcción (toda adjudicación suya la toca), así que su degree alto NO es señal de nada. La concentración que importa se juzga entre contrapartes: topCounterparty es la más conectada que no es un objetivo del frente.",
         value: graphSummary,
     });
 }

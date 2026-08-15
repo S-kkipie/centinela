@@ -131,10 +131,13 @@ function FocusController({ focusNit }: { focusNit: string | null }) {
 export function ContractorGraph({
     watchlistId,
     findingId,
+    heightClass,
 }: {
     watchlistId?: string;
     /** Si se pasa, la red se acota a las relaciones de ese hallazgo. */
     findingId?: string;
+    /** Alto del lienzo; por defecto el inline. El overlay lo llena todo. */
+    heightClass?: string;
 }) {
     const { data, isLoading } = useGraph(watchlistId);
     // Shares the feed's react-query cache; used to flag BANDERA_ROJA relations.
@@ -162,7 +165,7 @@ export function ContractorGraph({
     if (!watchlistId)
         return (
             <p className="text-muted-foreground text-sm">
-                Selecciona una vigilada para ver la red de contratistas.
+                Selecciona un frente para ver la red de contratistas.
             </p>
         );
     if (isLoading)
@@ -181,11 +184,11 @@ export function ContractorGraph({
         );
 
     return (
-        <div className="space-y-2">
+        <div className="flex min-h-0 flex-1 flex-col gap-2">
             <div
                 className={cn(
                     "bg-grid-ops w-full overflow-hidden rounded-md border border-rule bg-panel",
-                    findingId ? "h-[320px]" : "h-[480px]",
+                    heightClass ?? (findingId ? "h-[320px]" : "h-[480px]"),
                 )}
                 style={flowTheme}
             >

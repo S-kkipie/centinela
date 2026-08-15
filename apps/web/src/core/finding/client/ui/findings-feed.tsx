@@ -1,5 +1,6 @@
 "use client";
 
+import { MaximizeIcon } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -8,6 +9,7 @@ import {
 } from "@/core/copilot/client/store";
 import { useFindingsFeed } from "@/core/finding/client/hooks";
 import { ContractorGraph } from "@/core/finding/client/ui/contractor-graph";
+import { NetworkTeaser } from "@/core/finding/client/ui/network-teaser";
 import type { Finding } from "@/core/finding/domain/types";
 import { ScrollArea } from "@/frontend/components/ui/scroll-area";
 import { Spinner } from "@/frontend/components/ui/spinner";
@@ -110,6 +112,7 @@ function FindingReport({
     finding: Finding;
     watchlistId?: string;
 }) {
+    const copilot = useCopilotUiOptional();
     const isRed = finding.kind === "BANDERA_ROJA";
     return (
         <article>
@@ -179,9 +182,21 @@ function FindingReport({
                 )}
 
                 <section>
-                    <h4 className="label-ops text-muted-foreground">
-                        Red de contratistas del hallazgo
-                    </h4>
+                    <div className="flex items-center justify-between gap-3">
+                        <h4 className="label-ops text-muted-foreground">
+                            Red de contratistas del hallazgo
+                        </h4>
+                        <button
+                            className="label-ops flex items-center gap-1 text-muted-foreground transition-colors hover:text-signal"
+                            onClick={() =>
+                                copilot?.openNetwork({ findingId: finding.id })
+                            }
+                            type="button"
+                        >
+                            <MaximizeIcon className="size-3" />
+                            Ampliar
+                        </button>
+                    </div>
                     <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
                         Cada nodo es un NIT que aparece en las fuentes; cada
                         línea, una relación detectada. Rojo = tocado por una
@@ -272,7 +287,10 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
     return (
         <div className="space-y-6">
             <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-                <section className="min-w-0 self-start lg:sticky lg:top-16">
+                <section
+                    className="min-w-0 self-start lg:sticky lg:top-16"
+                    data-reveal="inbox"
+                >
                     <div className="overflow-hidden rounded-lg border border-rule bg-card">
                         <header className="flex items-center justify-between border-rule border-b bg-secondary/60 px-3.5 py-2.5">
                             <h2 className="label-ops text-muted-foreground">
@@ -310,6 +328,7 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
 
                 <section
                     className="min-w-0 self-start lg:sticky lg:top-16"
+                    data-reveal="informe"
                     ref={reportRef}
                 >
                     <div className="overflow-hidden rounded-lg border border-rule bg-card">
@@ -330,20 +349,8 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
                 </section>
             </div>
 
-            {/* Red completa de la vigilada: todos los NITs y relaciones */}
-            <section className="min-w-0 overflow-hidden rounded-lg border border-rule bg-card">
-                <header className="flex items-center justify-between border-rule border-b bg-secondary/60 px-3.5 py-2.5">
-                    <h2 className="label-ops text-muted-foreground">
-                        Red general de contratistas
-                    </h2>
-                    <span className="label-ops text-muted-foreground">
-                        toda la vigilada
-                    </span>
-                </header>
-                <div className="p-3.5">
-                    <ContractorGraph watchlistId={watchlistId} />
-                </div>
-            </section>
+            {/* La red completa vive en un overlay: aquí solo su titular. */}
+            <NetworkTeaser watchlistId={watchlistId} />
         </div>
     );
 }

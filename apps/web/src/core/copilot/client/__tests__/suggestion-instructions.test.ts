@@ -17,7 +17,7 @@ describe("buildSuggestionInstructions", () => {
             findingCounts: { oportunidades: 0, banderas: 0 },
             topCounterpartyNit: null,
         });
-        expect(out).toMatch(/vigil/i); // "vigilar una entidad" / "la vigilada"
+        expect(out).toMatch(/vigil|frente/i); // "vigilar una entidad" / "el frente"
         expect(out).not.toMatch(/BANDERA_ROJA/);
     });
 

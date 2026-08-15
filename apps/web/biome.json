@@ -3,7 +3,7 @@
     "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
     "files": {
         "ignoreUnknown": true,
-        "includes": ["**", "!public/mocks/**"]
+        "includes": ["**", "!public/mocks"]
     },
     "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 4 },
     "css": { "parser": { "tailwindDirectives": true } },

@@ -172,4 +172,26 @@
         letter-spacing: 0.08em;
         text-transform: uppercase;
     }
+    /* the copilot moved the page: say which region it moved you to */
+    .reveal-halo {
+        animation: reveal-halo 1.8s ease-out 1;
+        border-radius: 0.5rem;
+    }
+    @keyframes reveal-halo {
+        0% {
+            box-shadow: 0 0 0 0 var(--color-accent-signal);
+        }
+        20% {
+            box-shadow: 0 0 0 4px
+                color-mix(in srgb, var(--color-accent-signal) 45%, transparent);
+        }
+        100% {
+            box-shadow: 0 0 0 6px transparent;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .reveal-halo {
+            animation-duration: 0.01ms;
+        }
+    }
 }

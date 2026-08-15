@@ -18,7 +18,10 @@ export function Conversation({
     ...props
 }: ComponentProps<"div"> & { ref?: Ref<HTMLDivElement> }) {
     return (
-        <ScrollArea className={cn("flex-1", className)} viewportRef={ref}>
+        <ScrollArea
+            className={cn("min-h-0 flex-1", className)}
+            viewportRef={ref}
+        >
             <div {...props} />
         </ScrollArea>
     );

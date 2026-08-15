@@ -36,7 +36,8 @@ function filterLabel(args: z.infer<typeof filterFindingsParams>): string {
  */
 export function useFindingTools() {
     const router = useRouter();
-    const { setFindingFilter, focusFinding } = useCopilotUi();
+    const { setFindingFilter, focusFinding, reveal, pushActivity } =
+        useCopilotUi();
     const { data: feed } = useFindingsFeed();
 
     // `useFrontendTool` registers the tool object once, so a handler that closes
@@ -52,12 +53,21 @@ export function useFindingTools() {
     useFrontendTool({
         name: "filterFindings",
         description:
-            "Filtra el inbox de hallazgos del Panel por tipo (OPORTUNIDAD o BANDERA_ROJA), entidad (subcadena del nombre), recencia en días y/o vigilada. Sin parámetros limpia el filtro. Navega al Panel si hace falta.",
+            "Filtra el inbox de hallazgos del Panel por tipo (OPORTUNIDAD o BANDERA_ROJA), entidad (subcadena del nombre), recencia en días y/o frente. Sin parámetros limpia el filtro. Navega al Panel si hace falta.",
         parameters: filterFindingsParams,
         handler: async (args) => {
             const filter = toFindingFilter(args);
             setFindingFilter(filter);
             router.push("/dashboard");
+            // The inbox may be off-screen; a filter nobody sees applied reads
+            // as a copilot that did nothing.
+            reveal("inbox", `Filtro: ${filterLabel(args)}`);
+            pushActivity({
+                kind: "copiloto",
+                text: filter
+                    ? `Inbox filtrado: ${filterLabel(args)}.`
+                    : "Filtro del inbox limpiado.",
+            });
             return filter
                 ? `Filtro aplicado: ${filterLabel(args)}`
                 : "Filtro limpiado";
@@ -79,6 +89,11 @@ export function useFindingTools() {
             if (!finding) return { error: "hallazgo no encontrado" };
             focusFinding(finding.id);
             router.push("/dashboard");
+            reveal("informe", `Informe de "${finding.title}"`);
+            pushActivity({
+                kind: "copiloto",
+                text: `Informe abierto: ${finding.title}.`,
+            });
             return `Abriendo: ${finding.title}`;
         },
     });

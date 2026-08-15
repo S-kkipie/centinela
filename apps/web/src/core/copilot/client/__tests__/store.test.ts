@@ -13,6 +13,11 @@ describe("copilotUiReducer", () => {
             chatOpen: true,
             selectedWatchlistId: null,
             selectedFindingId: null,
+            networkOpen: false,
+            networkFindingId: null,
+            reveal: null,
+            activity: [],
+            briefingAt: null,
         });
     });
 
@@ -145,6 +150,114 @@ describe("copilotUiReducer", () => {
             nit: null,
         });
         expect(cleared.focusNit).toBeNull();
+    });
+});
+
+describe("copilotUiReducer · network overlay", () => {
+    it("opens centred on a NIT and scoped to a finding", () => {
+        const next = copilotUiReducer(initialCopilotUiState, {
+            type: "openNetwork",
+            nit: "900111",
+            findingId: "f-3",
+        });
+        expect(next.networkOpen).toBe(true);
+        expect(next.focusNit).toBe("900111");
+        expect(next.networkFindingId).toBe("f-3");
+    });
+
+    // "Open the network" with no argument must not wipe an existing highlight.
+    it("keeps the current highlight when no NIT is given", () => {
+        const focused = copilotUiReducer(initialCopilotUiState, {
+            type: "focusNit",
+            nit: "900111",
+        });
+        const opened = copilotUiReducer(focused, { type: "openNetwork" });
+        expect(opened.focusNit).toBe("900111");
+        expect(opened.networkFindingId).toBeNull();
+    });
+
+    it("clears the finding scope on close and is a no-op when already closed", () => {
+        const opened = copilotUiReducer(initialCopilotUiState, {
+            type: "openNetwork",
+            findingId: "f-3",
+        });
+        const closed = copilotUiReducer(opened, { type: "closeNetwork" });
+        expect(closed.networkOpen).toBe(false);
+        expect(closed.networkFindingId).toBeNull();
+        expect(copilotUiReducer(closed, { type: "closeNetwork" })).toBe(closed);
+    });
+});
+
+describe("copilotUiReducer · reveal", () => {
+    it("stamps a nonce so the same command twice still moves the page", () => {
+        const first = copilotUiReducer(initialCopilotUiState, {
+            type: "reveal",
+            target: "inbox",
+            reason: "Filtro aplicado",
+        });
+        const second = copilotUiReducer(first, {
+            type: "reveal",
+            target: "inbox",
+            reason: "Filtro aplicado",
+        });
+        expect(first.reveal?.nonce).toBe(1);
+        expect(second.reveal?.nonce).toBe(2);
+    });
+
+    it("consumes only the command it was issued for", () => {
+        const first = copilotUiReducer(initialCopilotUiState, {
+            type: "reveal",
+            target: "inbox",
+            reason: "a",
+        });
+        const second = copilotUiReducer(first, {
+            type: "reveal",
+            target: "red",
+            reason: "b",
+        });
+        // A late consume for the previous nonce must not drop the new command.
+        const stale = copilotUiReducer(second, {
+            type: "consumeReveal",
+            nonce: 1,
+        });
+        expect(stale.reveal?.target).toBe("red");
+        expect(
+            copilotUiReducer(stale, { type: "consumeReveal", nonce: 2 }).reveal,
+        ).toBeNull();
+    });
+});
+
+describe("copilotUiReducer · activity log", () => {
+    const entry = (id: string) => ({
+        id,
+        at: "2026-08-15T12:00:00.000Z",
+        text: `evento ${id}`,
+        kind: "barrido" as const,
+    });
+
+    it("prepends, newest first", () => {
+        const one = copilotUiReducer(initialCopilotUiState, {
+            type: "pushActivity",
+            entry: entry("a"),
+        });
+        const two = copilotUiReducer(one, {
+            type: "pushActivity",
+            entry: entry("b"),
+        });
+        expect(two.activity.map((e) => e.id)).toEqual(["b", "a"]);
+    });
+
+    it("caps the log so a long session cannot grow unbounded", async () => {
+        const { MAX_ACTIVITY } = await import("@/core/copilot/client/store");
+        let state = initialCopilotUiState;
+        for (let i = 0; i < MAX_ACTIVITY + 10; i++) {
+            state = copilotUiReducer(state, {
+                type: "pushActivity",
+                entry: entry(`e-${i}`),
+            });
+        }
+        expect(state.activity).toHaveLength(MAX_ACTIVITY);
+        expect(state.activity[0].id).toBe(`e-${MAX_ACTIVITY + 9}`);
     });
 });
 
