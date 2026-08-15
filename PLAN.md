@@ -64,6 +64,23 @@ En `apps/agent` (CF Agents SDK · Durable Objects · Queues · Workflows).
 
 ## Contratos compartidos (dueño: orquestador — cambios se piden, no se hacen)
 
+**Los contratos ya son código: paquete `@centinela/contracts`**
+(`packages/contracts`). Importar de ahí, no copiar tipos:
+
+- `@centinela/contracts/finding` — `FindingIngest`, `FindingKind`,
+  `validateFindingIngest()` (WS2 valida el body del ingest con esto; WS3
+  construye el objeto con estos tipos).
+- `@centinela/contracts/croma` — interfaz `CromaClient` (9 métodos, uno por
+  endpoint de AGENTS.md) + tipos de datos (`Tender`, `CompanyRecord`, …). WS1
+  la implementa; WS3 la stubea mientras tanto. Todos los records llevan `raw`.
+
+Añadir como dep workspace: `"@centinela/contracts": "workspace:*"`.
+
+Secret compartido `AGENT_INGEST_KEY` ya generado en `apps/web/.env` y
+`apps/agent/.dev.vars` (+ `WEB_API_URL` para el agente).
+
+Boceto original (superseded por el paquete — ante duda, manda el paquete):
+
 ```ts
 // @centinela/croma (WS1 publica, WS2/WS3 consumen)
 interface CromaClient {

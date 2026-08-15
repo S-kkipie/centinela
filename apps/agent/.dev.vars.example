@@ -1,3 +1,5 @@
 # Copy to .dev.vars for local `wrangler dev`. Never commit real values.
 CROMA_API_KEY=croma_test_xxx
 GEMINI_API_KEY=AIza-xxx
+AGENT_INGEST_KEY=shared-secret-for-agent-ingest
+WEB_API_URL=http://localhost:3000
