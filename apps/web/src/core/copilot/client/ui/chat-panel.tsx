@@ -3,6 +3,7 @@
 import {
     UseAgentUpdate,
     useAgent,
+    useCopilotKit,
     useRenderToolCall,
 } from "@copilotkit/react-core/v2";
 import { MessageSquareIcon, XIcon } from "lucide-react";
@@ -48,6 +49,7 @@ export function ChatPanel() {
     // Single mount point for all copilot context + tools (WS-B/WS-C append here).
     useCentinelaCopilot();
 
+    const { copilotkit } = useCopilotKit();
     const { agent } = useAgent({
         updates: [
             UseAgentUpdate.OnMessagesChanged,
@@ -75,7 +77,9 @@ export function ChatPanel() {
         if (!content || running) return;
         agent.addMessage({ id: crypto.randomUUID(), role: "user", content });
         setDraft("");
-        void agent.runAgent();
+        // Run through the core, not the raw AG-UI agent — the core is what
+        // attaches registered frontend tools and useAgentContext entries.
+        void copilotkit.runAgent({ agent });
     }
 
     function onSubmit(event: FormEvent<HTMLFormElement>) {
