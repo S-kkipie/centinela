@@ -1,0 +1,42 @@
+- generic [active] [ref=f21e1]:
+  - generic [ref=f21e2]:
+    - banner [ref=f21e3]:
+      - generic [ref=f21e4]:
+        - generic [ref=f21e5]:
+          - link "CENTINELA" [ref=f21e6] [cursor=pointer]:
+            - /url: /dashboard
+          - navigation [ref=f21e8]:
+            - link "Panel" [ref=f21e9] [cursor=pointer]:
+              - /url: /dashboard
+            - link "Vigiladas" [ref=f21e10] [cursor=pointer]:
+              - /url: /watchlists
+        - generic [ref=f21e11]:
+          - generic [ref=f21e12]: En vivo
+          - generic "smoke@centinela.test" [ref=f21e14]
+          - button "Salir" [ref=f21e15]
+    - main [ref=f21e16]:
+      - generic [ref=f21e18]:
+        - generic [ref=f21e19]:
+          - generic [ref=f21e20]:
+            - paragraph [ref=f21e21]: Consola del agente
+            - heading "Centinela" [level=1] [ref=f21e22]
+            - paragraph [ref=f21e23]: El agente vigila, cruza y expone en vivo.
+          - generic [ref=f21e24]:
+            - text: Vigilada
+            - combobox [ref=f21e25]
+            - combobox [ref=f21e26]
+        - generic [ref=f21e27]:
+          - generic [ref=f21e28]:
+            - generic [ref=f21e29]:
+              - heading "Hallazgos" [level=2] [ref=f21e30]
+              - generic [ref=f21e31]: Feed en vivo
+            - generic [ref=f21e34]:
+              - status "Loading" [ref=f21e35]
+              - text: Cargando feed…
+          - generic [ref=f21e37]:
+            - generic [ref=f21e38]:
+              - heading "Red de contratistas" [level=2] [ref=f21e39]
+              - generic [ref=f21e40]: NIT / relación
+            - paragraph [ref=f21e42]: Selecciona una vigilada para ver la red de contratistas.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f21e48] [cursor=pointer]

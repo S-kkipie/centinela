@@ -1,0 +1,10 @@
+- generic [active] [ref=f22e1]:
+  - main [ref=f22e2]:
+    - generic [ref=f22e3]:
+      - generic [ref=f22e4]:
+        - generic [ref=f22e5]: Acceso · Consola del agente
+        - generic [ref=f22e6]: CENTINELA
+      - status "Loading" [ref=f22e7]
+      - paragraph [ref=f22e9]: Vigilancia de contratación pública · Colombia
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f22e15] [cursor=pointer]

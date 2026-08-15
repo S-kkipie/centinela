@@ -1,9 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock(
-    "@/core/finding/server/services/ingest-finding-service",
-    () => ({ ingestFindingService: vi.fn() }),
-);
+vi.mock("@/core/finding/server/services/ingest-finding-service", () => ({
+    ingestFindingService: vi.fn(),
+}));
 
 import type { FindingIngest } from "@centinela/contracts/finding";
 import { ingestFindingService } from "@/core/finding/server/services/ingest-finding-service";

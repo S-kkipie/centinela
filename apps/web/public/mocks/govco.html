@@ -449,12 +449,12 @@ img,svg{max-width:100%}
 </footer>
 
 <script>
-(function(){
+(()=> {
   var bar=document.getElementById('sticky-cta');
   var hero=document.querySelector('.hero');
   var cta=bar.querySelector('a');
   if(!('IntersectionObserver' in window)){return}
-  var io=new IntersectionObserver(function(entries){
+  var io=new IntersectionObserver((entries)=> {
     var pastFold=!entries[0].isIntersecting;
     bar.classList.toggle('is-visible',pastFold);
     bar.setAttribute('aria-hidden',String(!pastFold));

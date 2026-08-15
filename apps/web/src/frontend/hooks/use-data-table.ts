@@ -11,10 +11,6 @@ import {
     useTable,
 } from "@tanstack/react-table";
 import {
-    type TableFeaturesConfig,
-    tableFeaturesConfig,
-} from "@/frontend/lib/table-features";
-import {
     type Parser,
     parseAsArrayOf,
     parseAsInteger,
@@ -26,6 +22,10 @@ import {
 import * as React from "react";
 import { useDebouncedCallback } from "@/frontend/hooks/use-debounced-callback";
 import { getSortingStateParser } from "@/frontend/lib/parsers";
+import {
+    type TableFeaturesConfig,
+    tableFeaturesConfig,
+} from "@/frontend/lib/table-features";
 import { PAGINATION_LIMIT } from "@/server/constants";
 import type { ExtendedColumnSort } from "../types/data-table";
 

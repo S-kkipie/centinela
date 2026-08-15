@@ -17,9 +17,20 @@ export default async function AuthPage({
     }
 
     return (
-        <main className="flex min-h-svh items-center justify-center p-4">
-            <div className="w-full max-w-sm">
-                <Auth path={path} />
+        <main className="bg-grid-ops relative flex min-h-svh flex-col items-center justify-center p-4">
+            <div className="flex w-full max-w-sm flex-col items-center">
+                <div className="mb-6 flex flex-col items-center gap-2">
+                    <span className="label-ops text-signal">
+                        Acceso · Consola del agente
+                    </span>
+                    <span className="font-display text-2xl font-semibold tracking-tight text-foreground">
+                        CENTINELA
+                    </span>
+                </div>
+                <Auth className="border-rule shadow-none" path={path} />
+                <p className="label-ops mt-6 text-muted-foreground">
+                    Vigilancia de contratación pública · Colombia
+                </p>
             </div>
         </main>
     );

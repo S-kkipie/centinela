@@ -108,8 +108,10 @@
     --color-ink: var(--color-ink);
     /* fonts (variables set by next/font in layout.tsx) */
     --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-    --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-    --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+    --font-display:
+        var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+    --font-mono:
+        var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
 }
 
 @layer base {

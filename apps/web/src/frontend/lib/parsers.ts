@@ -1,5 +1,5 @@
-import { createParser } from "nuqs/server";
 import type { RowData } from "@tanstack/react-table";
+import { createParser } from "nuqs/server";
 import { z } from "zod";
 import type {
     ExtendedColumnFilter,

@@ -126,7 +126,7 @@ export function SignIn({
     return (
         <Card className={cn("w-full max-w-sm", className)}>
             <CardHeader>
-                <CardTitle className="text-xl font-semibold">
+                <CardTitle className="font-display text-xl font-semibold tracking-tight">
                     {localization.auth.signIn}
                 </CardTitle>
             </CardHeader>
@@ -283,7 +283,11 @@ export function SignIn({
                                 )}
 
                                 <div className="flex flex-col gap-3">
-                                    <Button type="submit" disabled={isPending}>
+                                    <Button
+                                        className="label-ops"
+                                        type="submit"
+                                        disabled={isPending}
+                                    >
                                         {signInEmailPending && <Spinner />}
 
                                         {localization.auth.signIn}

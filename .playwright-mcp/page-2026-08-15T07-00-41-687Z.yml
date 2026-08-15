@@ -1,0 +1,27 @@
+- generic [active] [ref=f19e1]:
+  - generic [ref=f19e2]:
+    - banner [ref=f19e3]:
+      - generic [ref=f19e4]:
+        - generic [ref=f19e5]:
+          - link "CENTINELA" [ref=f19e6] [cursor=pointer]:
+            - /url: /dashboard
+          - navigation [ref=f19e8]:
+            - link "Panel" [ref=f19e9] [cursor=pointer]:
+              - /url: /dashboard
+            - link "Vigiladas" [ref=f19e10] [cursor=pointer]:
+              - /url: /watchlists
+        - generic [ref=f19e11]:
+          - generic [ref=f19e12]: En vivo
+          - generic "smoke@centinela.test" [ref=f19e14]
+          - button "Salir" [ref=f19e15]
+    - main [ref=f19e16]:
+      - generic [ref=f19e17]:
+        - generic [ref=f19e18]:
+          - paragraph [ref=f19e19]: Vigilancia · Entidades
+          - heading "Watchlists" [level=1] [ref=f19e20]
+          - paragraph [ref=f19e21]: Entidades contratantes que el agente vigila.
+        - generic [ref=f19e22]:
+          - status "Loading" [ref=f19e23]
+          - text: Cargando watchlists…
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f19e30] [cursor=pointer]

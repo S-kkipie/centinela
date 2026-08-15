@@ -1,5 +1,4 @@
-import type { Column } from "@tanstack/react-table";
-import type { RowData } from "@tanstack/react-table";
+import type { Column, RowData } from "@tanstack/react-table";
 import type { TableFeaturesConfig } from "@/frontend/lib/table-features";
 import type {
     ExtendedColumnFilter,
@@ -29,9 +28,9 @@ export function getCommonPinningStyles<TData extends RowData>({
                   ? "4px 0 4px -4px var(--border) inset"
                   : undefined
             : undefined,
-        left: isPinned === "start" ? `${column.getStart("start")}px` : undefined,
-        right:
-            isPinned === "end" ? `${column.getAfter("end")}px` : undefined,
+        left:
+            isPinned === "start" ? `${column.getStart("start")}px` : undefined,
+        right: isPinned === "end" ? `${column.getAfter("end")}px` : undefined,
         opacity: isPinned ? 0.97 : 1,
         position: isPinned ? "sticky" : "relative",
         background: "var(--background)",

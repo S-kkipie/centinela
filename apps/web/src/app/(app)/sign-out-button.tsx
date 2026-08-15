@@ -8,6 +8,7 @@ export function SignOutButton() {
     const router = useRouter();
     return (
         <Button
+            className="label-ops h-7 rounded-sm border-rule px-2.5 text-muted-foreground hover:text-foreground"
             variant="outline"
             size="sm"
             onClick={async () => {
@@ -15,7 +16,7 @@ export function SignOutButton() {
                 router.push("/auth/sign-in");
             }}
         >
-            Sign out
+            Salir
         </Button>
     );
 }

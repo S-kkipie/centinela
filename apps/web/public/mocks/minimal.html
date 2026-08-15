@@ -515,14 +515,14 @@ a { color: var(--color-accent); text-decoration-thickness: 1px; text-underline-o
 </footer>
 
 <script>
-(function () {
+(() => {
   // Nav frost-on-scroll — rAF-throttled
   var nav = document.getElementById('nav');
   var ticking = false;
   function onScroll() {
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame(function () {
+    requestAnimationFrame(() => {
       nav.classList.toggle('is-scrolled', window.scrollY > 24);
       ticking = false;
     });
@@ -537,7 +537,7 @@ a { color: var(--color-accent); text-decoration-thickness: 1px; text-underline-o
     function step(ts) {
       if (t0 === null) t0 = ts;
       var p = Math.min((ts - t0) / dur, 1);
-      var eased = 1 - Math.pow(1 - p, 3);
+      var eased = 1 - (1 - p) ** 3;
       fig.textContent = String(Math.round(eased * target));
       if (p < 1) requestAnimationFrame(step);
     }

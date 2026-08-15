@@ -1,0 +1,194 @@
+- generic [active] [ref=f26e1]:
+  - generic [ref=f26e2]:
+    - banner [ref=f26e3]:
+      - generic [ref=f26e4]:
+        - link "CENTINELA_" [ref=f26e5] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f26e6]: En vivo
+        - link "Ver el agente en vivo" [ref=f26e10] [cursor=pointer]:
+          - /url: /dashboard
+    - main [ref=f26e11]:
+      - generic [ref=f26e13]:
+        - generic [ref=f26e14]:
+          - paragraph [ref=f26e15]: Agente autónomo · latido cada 2 h · SECOP vía API Croma
+          - heading "Nadie vigila el SECOP a las 3 a.m. Centinela sí." [level=1] [ref=f26e16]:
+            - generic [ref=f26e17]:
+              - generic [ref=f26e18]: Nadie
+              - generic [ref=f26e19]: vigila
+              - generic [ref=f26e20]: el
+              - generic [ref=f26e21]: SECOP
+              - generic [ref=f26e22]: a
+              - generic [ref=f26e23]: las
+              - generic [ref=f26e24]: "3"
+              - generic [ref=f26e25]: a.m.
+              - generic [ref=f26e26]: Centinela
+              - generic [ref=f26e27]: sí.
+          - paragraph [ref=f26e28]: "Un agente vivo, con latido cada 2 horas: barre las licitaciones nuevas del SECOP vía la API Croma, cruza cada proceso contra 9 fuentes estatales y emite un veredicto con la evidencia citada."
+          - generic [ref=f26e29]:
+            - link "Ver el agente en vivo" [ref=f26e30] [cursor=pointer]:
+              - /url: /dashboard
+            - generic [ref=f26e31]: Sin registro. El agente ya está corriendo.
+        - figure "Registro esquemático de un ciclo del agente" [ref=f26e32]:
+          - generic [ref=f26e33]:
+            - generic [ref=f26e34]: Centinela / ciclo
+            - generic [ref=f26e35]: Cada 2 h
+          - generic [ref=f26e36]:
+            - list [ref=f26e37]:
+              - listitem [ref=f26e38]:
+                - generic [ref=f26e39]: "01"
+                - generic [ref=f26e40]: BARRIDO
+                - generic [ref=f26e41]: SECOP · procesos nuevos
+              - listitem [ref=f26e42]:
+                - generic [ref=f26e43]: "02"
+                - generic [ref=f26e44]: COLA
+                - generic [ref=f26e45]: encolados para análisis
+              - listitem [ref=f26e46]:
+                - generic [ref=f26e47]: "03"
+                - generic [ref=f26e48]: WORKFLOW
+                - generic [ref=f26e49]: 9 endpoints Croma
+              - listitem [ref=f26e50]:
+                - generic [ref=f26e51]: "04"
+                - generic [ref=f26e52]: SCORING
+                - generic [ref=f26e53]: Gemini pondera evidencia
+            - separator [ref=f26e54]
+            - list [ref=f26e55]:
+              - listitem [ref=f26e56]:
+                - generic [ref=f26e57]: "05"
+                - generic [ref=f26e58]: BANDERA_ROJA
+                - generic [ref=f26e59]: puntaje 65 · evidencia citada
+              - listitem [ref=f26e60]:
+                - generic [ref=f26e61]: "05"
+                - generic [ref=f26e62]: OPORTUNIDAD
+                - generic [ref=f26e63]: puntaje 85 · ganable
+      - generic [ref=f26e65]:
+        - paragraph [ref=f26e66]: Caudal real · medido por el agente
+        - generic [ref=f26e67]:
+          - generic [ref=f26e68]: "111"
+          - heading "licitaciones nuevas en 3 días. Una sola entidad." [level=2] [ref=f26e69]
+        - paragraph [ref=f26e70]: Eso publicó la Alcaldía de Bogotá mientras usted leía otra cosa. Nadie las revisa todas a mano — Centinela las barre en cada latido y no deja pasar ninguna.
+        - generic [ref=f26e71]:
+          - generic [ref=f26e72]:
+            - term [ref=f26e73]: LATIDO
+            - definition [ref=f26e74]: CADA 2 H
+          - generic [ref=f26e75]:
+            - term [ref=f26e76]: FUENTES
+            - definition [ref=f26e77]: 9 ENDPOINTS ESTATALES
+          - generic [ref=f26e78]:
+            - term [ref=f26e79]: DATOS
+            - definition [ref=f26e80]: 100 % API CROMA
+      - generic [ref=f26e82]:
+        - generic [ref=f26e83]:
+          - heading "Un solo motor. Dos caras." [level=2] [ref=f26e84]
+          - paragraph [ref=f26e85]: Cada proceso recibe un puntaje y un veredicto. La misma cadena de evidencia que le muestra a una PYME honesta qué licitación puede ganar es la que expone una adjudicación amañada.
+        - generic [ref=f26e86]:
+          - generic [ref=f26e88]:
+            - generic [ref=f26e89]:
+              - generic [ref=f26e90]: Oportunidad · 85
+              - generic [ref=f26e91]: "85"
+            - heading "Contrato de servicios de bajo riesgo" [level=3] [ref=f26e92]
+            - paragraph [ref=f26e93]: "Proceso ganable para una PYME: cuantía alcanzable, requisitos proporcionados y un contratante sin señales de captura."
+            - list [ref=f26e94]:
+              - listitem [ref=f26e95]:
+                - generic [ref=f26e96]: RUES
+                - generic [ref=f26e97]: matrícula mercantil verificada
+              - listitem [ref=f26e98]:
+                - generic [ref=f26e99]: SUPERSOCIEDADES
+                - generic [ref=f26e100]: situación societaria consultada
+              - listitem [ref=f26e101]:
+                - generic [ref=f26e102]: RAMA JUDICIAL
+                - generic [ref=f26e103]: historial consultado por NIT
+              - listitem [ref=f26e104]:
+                - generic [ref=f26e105]: SANCIONES
+                - generic [ref=f26e106]: Procuraduría y Contraloría cruzadas
+              - listitem [ref=f26e107]:
+                - generic [ref=f26e108]: VEREDICTO
+                - generic [ref=f26e109]: presentarse — riesgo bajo
+          - generic [ref=f26e111]:
+            - generic [ref=f26e112]:
+              - generic [ref=f26e113]: Bandera_roja · 65
+              - generic [ref=f26e114]: "65"
+            - heading "Historial judicial acumulado del contratista" [level=3] [ref=f26e115]
+            - paragraph [ref=f26e116]: El adjudicatario arrastra procesos en la Rama Judicial que el pliego nunca miró. Centinela los cita, expediente por expediente.
+            - list [ref=f26e117]:
+              - listitem [ref=f26e118]:
+                - generic [ref=f26e119]: RAMA JUDICIAL
+                - generic [ref=f26e120]: procesos vinculados al NIT
+              - listitem [ref=f26e121]:
+                - generic [ref=f26e122]: GRAFO
+                - generic [ref=f26e123]: el NIT queda como nodo con su historial
+              - listitem [ref=f26e124]:
+                - generic [ref=f26e125]: VEREDICTO
+                - generic [ref=f26e126]: revisar — evidencia citada
+        - generic [ref=f26e127]:
+          - generic [ref=f26e128]: Grafo de contratistas
+          - paragraph [ref=f26e129]: "Cada NIT es un nodo. Los hallazgos se conectan entre entidades: un contratista señalado en una alcaldía no vuelve a pasar desapercibido en otra."
+      - generic [ref=f26e131]:
+        - generic [ref=f26e132]:
+          - heading "La cadena de evidencia" [level=2] [ref=f26e133]
+          - paragraph [ref=f26e134]: "9 endpoints de la API Croma, encadenados. Ninguna fuente inventada, ningún dato sin origen: todo veredicto cita de dónde salió."
+        - generic [ref=f26e143]:
+          - generic [ref=f26e144]:
+            - generic [ref=f26e145]: "01"
+            - generic [ref=f26e146]: SECOP
+            - generic [ref=f26e147]: Procesos, pliegos y adjudicaciones — la fuente primaria del barrido.
+            - generic [ref=f26e148]: Vía Croma
+          - generic [ref=f26e149]:
+            - generic [ref=f26e150]: "02"
+            - generic [ref=f26e151]: RUES
+            - generic [ref=f26e152]: Existencia y matrícula mercantil de cada proponente.
+            - generic [ref=f26e153]: Vía Croma
+          - generic [ref=f26e154]:
+            - generic [ref=f26e155]: "03"
+            - generic [ref=f26e156]: Supersociedades
+            - generic [ref=f26e157]: Situación societaria del contratista.
+            - generic [ref=f26e158]: Vía Croma
+          - generic [ref=f26e159]:
+            - generic [ref=f26e160]: "04"
+            - generic [ref=f26e161]: Rama Judicial
+            - generic [ref=f26e162]: Procesos judiciales consultados por NIT.
+            - generic [ref=f26e163]: Vía Croma
+          - generic [ref=f26e164]:
+            - generic [ref=f26e165]: "05"
+            - generic [ref=f26e166]: Procuraduría · Contraloría
+            - generic [ref=f26e167]: Sanciones disciplinarias y responsabilidad fiscal.
+            - generic [ref=f26e168]: Vía Croma
+          - generic [ref=f26e169]:
+            - generic [ref=f26e170]: 9 endpoints · 100 % Croma
+            - paragraph [ref=f26e171]: La cadena corre completa en cada ciclo. Si una fuente no responde, el veredicto lo dice — no lo rellena.
+        - generic [ref=f26e172]:
+          - heading "La arquitectura es parte del pitch" [level=2] [ref=f26e173]
+          - paragraph [ref=f26e174]: "Un agente vivo, no un cron con esteroides: estado durable, colas y workflows sobre Cloudflare, con Gemini como juez."
+        - list [ref=f26e175]:
+          - listitem [ref=f26e176]:
+            - generic [ref=f26e177]: "01"
+            - heading "Barrido" [level=3] [ref=f26e178]
+            - paragraph [ref=f26e179]: El latido despierta al agente y consulta el SECOP.
+            - generic [ref=f26e180]: Durable Object · alarma 2 h
+          - listitem [ref=f26e181]:
+            - generic [ref=f26e182]: "02"
+            - heading "Cola" [level=3] [ref=f26e183]
+            - paragraph [ref=f26e184]: Cada proceso nuevo se encola sin perder ninguno.
+            - generic [ref=f26e185]: Cloudflare Queues
+          - listitem [ref=f26e186]:
+            - generic [ref=f26e187]: "03"
+            - heading "Workflow" [level=3] [ref=f26e188]
+            - paragraph [ref=f26e189]: Los 9 endpoints se consultan con reintentos durables.
+            - generic [ref=f26e190]: Cloudflare Workflows
+          - listitem [ref=f26e191]:
+            - generic [ref=f26e192]: "04"
+            - heading "Scoring" [level=3] [ref=f26e193]
+            - paragraph [ref=f26e194]: Gemini pondera la evidencia y asigna el puntaje.
+            - generic [ref=f26e195]: Gemini
+          - listitem [ref=f26e196]:
+            - generic [ref=f26e197]: "05"
+            - heading "Hallazgo" [level=3] [ref=f26e198]
+            - paragraph [ref=f26e199]: OPORTUNIDAD o BANDERA_ROJA, con la cadena citada.
+            - generic [ref=f26e200]: Dashboard en vivo
+      - generic [ref=f26e202]:
+        - heading "El agente está corriendo ahora mismo." [level=2] [ref=f26e203]
+        - link "Ver el agente en vivo" [ref=f26e204] [cursor=pointer]:
+          - /url: /dashboard
+    - contentinfo [ref=f26e209]:
+      - paragraph [ref=f26e211]: "CENTINELA — agente autónomo de vigilancia de la contratación pública colombiana. Construido para la IA-Hackathon GOV-TECH by Croma. Datos: SECOP y fuentes estatales vía la API Croma (9 endpoints, 100 %). Motor de análisis: Gemini. Infraestructura: Cloudflare Durable Objects, Queues y Workflows. Latido: cada 2 horas. Tipografía: Space Grotesk, Inter Tight, IBM Plex Mono. Bogotá, Colombia — 2026."
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f26e217] [cursor=pointer]

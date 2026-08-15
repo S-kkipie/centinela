@@ -1,0 +1,41 @@
+- generic [active] [ref=f24e1]:
+  - generic [ref=f24e2]:
+    - banner [ref=f24e3]:
+      - generic [ref=f24e4]:
+        - generic [ref=f24e5]:
+          - link "CENTINELA" [ref=f24e6] [cursor=pointer]:
+            - /url: /dashboard
+          - navigation [ref=f24e7]:
+            - link "Panel" [ref=f24e8] [cursor=pointer]:
+              - /url: /dashboard
+            - link "Vigiladas" [ref=f24e9] [cursor=pointer]:
+              - /url: /watchlists
+        - generic [ref=f24e10]:
+          - generic [ref=f24e11]: En vivo
+          - button "Salir" [ref=f24e13]
+    - main [ref=f24e14]:
+      - generic [ref=f24e16]:
+        - generic [ref=f24e17]:
+          - generic [ref=f24e18]:
+            - paragraph [ref=f24e19]: Consola del agente
+            - heading "Centinela" [level=1] [ref=f24e20]
+            - paragraph [ref=f24e21]: El agente vigila, cruza y expone en vivo.
+          - generic [ref=f24e22]:
+            - text: Vigilada
+            - combobox [ref=f24e23]
+            - combobox [ref=f24e24]
+        - generic [ref=f24e25]:
+          - generic [ref=f24e26]:
+            - generic [ref=f24e27]:
+              - heading "Hallazgos" [level=2] [ref=f24e28]
+              - generic [ref=f24e29]: Feed en vivo
+            - generic [ref=f24e32]:
+              - status "Loading" [ref=f24e33]
+              - text: Cargando feed…
+          - generic [ref=f24e35]:
+            - generic [ref=f24e36]:
+              - heading "Red de contratistas" [level=2] [ref=f24e37]
+              - generic [ref=f24e38]: NIT / relación
+            - paragraph [ref=f24e40]: Selecciona una vigilada para ver la red de contratistas.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f24e46] [cursor=pointer]

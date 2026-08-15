@@ -108,7 +108,7 @@ export function ResetPassword({ className }: ResetPasswordProps) {
     return (
         <Card className={cn("w-full max-w-sm", className)}>
             <CardHeader>
-                <CardTitle className="text-xl font-semibold">
+                <CardTitle className="font-display text-xl font-semibold tracking-tight">
                     {localization.auth.resetPassword}
                 </CardTitle>
             </CardHeader>
@@ -306,7 +306,11 @@ export function ResetPassword({ className }: ResetPasswordProps) {
                         )}
 
                         <div className="flex flex-col gap-3">
-                            <Button type="submit" disabled={isPending}>
+                            <Button
+                                        className="label-ops"
+                                        type="submit"
+                                        disabled={isPending}
+                                    >
                                 {isPending && <Spinner />}
 
                                 {localization.auth.resetPassword}

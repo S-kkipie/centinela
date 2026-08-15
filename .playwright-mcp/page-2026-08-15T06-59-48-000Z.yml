@@ -1,0 +1,28 @@
+- generic [active] [ref=f16e1]:
+  - main [ref=f16e2]:
+    - generic [ref=f16e3]:
+      - generic [ref=f16e4]:
+        - generic [ref=f16e5]: Acceso · Consola del agente
+        - generic [ref=f16e6]: CENTINELA
+      - generic [ref=f16e7]:
+        - generic [ref=f16e8]: Iniciar sesión
+        - generic [ref=f16e10]:
+          - generic [ref=f16e13]:
+            - group [ref=f16e14]:
+              - generic [ref=f16e15]: Correo electrónico
+              - textbox "Correo electrónico" [ref=f16e16]:
+                - /placeholder: correo@ejemplo.com
+            - group [ref=f16e17]:
+              - generic [ref=f16e18]: Contraseña
+              - textbox "Contraseña" [ref=f16e19]
+            - button "Iniciar sesión" [ref=f16e21]
+          - generic [ref=f16e22]:
+            - link "¿Olvidó su contraseña?" [ref=f16e23] [cursor=pointer]:
+              - /url: /auth/forgot-password
+            - paragraph [ref=f16e24]:
+              - text: ¿Necesita crear una cuenta?
+              - link "Crear cuenta" [ref=f16e25] [cursor=pointer]:
+                - /url: /auth/sign-up
+      - paragraph [ref=f16e26]: Vigilancia de contratación pública · Colombia
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f16e32] [cursor=pointer]

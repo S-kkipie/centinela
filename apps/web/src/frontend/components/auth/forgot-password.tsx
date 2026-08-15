@@ -84,7 +84,7 @@ export function ForgotPassword({ className }: ForgotPasswordProps) {
     return (
         <Card className={cn("w-full max-w-sm", className)}>
             <CardHeader>
-                <CardTitle className="text-xl font-semibold">
+                <CardTitle className="font-display text-xl font-semibold tracking-tight">
                     {localization.auth.forgotPassword}
                 </CardTitle>
             </CardHeader>
@@ -134,7 +134,11 @@ export function ForgotPassword({ className }: ForgotPasswordProps) {
                         )}
 
                         <div className="flex flex-col gap-3">
-                            <Button type="submit" disabled={isPending}>
+                            <Button
+                                        className="label-ops"
+                                        type="submit"
+                                        disabled={isPending}
+                                    >
                                 {isPending && <Spinner />}
 
                                 {localization.auth.sendResetLink}
