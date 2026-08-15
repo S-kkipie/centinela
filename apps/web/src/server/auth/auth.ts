@@ -5,6 +5,7 @@ import { openAPI } from "better-auth/plugins";
 import { headers } from "next/headers";
 import { cache } from "react";
 import { ServerConfig } from "@/config/server-config";
+import { seedDemoForUser } from "@/core/finding/server/seed/seed-demo-service";
 import { db } from "@/server/drizzle/db";
 import * as authSchema from "@/server/drizzle/schemas/auth-schema";
 
@@ -19,6 +20,25 @@ export const auth = betterAuth({
         enabled: true,
         // Starter keeps verification off so sign-up works with no email provider.
         requireEmailVerification: false,
+    },
+    databaseHooks: {
+        user: {
+            create: {
+                // Seed a demo frente + real findings so a brand-new account
+                // (a judge signing up) lands on a populated console. Best-effort:
+                // never let it break sign-up.
+                async after(user) {
+                    try {
+                        await seedDemoForUser(user.id);
+                    } catch (error) {
+                        logger.error("Demo seed failed for {id}: {error}", {
+                            id: user.id,
+                            error,
+                        });
+                    }
+                },
+            },
+        },
     },
     plugins: [
         openAPI({ disableDefaultReference: !ServerConfig.isDevelopment }),
