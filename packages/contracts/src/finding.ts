@@ -20,7 +20,9 @@ export interface FindingEvidence {
 }
 
 export interface FindingGraphEdge {
+  /** NIT / document id of the source node — NOT a display name (dedup key). */
   from: string;
+  /** NIT / document id of the target node — NOT a display name (dedup key). */
   to: string;
   relation: string;
 }
