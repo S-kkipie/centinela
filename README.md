@@ -79,3 +79,9 @@ pnpm -F @centinela/agent deploy   # wrangler deploy
 
 Scaffold only. Agent loop, Croma integration, scoring, graph, and dashboard
 are stubbed — see `AGENTS.md` for architecture and build plan.
+
+## License
+
+[GNU AGPL-3.0-only](./LICENSE). Because Centinela runs as a network service,
+the AGPL's network clause applies: anyone who offers it over a network must
+make the corresponding source available to its users.
