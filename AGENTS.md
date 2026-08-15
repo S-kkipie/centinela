@@ -57,9 +57,10 @@ Turborepo, pnpm. Two apps.
 
 ## Croma API
 
-- Base: `https://api.croma.run` · **GET + query params** (verified live by WS1;
-  an earlier note here said POST — wrong) · `Authorization: Bearer croma_live_…`
-  · responses wrapped under `data` · rate limit 100/min · SECOP paginates
+- Base: `https://api.croma.run` · **POST to `/co/<source>/<name>/v1`** with a
+  JSON body (verified live by WS1) · `Authorization: Bearer croma_live_…`
+  · responses wrapped under `data` · **rate limit 500 requests / 24h PER
+  endpoint** (not 100/min — budget sweeps daily) · SECOP paginates
   500/page · MCP at
   `/mcp-server`. Docs: https://docs.usecroma.com (`/llms.txt` for full index).
 - Key: `platform.usecroma.com`. Keep in Secrets Store / `.dev.vars` — never
