@@ -20,6 +20,10 @@ export { InvestigateTender } from "./workflow.ts";
 const HEARTBEAT_CRON = "0 */2 * * *";
 /** One sendBatch = one subrequest; keep batches well under the 100-msg limit. */
 const QUEUE_BATCH_SIZE = 100;
+/** Only sweep tenders published in this window (cold-start guard). */
+const SWEEP_WINDOW_DAYS = 3;
+/** Hard cap per tick: each investigation spends ~7 Croma calls + 2 Gemini. */
+const MAX_ENQUEUE_PER_SWEEP = 25;
 
 type State = {
   /** SECOP entity NITs to sweep each heartbeat. */
@@ -77,23 +81,28 @@ export class CentinelaAgent extends Agent<Env, State> {
   }
 
   /** Heartbeat tick: diff the firehose and fan new tenders onto the queue. */
-  async sweep(): Promise<{ enqueued: number }> {
+  async sweep(): Promise<{ enqueued: number; detected: number }> {
     const croma = createCromaClient(this.env);
     const messages: Array<{ body: TenderMessage }> = [];
 
+    const from = new Date(Date.now() - SWEEP_WINDOW_DAYS * 86_400_000)
+      .toISOString()
+      .slice(0, 10);
+
     for (const entity of this.state.watchedEntities) {
-      const tenders = await croma.secopProcessesByEntity(entity, { pageSize: 500 });
+      const tenders = await croma.secopProcessesByEntity(entity, { from, pageSize: 500 });
       const { newTenders, nextSeenMap } = detectNewTenders(tenders, this.loadSeen(entity));
       this.saveSeen(entity, nextSeenMap);
       for (const tender of newTenders) messages.push({ body: { tender } });
     }
 
-    for (let i = 0; i < messages.length; i += QUEUE_BATCH_SIZE) {
-      await this.env.CRAWL_QUEUE.sendBatch(messages.slice(i, i + QUEUE_BATCH_SIZE));
+    const capped = messages.slice(0, MAX_ENQUEUE_PER_SWEEP);
+    for (let i = 0; i < capped.length; i += QUEUE_BATCH_SIZE) {
+      await this.env.CRAWL_QUEUE.sendBatch(capped.slice(i, i + QUEUE_BATCH_SIZE));
     }
 
     this.setState({ ...this.state, lastSweepAt: Date.now() });
-    return { enqueued: messages.length };
+    return { enqueued: capped.length, detected: messages.length };
   }
 
   private loadSeen(entity: string): SeenMap {
