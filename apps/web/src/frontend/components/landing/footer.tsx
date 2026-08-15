@@ -9,7 +9,7 @@ const enlaces = [
 
 export function LandingFooter() {
     return (
-        <footer className="border-t-2 border-foreground bg-secondary">
+        <footer className="border-t border-rule bg-secondary">
             <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-10">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-6">
                     <span className="font-display text-2xl leading-none font-bold tracking-[0.04em]">

@@ -28,7 +28,9 @@ function Nodo({
     return (
         <div
             className={cn(
-                "z-10 rounded-md border border-rule bg-card px-4 py-3 leading-snug",
+                // relative is required: z-10 is ignored on static elements and
+                // the beam SVG would otherwise paint across the card
+                "relative z-10 rounded-md border border-rule bg-card px-4 py-3 leading-snug",
                 className,
             )}
         >
