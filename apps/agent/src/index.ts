@@ -43,6 +43,32 @@ export class CentinelaAgent extends Agent<Env, State> {
     }
   }
 
+  /**
+   * HTTP surface (routed by `routeAgentRequest` to
+   * `/agents/centinela-agent/<instance>/…`), guarded by the shared agent key:
+   *   POST …/watch {"entities": ["<nit>", …]} → watched list
+   *   POST …/sweep                            → {"enqueued": n}
+   *   GET  …/status                           → current state
+   */
+  async onRequest(request: Request): Promise<Response> {
+    if (request.headers.get("x-agent-key") !== this.env.AGENT_INGEST_KEY) {
+      return Response.json({ error: "unauthorized" }, { status: 401 });
+    }
+    const path = new URL(request.url).pathname;
+    if (request.method === "POST" && path.endsWith("/watch")) {
+      const body = (await request.json()) as { entities?: string[] };
+      const watched = await this.watch(body.entities ?? []);
+      return Response.json({ watched });
+    }
+    if (request.method === "POST" && path.endsWith("/sweep")) {
+      return Response.json(await this.sweep());
+    }
+    if (request.method === "GET" && path.endsWith("/status")) {
+      return Response.json(this.state);
+    }
+    return Response.json({ error: "not found" }, { status: 404 });
+  }
+
   /** Add entities to the watchlist (callable via the Agents RPC/HTTP surface). */
   async watch(entityNits: string[]): Promise<string[]> {
     const merged = new Set([...this.state.watchedEntities, ...entityNits]);
