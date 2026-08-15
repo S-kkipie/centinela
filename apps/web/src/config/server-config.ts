@@ -4,6 +4,7 @@ export const ServerConfig = {
     databaseURL: env.DATABASE_URL,
     baseUrl: env.NEXT_PUBLIC_APP_URL,
     betterAuthSecret: env.BETTER_AUTH_SECRET,
+    agentIngestKey: env.AGENT_INGEST_KEY,
     info: {
         name: "Hackaton Starter API",
         version: "1.0.0",

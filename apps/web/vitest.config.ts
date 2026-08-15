@@ -17,6 +17,7 @@ export default defineConfig({
         env: {
             DATABASE_URL: "postgres://user:pass@localhost:5432/app",
             BETTER_AUTH_SECRET: "test-secret-least-thirty-two-chars-long",
+            AGENT_INGEST_KEY: "test-agent-ingest-key-1234567890",
             NEXT_PUBLIC_APP_URL: "http://localhost:3000",
         },
     },
