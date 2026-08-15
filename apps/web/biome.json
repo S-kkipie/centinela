@@ -1,0 +1,44 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.5.8/schema.json",
+    "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+    "files": { "ignoreUnknown": true },
+    "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 4 },
+    "css": { "parser": { "tailwindDirectives": true } },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "preset": "recommended",
+            "suspicious": {
+                "noArrayIndexKey": "off",
+                "noUnknownAtRules": "off"
+            }
+        }
+    },
+    "assist": { "actions": { "source": { "organizeImports": "on" } } },
+    "overrides": [
+        {
+            "includes": [
+                "**/frontend/components/ui/**",
+                "**/frontend/components/auth/**",
+                "**/frontend/components/data-table/**"
+            ],
+            "formatter": { "enabled": false },
+            "assist": { "actions": { "source": { "organizeImports": "off" } } },
+            "linter": {
+                "rules": {
+                    "a11y": {
+                        "useSemanticElements": "off",
+                        "useKeyWithClickEvents": "off"
+                    },
+                    "complexity": { "noUselessFragments": "off" },
+                    "correctness": { "useExhaustiveDependencies": "off" },
+                    "style": { "useImportType": "off" },
+                    "suspicious": {
+                        "noDoubleEquals": "off",
+                        "noDocumentCookie": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

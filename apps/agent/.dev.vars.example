@@ -1,0 +1,3 @@
+# Copy to .dev.vars for local `wrangler dev`. Never commit real values.
+CROMA_API_KEY=croma_test_xxx
+GEMINI_API_KEY=AIza-xxx

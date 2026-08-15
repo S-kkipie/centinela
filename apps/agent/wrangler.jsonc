@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "centinela-agent",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  // Durable Object = the living agent (per-user watchlist instance).
+  // SQLite-backed for persistent memory across heartbeats.
+  "durable_objects": {
+    "bindings": [
+      { "name": "CentinelaAgent", "class_name": "CentinelaAgent" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["CentinelaAgent"] }
+  ]
+
+  // TODO bindings to wire when building:
+  // - Queues (fan-out crawl of watched entities)
+  // - Workflows (durable multi-step Croma investigation)
+  // - Secrets: CROMA_API_KEY, GEMINI_API_KEY, WEB_API_URL (via `wrangler secret put`)
+  // App data lives in CockroachDB owned by apps/web; agent persists via web API.
+}

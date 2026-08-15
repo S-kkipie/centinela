@@ -1,0 +1,27 @@
+# deps
+node_modules
+.pnpm-store
+
+# next
+.next
+out
+next-env.d.ts
+
+# build / cache
+.turbo
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# env
+.env
+.env*.local
+
+# drizzle
+drizzle/**/*.sql.bak
+
+# os / editor
+.DS_Store
+*.log
+
+# SDD / port scratch (agents)
+.superpowers/

@@ -1,0 +1,93 @@
+# Centinela — build context & decision log
+
+Working notes so a fresh session (cwd in this folder) picks up instantly.
+Architecture + Croma endpoint map live in `AGENTS.md`; product pitch in `README.md`.
+
+## What Centinela is (locked)
+
+Autonomous govtech agent over Colombian public procurement (SECOP) via the
+**Croma** API, for the **IA-Hackathon GOV-TECH by Croma** (deadline 2026-08-16,
+extended ~10-day window; single winner: $300 + 6mo Croma).
+
+A **living agent** (heartbeat, not on-demand). Sweeps watched contracting
+entities, cross-references each new tender across Croma
+(secop → rues → supersociedades → rama-judicial → sanciones), Gemini scores it,
+emits **two faces from one engine**:
+- **OPORTUNIDAD** — help an honest SME win winnable tenders (the payer, upside $).
+- **BANDERA ROJA** — expose rigged awards (viral watchdog narrative, cited
+  evidence chain).
+
+Judging criteria to optimize: originality · **Croma centrality (weighted)** ·
+impact/production-readiness.
+
+### Design guardrails (user insisted)
+- NOT passive monitoring → insurance trap (invisible value, nobody pays).
+- NOT on-demand query tool → "just an MCP in my Fable" (no moat).
+- The agent must **initiate** (heartbeat) and deliver **felt value**
+  (contract won / theft exposed). "Firehose" = SECOP's continuous tender stream
+  no human can track.
+- Ambition level chosen: **Techo** (full build).
+
+## Stack decisions (final)
+
+| Concern | Choice | Notes |
+|---|---|---|
+| Monorepo | Turborepo + pnpm | `apps/web`, `apps/agent` |
+| Web (dashboard+API+auth) | `hackaton-starter` | Next16 · Elysia · Better Auth · Drizzle |
+| App DB | **Supabase Postgres** | starter's pg+drizzle unchanged; runtime pooler 6543, migrations DIRECT_URL 5432 |
+| Living agent | **Cloudflare Agents SDK + Durable Objects** | SQLite memory, heartbeat via alarm |
+| Fan-out / durability | CF Queues + Workflows (Queues free 2026) | 1 msg = 1 tender = 1 invocation (50 subrequest cap) |
+| LLM | **Gemini** (2.5 Flash sweep / Pro scoring) | responseSchema JSON; free tier; user chose over Anthropic |
+| Gov data | **Croma REST** `https://api.croma.run` | Bearer, envelope `data`, 100/min |
+| Graph | React Flow / Sigma.js | contractor network |
+| Alerts | CF Email + WhatsApp Cloud API | later |
+| Agent → DB | via web Elysia API | Worker holds no PG driver |
+
+Cloudflare **free plan confirmed sufficient** (DO SQLite, Queues, alarms, cron
+all free 2026). Only real cost = LLM tokens → Gemini free tier ≈ zero.
+
+Rejected en route: D1 (starter schema rewrite), CockroachDB (user reversed),
+PlanetScale (no free tier), Neon (slots), Hyperdrive (pooler not a host).
+
+## Done (2026-08-15)
+
+- Monorepo scaffolded; starter cloned into `apps/web` (`.git`/`cli` stripped,
+  renamed `@centinela/web`).
+- `apps/agent`: CF Agents SDK stub (`CentinelaAgent` DO + `sweep()` TODO),
+  wrangler.jsonc (DO binding + sqlite migration), tsconfig, `.dev.vars`.
+- Root: package.json, pnpm-workspace.yaml, turbo.json, .gitignore, README,
+  AGENTS.md.
+- `.env` files written (git-ignored): DATABASE_URL (6543) + DIRECT_URL (5432) +
+  BETTER_AUTH_SECRET + NEXT_PUBLIC_APP_URL + GEMINI_API_KEY + CROMA_API_KEY.
+- Migrations pointed at DIRECT_URL. `pnpm install` OK.
+- **Smoke test green:** migrations applied to Supabase; web boots (Next 16,
+  `GET / 307` auth guard).
+
+## Secrets
+
+In `apps/web/.env` and `apps/agent/.dev.vars` — **git-ignored, never commit**.
+Keys were pasted in chat → **rotate before real production** (Croma, Gemini,
+Supabase password).
+
+## Next steps (in order)
+
+1. **`packages/croma`** — typed REST client for the 9 Colombia endpoints
+   (`api.croma.run`, Bearer, `data` envelope, rate-limit aware). Validate one
+   live endpoint first, then type the rest. This is the core (Croma centrality).
+2. Drizzle schema: `watchlists`, `findings`, `graph_edges` (clone `Project`
+   domain pattern in `src/core/`).
+3. Agent `sweep()` real → Queue fan-out → Croma cross-ref → Gemini scoring →
+   persist via web API.
+4. Dashboard live feed (`useAgent` WebSocket) + contractor-network graph.
+5. Alerts (email/WhatsApp) + shareable public watchdog reports.
+
+## Commands
+
+```bash
+pnpm install
+pnpm -F @centinela/web dev            # dashboard :3000
+pnpm -F @centinela/web db:generate    # after schema edits
+pnpm -F @centinela/web db:migrate     # apply (uses DIRECT_URL)
+pnpm -F @centinela/agent dev          # wrangler dev
+pnpm -F @centinela/agent deploy
+```

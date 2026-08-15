@@ -1,0 +1,17 @@
+{
+  "name": "centinela",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check": "turbo run check",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "deploy": "turbo run deploy"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.9"
+  }
+}
