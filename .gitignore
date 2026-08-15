@@ -19,3 +19,6 @@ out/
 *.log
 .DS_Store
 .claude/worktrees/
+
+# Playwright MCP session artifacts
+.playwright-mcp/
