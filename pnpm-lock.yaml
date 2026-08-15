@@ -17,6 +17,9 @@ importers:
       '@centinela/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@centinela/croma':
+        specifier: workspace:*
+        version: link:../../packages/croma
       agents:
         specifier: ^0.2.0
         version: 0.2.35(@cloudflare/workers-types@5.20260815.1)(react@19.2.8)(typescript@5.9.3)(zod@4.4.3)

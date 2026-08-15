@@ -27,4 +27,6 @@ export interface Env {
   /** Gemini model overrides; defaults live in workflow.ts (lineup drifts fast). */
   GEMINI_SWEEP_MODEL?: string;
   GEMINI_SCORING_MODEL?: string;
+  /** "1" → offline demo fixtures instead of live Croma. */
+  CROMA_STUB?: string;
 }

@@ -18,6 +18,7 @@ import type {
   TenderDetail,
   Tender,
 } from "@centinela/contracts/croma";
+import { createCromaClient as createRealCromaClient } from "@centinela/croma";
 
 const FANTASMA_NIT = "900123456";
 
@@ -47,7 +48,7 @@ export function createStubCromaClient(): CromaClient {
     async secopContractsByProvider(document: string): Promise<ProviderContract[]> {
       if (document !== FANTASMA_NIT) return [];
       return [
-        { noticeUid: "CO1.NTC.DEMO001", entityNit: "899999061", valueCop: 12_000_000_000, awardedAt: "2026-08-01", raw: {} },
+        { contractId: "CO1.PCCNTR.DEMO001", noticeUid: "CO1.NTC.DEMO001", entityNit: "899999061", valueCop: 12_000_000_000, awardedAt: "2026-08-01", raw: {} },
       ];
     },
     async secopSanctionsByProvider(): Promise<Sanction[]> {
@@ -81,10 +82,13 @@ export function createStubCromaClient(): CromaClient {
 }
 
 /**
- * Single swap point. When `@centinela/croma` merges, replace the body with:
- *   import { CromaClient as RealClient } from "@centinela/croma";
- *   return new RealClient({ apiKey: env.CROMA_API_KEY });
+ * Single swap point: real `@centinela/croma` client by default; set
+ * `CROMA_STUB=1` to run the demo "empresa fantasma" fixtures offline.
  */
-export function createCromaClient(_env: { CROMA_API_KEY: string }): CromaClient {
-  return createStubCromaClient();
+export function createCromaClient(env: {
+  CROMA_API_KEY: string;
+  CROMA_STUB?: string;
+}): CromaClient {
+  if (env.CROMA_STUB === "1") return createStubCromaClient();
+  return createRealCromaClient({ apiKey: env.CROMA_API_KEY });
 }
