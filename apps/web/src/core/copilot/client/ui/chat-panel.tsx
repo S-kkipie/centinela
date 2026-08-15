@@ -17,6 +17,7 @@ import {
 import { useCopilotUi } from "@/core/copilot/client/store";
 import { dedupeSuggestions } from "@/core/copilot/client/suggestions/dedupe";
 import { useCentinelaCopilot } from "@/core/copilot/client/use-centinela-copilot";
+import { ChatMarkdown } from "@/frontend/components/ai-elements/chat-markdown";
 import {
     Conversation,
     ConversationContent,
@@ -185,8 +186,21 @@ export function ChatPanel() {
                                 <Fragment key={m.id}>
                                     {text && (
                                         <Message from={from}>
-                                            <MessageContent from={from}>
-                                                {text}
+                                            <MessageContent
+                                                className={
+                                                    from === "assistant"
+                                                        ? "whitespace-normal"
+                                                        : undefined
+                                                }
+                                                from={from}
+                                            >
+                                                {from === "assistant" ? (
+                                                    <ChatMarkdown>
+                                                        {text}
+                                                    </ChatMarkdown>
+                                                ) : (
+                                                    text
+                                                )}
                                             </MessageContent>
                                         </Message>
                                     )}

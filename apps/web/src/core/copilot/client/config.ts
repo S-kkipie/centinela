@@ -7,8 +7,13 @@
 /** Must equal @copilotkit/shared DEFAULT_AGENT_ID so `useAgent()` resolves. */
 export const COPILOT_AGENT_ID = "default";
 
-/** BuiltInAgent model specifier — "provider/model" form. Reuses GEMINI_API_KEY. */
-export const COPILOT_MODEL = "google/gemini-2.5-flash";
+/**
+ * BuiltInAgent model specifier — "provider/model" form. Reuses GEMINI_API_KEY.
+ * Gen-3 flash-lite: cheap, and it doesn't return the empty completions that
+ * gemini-2.5-flash did with this tool set + auto tool-choice (observed in prod).
+ * Same model the agent's sweep uses, so the id is known-good on Google's side.
+ */
+export const COPILOT_MODEL = "google/gemini-3.5-flash-lite";
 
 /** es-CO analyst persona for BuiltInAgent. Grounding is non-negotiable. */
 export const SYSTEM_PROMPT = `Eres el copiloto de Centinela, un analista de contratación pública colombiana (es-CO).

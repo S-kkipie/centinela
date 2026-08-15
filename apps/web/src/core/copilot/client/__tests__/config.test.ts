@@ -13,9 +13,10 @@ describe("copilot config", () => {
         expect(COPILOT_AGENT_ID).toBe("default");
     });
 
-    it("uses the Gemini flash model in provider/slash form", () => {
+    it("uses a Gemini flash model in provider/slash form", () => {
         // BuiltInAgentModel accepts "provider/model", not "provider:model".
-        expect(COPILOT_MODEL).toBe("google/gemini-2.5-flash");
+        // Gen-3 flash-lite: cheap and avoids 2.5-flash's empty completions.
+        expect(COPILOT_MODEL).toBe("google/gemini-3.5-flash-lite");
     });
 
     it("has an es-CO analyst system prompt that demands grounded claims", () => {
