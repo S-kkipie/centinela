@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guion de 60 segundos · Centinela</title>
+<style>
+  :root{
+    --bg:#0F1C17;--panel:#16271F;--panel-2:#1C3128;
+    --rule:rgba(232,239,235,.11);--rule-strong:rgba(232,239,235,.2);
+    --ink:#E9F0EC;--ink-2:#C4D2CB;--muted:#8FA69C;--faint:#6C837A;
+    --signal:#25CE93;--signal-dim:#0C7A57;--flag:#E67264;
+    --grid:rgba(232,239,235,.035);
+    --mono:ui-monospace,"SF Mono","IBM Plex Mono","JetBrains Mono",Menlo,monospace;
+    --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --disp:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--grid) 1px,transparent 1px) 0 0/34px 34px,
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/34px 34px,
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:940px;margin:0 auto;padding:0 24px}
+  .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .label.sig{color:var(--signal)}
+
+  header{border-bottom:1px solid var(--rule);background:linear-gradient(180deg,rgba(37,206,147,.05),transparent)}
+  .eye{width:26px;height:26px;flex:0 0 auto}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:600}
+  .brand b{font-weight:700}.brand .cur{color:var(--signal)}
+  .head-top{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.05;letter-spacing:-.02em;margin:14px 0 10px;text-wrap:balance;max-width:20ch}
+  .lede{font-size:clamp(17px,2.3vw,20px);color:var(--ink-2);max-width:62ch;margin:0 0 18px}
+  .lede .hi{color:var(--ink);border-bottom:2px solid var(--signal-dim);padding-bottom:1px}
+
+  /* reglas del hackathon */
+  .rules{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:6px 0 12px;background:var(--panel)}
+  .rules div{padding:14px 16px}
+  .rules div+div{border-left:1px solid var(--rule)}
+  .rules .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
+  .rules .val{font-family:var(--disp);font-weight:600;font-size:17px;color:var(--ink)}
+  .rules .val.sig{color:var(--signal)}
+  @media(max-width:640px){.rules{grid-template-columns:repeat(2,1fr)}.rules div:nth-child(3){border-left:none}.rules div:nth-child(n+3){border-top:1px solid var(--rule)}}
+
+  section{padding:30px 0}
+  h2{font-family:var(--disp);font-weight:600;font-size:22px;letter-spacing:-.01em;margin:0 0 4px;display:flex;align-items:baseline;gap:12px}
+  h2 .n{font-family:var(--mono);font-size:13px;color:var(--signal);font-weight:400}
+  .sec-sub{color:var(--muted);font-size:14px;margin:0 0 20px}
+
+  /* barra de tiempo 60s */
+  .timeline{display:flex;height:12px;border-radius:6px;overflow:hidden;border:1px solid var(--rule);margin-bottom:20px;font-size:0}
+  .timeline i{display:block;height:100%;border-right:1px solid var(--bg)}
+  .timeline i:last-child{border-right:0}
+
+  /* shots */
+  .shot{display:grid;grid-template-columns:96px 1fr;border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--panel);margin-bottom:14px}
+  .shot .tc{padding:16px 0;text-align:center;border-right:1px solid var(--rule);background:rgba(0,0,0,.14);font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .shot .tc .big{display:block;font-size:16px;color:var(--signal);font-weight:600;letter-spacing:.02em}
+  .shot .tc .sm{display:block;font-size:11px;color:var(--faint);margin-top:5px}
+  .shot .b{padding:15px 20px 17px}
+  .shot h3{font-family:var(--disp);font-weight:600;font-size:16px;margin:1px 0 11px;letter-spacing:-.01em}
+  .kv{margin:0 0 9px}.kv:last-child{margin-bottom:0}
+  .kv .k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;display:block;margin-bottom:3px}
+  .kv.act .k{color:var(--signal)}.kv.say .k{color:var(--ink-2)}
+  .kv .v{color:var(--ink-2);font-size:14.5px}
+  .kv.say .v{color:var(--ink);font-style:italic;border-left:2px solid var(--rule-strong);padding-left:12px}
+  .kv .v code{font-family:var(--mono);font-size:.85em;background:var(--panel-2);color:var(--ink);padding:1px 6px;border-radius:4px}
+  .sigstripe{border-left:3px solid var(--signal-dim)}
+  .flagstripe{border-left:3px solid var(--flag)}
+  .corebadge{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--bg);background:var(--signal);padding:2px 7px;border-radius:4px;margin-left:8px;vertical-align:middle;font-weight:600}
+
+  /* libreto corrido */
+  .script{border:1px solid var(--signal-dim);border-radius:12px;background:rgba(37,206,147,.05);padding:22px 24px}
+  .script p{margin:0 0 12px;font-size:19px;line-height:1.55;color:var(--ink)}
+  .script p:last-child{margin-bottom:0}
+  .script .t{font-family:var(--mono);font-size:11px;color:var(--signal);letter-spacing:.06em}
+  .script b{color:var(--signal);font-weight:600}
+  .wordcount{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:16px;display:flex;gap:20px;flex-wrap:wrap}
+  .wordcount b{color:var(--ink-2);font-weight:500}
+
+  /* teleprompter sincronizado: voz corrida | pantalla */
+  .tele{border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--panel)}
+  .tele .r{display:grid;grid-template-columns:60px minmax(0,1.5fr) minmax(0,1fr)}
+  .tele .r+.r{border-top:1px solid var(--rule)}
+  .tele .r.core{background:rgba(37,206,147,.055)}
+  .tele .tc{padding:18px 0 0;text-align:center;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--signal);font-weight:600}
+  .tele .voz{padding:16px 20px;font-size:18px;line-height:1.5;color:var(--ink);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .tele .voz em{font-style:normal;color:var(--signal);font-weight:600}
+  .tele .voz .red{color:var(--flag);font-weight:600}
+  .tele .act{padding:16px 18px;background:rgba(0,0,0,.14)}
+  .tele .act .k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:7px;margin-bottom:7px}
+  .tele .act .k::before{content:"▸";color:var(--signal);font-size:12px}
+  .tele .act .v{font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+  .tele .act .v code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);color:var(--ink);padding:1px 5px;border-radius:4px}
+  .tele .act .tag{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--bg);background:var(--signal);padding:2px 6px;border-radius:4px;margin-bottom:8px;font-weight:600}
+  @media(max-width:680px){
+    .tele .r{grid-template-columns:52px 1fr}
+    .tele .voz{border-right:none}
+    .tele .act{grid-column:1 / -1;border-top:1px dashed var(--rule)}
+  }
+
+  /* endpoints */
+  .endpoints{border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--panel)}
+  .ep{display:grid;grid-template-columns:1fr 1.25fr}
+  .ep+.ep{border-top:1px solid var(--rule)}
+  .ep .c1{font-family:var(--mono);font-size:12px;color:var(--signal);padding:10px 16px;border-right:1px solid var(--rule);word-break:break-word}
+  .ep .c2{padding:10px 16px;color:var(--ink-2);font-size:13.5px}
+  @media(max-width:560px){.ep{grid-template-columns:1fr}.ep .c1{border-right:none;border-bottom:1px solid var(--rule)}}
+
+  .check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+  .check li{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;color:var(--ink-2)}
+  .check li::before{content:"";flex:0 0 auto;width:16px;height:16px;margin-top:3px;border:1.5px solid var(--signal-dim);border-radius:4px}
+  .check li b{color:var(--ink);font-weight:600}
+
+  .divider{height:1px;background:var(--rule);border:0;margin:0}
+  footer{border-top:1px solid var(--rule);padding:24px 0 44px;color:var(--faint);font-family:var(--mono);font-size:12px;text-align:center}
+  @media print{body{background:#fff;color:#111}.shot,.script,.endpoints,.rules{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head-top">
+      <div class="brand">
+        <svg class="eye" viewBox="0 0 256 256" aria-hidden="true">
+          <path fill="var(--ink)" d="M28 119 80 68h96l52 51-17 17-43-42H88l-43 42Z"/>
+          <path fill="var(--ink)" d="m28 137 17-17 43 42h80l43-42 17 17-52 51H80Z"/>
+          <path fill="var(--signal)" fill-rule="evenodd" d="M128 96a32 32 0 1 1 0 64 32 32 0 0 1 0-64Zm-4 12h8v40h-8Z"/>
+        </svg>
+        <span><b>CENTINELA</b><span class="cur">_</span></span>
+      </div>
+      <div class="label">Guion · 60 s</div>
+    </div>
+    <p class="label sig" style="margin:20px 0 0">Video del hackathon · un (1) minuto · es-CO</p>
+    <h1>60 segundos: el problema, y cómo Croma lo resuelve.</h1>
+    <p class="lede">Guion cerrado para el video de 1 minuto. Muestra <span class="hi">el problema</span> y <span class="hi">la solución</span>, con Croma como <span class="hi">motor central</span> — los dos ejes que evalúa el jurado.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- reglas -->
+  <section aria-label="Reglas de la entrega" style="padding-top:24px">
+    <div class="rules">
+      <div><span class="k">Video</span><span class="val sig">1 minuto</span></div>
+      <div><span class="k">Debe mostrar</span><span class="val">Problema + solución</span></div>
+      <div><span class="k">Se evalúa</span><span class="val">Originalidad · <span style="color:var(--signal)">Croma central</span> · Impacto</span></div>
+      <div><span class="k">Entrega</span><span class="val">Hoy · 6:30 p.m.</span></div>
+    </div>
+    <p class="sec-sub" style="margin-top:12px">Obligatorio: Croma integrado (✓ ya, 9 endpoints + Gemini). Recomendado: link al producto (<code style="font-family:var(--mono);color:var(--signal)">centinela.aido.lat</code>) y repo público (✓ ambos).</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- TELEPROMPTER SINCRONIZADO: voz corrida | pantalla -->
+  <section>
+    <h2><span class="n">VOZ + PANTALLA</span> Teleprompter — a la par</h2>
+    <p class="sec-sub">Lee la columna <b style="color:var(--ink)">VOZ</b> de arriba a abajo: es el libreto corrido, ~135 palabras ≈ 58 s. A la derecha, qué mostrar mientras dices cada línea.</p>
+
+    <div class="timeline" aria-hidden="true">
+      <i style="width:22%;background:var(--flag)"></i>
+      <i style="width:15%;background:var(--signal-dim)"></i>
+      <i style="width:30%;background:var(--signal)"></i>
+      <i style="width:17%;background:var(--signal-dim)"></i>
+      <i style="width:16%;background:var(--panel-2)"></i>
+    </div>
+
+    <div class="tele">
+      <div class="r">
+        <div class="tc">0:00</div>
+        <div class="voz">En Colombia el Estado publica <em>miles de contratos cada día</em> en el SECOP. Nadie los lee todos — y ahí la corrupción se esconde a plena vista, mientras las empresas honestas pierden contratos que sí podían ganar.</div>
+        <div class="act"><span class="k">Pantalla</span><span class="v">Landing de <code>centinela.aido.lat</code>: el titular y el panel del ciclo del agente corriendo. (O un pantallazo del SECOP con miles de procesos.)</span></div>
+      </div>
+
+      <div class="r">
+        <div class="tc">0:13</div>
+        <div class="voz">Centinela es un <em>agente autónomo</em> que vigila el SECOP y cruza cada proceso contra <em>nueve fuentes oficiales usando Croma</em>.</div>
+        <div class="act"><span class="k">Pantalla</span><span class="v">Dashboard ya poblado. Muestra el frente y los contadores: hallazgos, oportunidades, banderas rojas.</span></div>
+      </div>
+
+      <div class="r core">
+        <div class="tc">0:22</div>
+        <div class="voz">Con un clic, barre los procesos nuevos y encadena Croma: verifica la empresa en <em>RUES</em>, sus finanzas en <em>Supersociedades</em>, sus pleitos y sanciones en la <em>Rama Judicial</em>, la <em>Procuraduría</em> y la <em>Contraloría</em>. Gemini pondera la evidencia.</div>
+        <div class="act"><span class="tag">Núcleo</span><span class="k">Pantalla</span><span class="v">Pulsa <code>Barrer ahora</code> → abre un hallazgo → baja a <b style="color:var(--ink)">"Evidencia citada"</b> y deja ver los nombres de las fuentes. El plano más largo: dale aire.</span></div>
+      </div>
+
+      <div class="r">
+        <div class="tc">0:40</div>
+        <div class="voz">El resultado tiene dos caras: para la PYME, una <em>oportunidad ganable</em>; para el ciudadano, una <span class="red">bandera roja</span> con cada afirmación citada a su fuente.</div>
+        <div class="act"><span class="k">Pantalla</span><span class="v">Rápido: una <b style="color:var(--ink)">OPORTUNIDAD</b> (score alto) y una <b style="color:var(--ink)">BANDERA_ROJA</b> con su informe. El triaje superior muestra ambas de un vistazo.</span></div>
+      </div>
+
+      <div class="r">
+        <div class="tc">0:50</div>
+        <div class="voz">Detecta hasta lo que nadie ve — adjudicaciones concentradas, 'competidores' que comparten representante — y te genera el <em>derecho de petición</em> listo.</div>
+        <div class="act"><span class="k">Pantalla · 2 pasos</span><span class="v"><b style="color:var(--ink)">1.</b> En el chat escribe <code>escanea el patrón de adjudicaciones</code> → sale la tarjeta con el HHI y el representante compartido. <b style="color:var(--ink)">2.</b> Escribe <code>redacta el derecho de petición</code> → aparece el documento; señala <b style="color:var(--ink)">Descargar</b>.</span></div>
+      </div>
+
+      <div class="r">
+        <div class="tc">0:58</div>
+        <div class="voz">En producción, en centinela punto aido punto lat. <em>Croma es el motor.</em></div>
+        <div class="act"><span class="k">Pantalla</span><span class="v">Cierra mostrando la URL <code>centinela.aido.lat</code> en la barra del navegador.</span></div>
+      </div>
+    </div>
+
+    <div class="wordcount">
+      <span><b>Palabras:</b> ~135</span>
+      <span><b>Ritmo:</b> ~140 ppm</span>
+      <span><b>Duración:</b> ~58 s</span>
+      <span><b>Consejo:</b> graba la voz aparte y móntala sobre el screencast.</span>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CÓMO DISPARAR -->
+  <section>
+    <h2><span class="n">CHAT</span> Cómo disparar cada cosa</h2>
+    <p class="sec-sub">Todo se maneja hablándole al copiloto en lenguaje normal. Escríbele (o toca el chip sugerido) exactamente esto:</p>
+    <div class="endpoints">
+      <div class="ep"><div class="c1">"vigila la Alcaldía de Bogotá"</div><div class="c2">Busca el NIT y propone crear el frente. Confirmas en la tarjeta.</div></div>
+      <div class="ep"><div class="c1">botón "Barrer ahora"</div><div class="c2">Lanza el barrido: encadena Croma y encola procesos a investigar.</div></div>
+      <div class="ep"><div class="c1">"¿por qué es bandera roja?"</div><div class="c2">Explica el hallazgo abierto con su evidencia citada (fuentes Croma).</div></div>
+      <div class="ep"><div class="c1">"escanea el patrón de adjudicaciones"</div><div class="c2">patternScan: tarjeta con índice HHI + representante compartido.</div></div>
+      <div class="ep"><div class="c1">"ábreme la red de contratistas"</div><div class="c2">Abre el grafo en pantalla completa (hover = qué es, clic = detalle).</div></div>
+      <div class="ep"><div class="c1">"redacta el derecho de petición"</div><div class="c2">Genera el borrador (Ley 1755) descargable, con evidencia citada.</div></div>
+      <div class="ep"><div class="c1">"genera el dossier"</div><div class="c2">Dossier de evidencia en .md, con fuentes y timestamps.</div></div>
+      <div class="ep"><div class="c1">"escríbeme el hilo"</div><div class="c2">Hilo numerado para redes sobre la bandera roja, con enlaces.</div></div>
+    </div>
+    <p class="sec-sub" style="margin-top:12px">Los <b style="color:var(--ink)">chips</b> que el copiloto sugiere debajo del chat suelen traer estas mismas acciones — tócalos y evitas escribir en vivo.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CROMA REF -->
+  <section>
+    <h2><span class="n">CROMA</span> Los 9 endpoints (por si preguntan)</h2>
+    <p class="sec-sub">No hace falta narrarlos todos — con nombrar 4 o 5 en el plano del motor basta. Esto es respaldo.</p>
+    <div class="endpoints">
+      <div class="ep"><div class="c1">secop-processes-by-entity</div><div class="c2">Barre los procesos nuevos de la entidad.</div></div>
+      <div class="ep"><div class="c1">secop-process-by-notice</div><div class="c2">Adjudicatarios y cuantías del proceso.</div></div>
+      <div class="ep"><div class="c1">secop-contracts-by-provider</div><div class="c2">Lo que un contratista ha ganado → concentración.</div></div>
+      <div class="ep"><div class="c1">secop-sanctions-by-provider</div><div class="c2">Sanciones del proveedor en SECOP.</div></div>
+      <div class="ep"><div class="c1">rues-entity-by-nit</div><div class="c2">¿Existe? Constitución, estado, representantes.</div></div>
+      <div class="ep"><div class="c1">supersociedades-financial-statements</div><div class="c2">¿El capital cuadra con el contrato?</div></div>
+      <div class="ep"><div class="c1">rama-judicial-cases-by-entity</div><div class="c2">Litigios por nombre de la empresa.</div></div>
+      <div class="ep"><div class="c1">procuraduria-disciplinary-records</div><div class="c2">Antecedentes disciplinarios.</div></div>
+      <div class="ep"><div class="c1">contraloria-fiscal-records</div><div class="c2">Responsabilidad fiscal.</div></div>
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section>
+    <h2><span class="n">PREP</span> Antes de la toma</h2>
+    <ul class="check">
+      <li><b>Cuenta poblada:</b> entra con una cuenta que ya tenga hallazgos ricos (oportunidades + banderas rojas). No grabes con la consola vacía.</li>
+      <li><b>Barrido fresco:</b> corre "Barrer ahora" justo antes para que "último barrido" muestre hora reciente.</li>
+      <li><b>Hallazgo elegido:</b> ten ubicada la bandera roja con mejor evidencia citada — sabrás cuál abrir sin dudar.</li>
+      <li><b>Navegador limpio:</b> pantalla completa, zoom 100 %, sin barras ni pestañas de más.</li>
+      <li><b>Voz aparte:</b> graba el libreto por separado y móntalo — sale más limpio que narrar en vivo.</li>
+      <li><b>El plano del motor manda:</b> si te pasas de 1:00, recorta el problema, nunca el plano de Croma.</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer>
+  Centinela · guion de 60 s · archivo local — <span style="color:var(--muted)">problema en 12 s, Croma el resto.</span>
+</footer>
+
+</body>
+</html>

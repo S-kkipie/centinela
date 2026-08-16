@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centinela · Pitch</title>
+<style>
+  :root{
+    --bg:#0E1B16;--panel:#16271F;--panel-2:#1E332A;
+    --rule:rgba(232,239,235,.12);--ink:#EAF1ED;--ink-2:#C4D2CB;
+    --muted:#8FA69C;--faint:#647A71;
+    --signal:#25CE93;--signal-dim:#0C7A57;--flag:#E67264;
+    --grid:rgba(232,239,235,.03);
+    --mono:ui-monospace,"SF Mono","IBM Plex Mono",Menlo,monospace;
+    --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --disp:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 80% -10%,rgba(37,206,147,.09),transparent 60%),
+      linear-gradient(var(--grid) 1px,transparent 1px) 0 0/38px 38px,
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/38px 38px,
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .deck{height:100%;width:100%;position:relative}
+  .slide{
+    position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:min(8vh,80px) clamp(28px,7vw,110px);
+    opacity:0;visibility:hidden;transform:translateY(14px);
+    transition:opacity .45s ease,transform .45s ease,visibility .45s;
+  }
+  @media(prefers-reduced-motion:reduce){.slide{transition:none}}
+  .slide.active{opacity:1;visibility:visible;transform:none}
+  .inner{max-width:1080px;margin:0 auto;width:100%}
+
+  /* tipografía */
+  .eyebrow{font-family:var(--mono);font-size:clamp(11px,1.3vw,13px);letter-spacing:.18em;text-transform:uppercase;color:var(--signal);margin:0 0 20px}
+  .eyebrow.mut{color:var(--muted)}
+  h1{font-family:var(--disp);font-weight:700;letter-spacing:-.025em;line-height:1.02;font-size:clamp(40px,7vw,84px);margin:0;text-wrap:balance}
+  h2{font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1.05;font-size:clamp(30px,5vw,58px);margin:0 0 22px;text-wrap:balance}
+  .lead{font-size:clamp(18px,2.5vw,26px);color:var(--ink-2);max-width:30ch;margin:0}
+  .lead.wide{max-width:46ch}
+  em{font-style:normal;color:var(--signal)}
+  .red{color:var(--flag);font-weight:600}
+  .k{color:var(--ink)}
+
+  /* logo */
+  .eye{width:clamp(46px,6vw,72px);height:auto;display:block}
+  .brand{display:flex;align-items:center;gap:16px;margin-bottom:34px}
+  .brand .wm{font-family:var(--disp);font-weight:700;font-size:clamp(22px,2.6vw,30px);letter-spacing:-.01em}
+  .brand .cur{color:var(--signal)}
+
+  /* stat grid */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,3vw,44px);margin-top:38px}
+  .stat .n{font-family:var(--disp);font-weight:700;font-size:clamp(34px,5.5vw,64px);letter-spacing:-.02em;line-height:1}
+  .stat .n.sig{color:var(--signal)}.stat .n.flag{color:var(--flag)}
+  .stat .l{font-family:var(--mono);font-size:clamp(11px,1.3vw,13px);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:12px;max-width:22ch}
+
+  /* cadena Croma */
+  .chain{display:flex;flex-wrap:wrap;align-items:center;gap:10px 8px;margin-top:34px}
+  .pill{font-family:var(--mono);font-size:clamp(11px,1.4vw,15px);padding:9px 14px;border:1px solid var(--signal-dim);border-radius:8px;background:rgba(37,206,147,.07);color:var(--ink);white-space:nowrap}
+  .pill.src{border-color:var(--rule);background:var(--panel)}
+  .pill.out{border-color:var(--signal);background:var(--signal);color:var(--bg);font-weight:600}
+  .arrow{color:var(--signal);font-size:18px}
+
+  /* dos caras */
+  .faces{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,32px);margin-top:34px}
+  .face{border:1px solid var(--rule);border-radius:16px;padding:clamp(20px,3vw,34px);background:var(--panel)}
+  .face.op{border-top:3px solid var(--signal)}
+  .face.br{border-top:3px solid var(--flag)}
+  .face .tag{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 14px}
+  .face.op .tag{color:var(--signal)}.face.br .tag{color:var(--flag)}
+  .face h3{font-family:var(--disp);font-weight:600;font-size:clamp(20px,2.6vw,28px);margin:0 0 10px;letter-spacing:-.01em}
+  .face p{margin:0;color:var(--ink-2);font-size:clamp(15px,1.7vw,18px)}
+
+  /* lista con check */
+  .feat{display:grid;gap:16px;margin-top:30px;max-width:52ch}
+  .feat li{list-style:none;display:flex;gap:16px;align-items:flex-start;font-size:clamp(16px,1.9vw,20px);color:var(--ink-2)}
+  .feat li b{color:var(--ink);font-weight:600}
+  .feat li .ic{flex:0 0 auto;width:26px;height:26px;border:1.5px solid var(--signal-dim);border-radius:7px;display:grid;place-items:center;color:var(--signal);font-family:var(--mono);font-size:13px;margin-top:2px}
+
+  /* criterios */
+  .crit{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,3vw,28px);margin-top:34px}
+  .crit .c{border:1px solid var(--rule);border-radius:16px;padding:clamp(20px,3vw,30px);background:var(--panel)}
+  .crit .c.core{border-color:var(--signal);background:rgba(37,206,147,.06)}
+  .crit .c .h{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+  .crit .c.core .h{color:var(--signal)}
+  .crit .c p{margin:0;color:var(--ink-2);font-size:clamp(14px,1.6vw,17px)}
+  .crit .c p b{color:var(--ink)}
+
+  /* CTA links */
+  .links{display:flex;flex-wrap:wrap;gap:14px 28px;margin-top:34px;font-family:var(--mono);font-size:clamp(13px,1.6vw,16px)}
+  .links a{color:var(--signal);text-decoration:none;border-bottom:1px solid var(--signal-dim);padding-bottom:2px}
+  .links span{color:var(--muted)}
+
+  /* chrome: progreso, contador, hint */
+  .progress{position:fixed;top:0;left:0;height:3px;background:var(--signal);width:0;transition:width .4s ease;z-index:20}
+  .counter{position:fixed;bottom:22px;right:28px;font-family:var(--mono);font-size:13px;color:var(--muted);z-index:20;font-variant-numeric:tabular-nums}
+  .counter b{color:var(--ink)}
+  .dots{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:9px;z-index:20}
+  .dots button{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:var(--faint);cursor:pointer;transition:background .2s,transform .2s}
+  .dots button.on{background:var(--signal);transform:scale(1.3)}
+  .dots button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+  .hint{position:fixed;bottom:22px;left:28px;font-family:var(--mono);font-size:12px;color:var(--faint);z-index:20}
+  .foot{position:fixed;top:20px;right:28px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);z-index:20}
+
+  @media(max-width:720px){
+    .stats,.crit{grid-template-columns:1fr}
+    .faces{grid-template-columns:1fr}
+    .hint{display:none}
+  }
+
+  /* export a PDF: cada slide = una página 16:9, todas visibles y apiladas */
+  @media print{
+    @page{size:1280px 720px;margin:0}
+    html,body{height:auto;overflow:visible;background:var(--bg)}
+    .progress,.counter,.dots,.hint,.foot{display:none!important}
+    .deck{height:auto}
+    .slide{
+      position:relative!important;inset:auto!important;
+      opacity:1!important;visibility:visible!important;transform:none!important;
+      width:1280px;height:720px;page-break-after:always;break-after:page;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    }
+    .slide:last-child{page-break-after:auto;break-after:auto}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="foot">IA-Hackathon GOV-TECH · Croma</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 · PORTADA -->
+  <section class="slide active">
+    <div class="inner">
+      <div class="brand">
+        <svg class="eye" viewBox="0 0 256 256" aria-hidden="true">
+          <path fill="var(--ink)" d="M28 119 80 68h96l52 51-17 17-43-42H88l-43 42Z"/>
+          <path fill="var(--ink)" d="m28 137 17-17 43 42h80l43-42 17 17-52 51H80Z"/>
+          <path fill="var(--signal)" fill-rule="evenodd" d="M128 96a32 32 0 1 1 0 64 32 32 0 0 1 0-64Zm-4 12h8v40h-8Z"/>
+        </svg>
+        <span class="wm">CENTINELA<span class="cur">_</span></span>
+      </div>
+      <p class="eyebrow">Vigilancia autónoma de la contratación pública</p>
+      <h1>El ojo que <em>cruza los datos</em> que nadie cruza.</h1>
+      <p class="lead wide" style="margin-top:26px">Un agente que vigila el SECOP, encadena Croma y expone lo que se esconde a plena vista.</p>
+    </div>
+  </section>
+
+  <!-- 2 · PROBLEMA -->
+  <section class="slide">
+    <div class="inner">
+      <p class="eyebrow">El problema</p>
+      <h2>La corrupción no se esconde en secreto.<br>Se esconde en el <em>volumen</em>.</h2>
+      <div class="stats">
+        <div class="stat"><div class="n">miles</div><div class="l">de procesos publicados en el SECOP cada día</div></div>
+        <div class="stat"><div class="n flag">9</div><div class="l">registros oficiales dispersos que nadie cruza</div></div>
+        <div class="stat"><div class="n sig">0</div><div class="l">humanos capaces de leerlo todo a tiempo</div></div>
+      </div>
+      <p class="lead wide" style="margin-top:36px">Resultado: adjudicaciones amañadas pasan sin ruido, y la <span class="k">PYME honesta pierde</span> contratos que sí podía ganar.</p>
+    </div>
+  </section>
+
+  <!-- 3 · INSIGHT -->
+  <section class="slide">
+    <div class="inner">
+      <p class="eyebrow mut">La clave</p>
+      <h1 style="font-size:clamp(34px,6vw,72px)">El problema no es falta de datos.<br>Es que <em>nadie los encadena</em>.</h1>
+      <p class="lead wide" style="margin-top:30px">Cada pieza vive sola — un NIT en RUES, unas finanzas en Supersociedades, un pleito en la Rama Judicial. Por separado no dicen nada. <span class="k">Cruzadas, delatan.</span></p>
+    </div>
+  </section>
+
+  <!-- 4 · SOLUCIÓN -->
+  <section class="slide">
+    <div class="inner">
+      <p class="eyebrow">La solución</p>
+      <h2>Centinela: un <em>agente vivo</em>, no un buscador.</h2>
+      <ul class="feat">
+        <li><span class="ic">◇</span><span><b>Vigila</b> las entidades y contratistas que le señalas — sin que sepas un solo NIT.</span></li>
+        <li><span class="ic">↻</span><span><b>Barre</b> el SECOP en heartbeat y cruza cada proceso contra 9 fuentes oficiales <b>vía Croma</b>.</span></li>
+        <li><span class="ic">▤</span><span><b>Puntúa</b> con Gemini y emite dos caras de un mismo motor: oportunidad y bandera roja.</span></li>
+        <li><span class="ic">▸</span><span><b>Produce</b>: derecho de petición, dossier citado, hilo — no solo avisa, actúa.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5 · CROMA (centralidad) -->
+  <section class="slide">
+    <div class="inner">
+      <p class="eyebrow">El motor · Croma</p>
+      <h2>Un proceso entra. <em>Nueve fuentes</em> lo interrogan. Sale un veredicto.</h2>
+      <div class="chain">
+        <span class="pill src">SECOP · proceso</span><span class="arrow">→</span>
+        <span class="pill">RUES</span><span class="arrow">→</span>
+        <span class="pill">Supersociedades</span><span class="arrow">→</span>
+        <span class="pill">Rama Judicial</span><span class="arrow">→</span>
+        <span class="pill">Procuraduría</span><span class="arrow">→</span>
+        <span class="pill">Contraloría</span><span class="arrow">→</span>
+        <span class="pill">Gemini</span><span class="arrow">→</span>
+        <span class="pill out">Veredicto citado</span>
+      </div>
+      <p class="lead wide" style="margin-top:34px">Todo el cruce corre sobre <em>Croma</em>. No es un dato suelto: es la cadena. <span class="k">Sin Croma no hay veredicto.</span></p>
+    </div>
+  </section>
+
+  <!-- 6 · DOS CARAS -->
+  <section class="slide">
+    <div class="inner">
+      <p class="eyebrow">Dos caras, un motor</p>
+      <h2>El mismo engine <em>paga</em> y <em>expone</em>.</h2>
+      <div class="faces">
+        <div class="face op">
+          <p class="tag">Oportunidad · la PYME gana</p>
+          <h3>Contrato ganable, a tiempo</h3>
+          <p>Detecta procesos abiertos que la empresa honesta puede ganar — antes que su competencia, con lo que necesita para presentarse.</p>
+        </div>
+        <div class="face br">
+          <p class="tag">Bandera roja · el watchdog expone</p>
+          <h3>Adjudicación amañada, citada</h3>
+          <p>Marca el indicio de riesgo con cada afirmación trazable a su fuente oficial. Evidencia, no opinión.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · DIFERENCIAL -->
+  <section class="slide">
+    <div class="inner">
+      <p class="eyebrow">El diferencial</p>
+      <h2>Detecta lo que <em>ningún humano</em> leería en una lista.</h2>
+      <ul class="feat" style="max-width:60ch">
+        <li><span class="ic">%</span><span><b>Concentración de adjudicaciones</b> — índice HHI sobre la red: cuándo una entidad le da todo al mismo NIT.</span></li>
+        <li><span class="ic">⚑</span><span><b>Representante compartido</b> — dos "competidores" con el mismo representante legal. No compiten: es fachada.</span></li>
+        <li><span class="ic">◈</span><span><b>Red de contratistas interactiva</b> — el mapa de quién gana de quién, explorable.</span></li>
+        <li><span class="ic">▤</span><span><b>Entregables en un clic</b> — derecho de petición (Ley 1755), dossier de evidencia, hilo para redes.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 8 · PRODUCCIÓN -->
+  <section class="slide">
+    <div class="inner">
+      <p class="eyebrow">No es un laboratorio</p>
+      <h1 style="font-size:clamp(34px,6vw,72px)">Vivo, en <em>producción</em>,<br>latiendo cada 2 horas.</h1>
+      <p class="lead wide" style="margin-top:28px">Desplegado en <span class="k">centinela.aido.lat</span>. Cada cuenta nueva arranca con hallazgos reales; el agente sigue barriendo solo.</p>
+      <div class="stats" style="margin-top:40px">
+        <div class="stat"><div class="n sig">9</div><div class="l">endpoints de Croma encadenados</div></div>
+        <div class="stat"><div class="n">2 h</div><div class="l">cadencia del heartbeat autónomo</div></div>
+        <div class="stat"><div class="n">2</div><div class="l">caras: oportunidad y bandera roja</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · POR QUÉ GANA -->
+  <section class="slide">
+    <div class="inner">
+      <p class="eyebrow">Por qué Centinela</p>
+      <h2>Alineado con los <em>tres ejes</em> del jurado.</h2>
+      <div class="crit">
+        <div class="c">
+          <p class="h">Originalidad</p>
+          <p>Un agente que <b>inicia</b> (heartbeat) y entrega valor sentido — no un buscador pasivo ni un dashboard más.</p>
+        </div>
+        <div class="c core">
+          <p class="h">Uso de Croma</p>
+          <p>Croma es <b>el motor</b>: 9 endpoints encadenados por proceso. Sin Croma, no hay producto.</p>
+        </div>
+        <div class="c">
+          <p class="h">Impacto</p>
+          <p>Problema real, <b>en producción</b> hoy. PYMEs que ganan, corrupción que se expone, evidencia citada.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · CIERRE -->
+  <section class="slide">
+    <div class="inner">
+      <div class="brand">
+        <svg class="eye" viewBox="0 0 256 256" aria-hidden="true">
+          <path fill="var(--ink)" d="M28 119 80 68h96l52 51-17 17-43-42H88l-43 42Z"/>
+          <path fill="var(--ink)" d="m28 137 17-17 43 42h80l43-42 17 17-52 51H80Z"/>
+          <path fill="var(--signal)" fill-rule="evenodd" d="M128 96a32 32 0 1 1 0 64 32 32 0 0 1 0-64Zm-4 12h8v40h-8Z"/>
+        </svg>
+        <span class="wm">CENTINELA<span class="cur">_</span></span>
+      </div>
+      <h1 style="font-size:clamp(34px,6vw,76px)">PYMEs que ganan.<br>Corrupción que se <em>expone</em>.</h1>
+      <div class="links">
+        <a href="https://centinela.aido.lat">centinela.aido.lat</a>
+        <a href="https://github.com/S-kkipie/centinela">github.com/S-kkipie/centinela</a>
+        <span>· todo cimentado en Croma</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="dots" id="dots" role="tablist" aria-label="Diapositivas"></div>
+<div class="counter" id="counter"><b>01</b> / 10</div>
+<div class="hint">← → para navegar · F pantalla completa</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var dotsWrap=document.getElementById('dots');
+  var counter=document.getElementById('counter');
+  var progress=document.getElementById('progress');
+  var i=0;
+  slides.forEach(function(_,n){
+    var b=document.createElement('button');
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-label','Ir a diapositiva '+(n+1));
+    b.addEventListener('click',function(){go(n)});
+    dotsWrap.appendChild(b);
+  });
+  var dots=[].slice.call(dotsWrap.children);
+  function pad(n){return (n<10?'0':'')+n}
+  function render(){
+    slides.forEach(function(s,n){s.classList.toggle('active',n===i)});
+    dots.forEach(function(d,n){d.classList.toggle('on',n===i)});
+    counter.innerHTML='<b>'+pad(i+1)+'</b> / '+pad(slides.length);
+    progress.style.width=((i+1)/slides.length*100)+'%';
+  }
+  function go(n){i=Math.max(0,Math.min(slides.length-1,n));render()}
+  function next(){go(i+1)} function prev(){go(i-1)}
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next()}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev()}
+    else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(slides.length-1)}
+    else if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+  });
+  document.getElementById('deck').addEventListener('click',function(e){
+    if(e.target.closest('a')||e.target.closest('button'))return;
+    var mid=window.innerWidth/2; if(e.clientX>mid)next(); else prev();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
