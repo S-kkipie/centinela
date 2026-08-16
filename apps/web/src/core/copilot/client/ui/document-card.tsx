@@ -3,7 +3,6 @@
 import { CheckIcon, CopyIcon, DownloadIcon } from "lucide-react";
 import { useState } from "react";
 import type { CentinelaDocument } from "@/core/copilot/client/deliverables/documents";
-import { ScrollArea } from "@/frontend/components/ui/scroll-area";
 
 const KIND_LABEL: Record<CentinelaDocument["kind"], string> = {
     dossier: "Dossier de evidencia",
@@ -86,11 +85,14 @@ export function DocumentCard({
                     </button>
                 </div>
             </header>
-            <ScrollArea viewportClassName="max-h-64">
-                <pre className="whitespace-pre-wrap px-3.5 py-3 font-mono text-[11px] text-muted-foreground leading-relaxed">
+            {/* Native scroll, not Radix ScrollArea: its display:table viewport
+                wrapper lets the <pre> grow past the panel and clip on the right.
+                A plain block container lets whitespace-pre-wrap actually wrap. */}
+            <div className="max-h-64 overflow-y-auto overflow-x-hidden">
+                <pre className="whitespace-pre-wrap break-words px-3.5 py-3 font-mono text-[11px] text-muted-foreground leading-relaxed">
                     {doc.markdown}
                 </pre>
-            </ScrollArea>
+            </div>
         </article>
     );
 }
