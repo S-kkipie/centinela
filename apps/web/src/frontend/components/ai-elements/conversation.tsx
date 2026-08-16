@@ -21,6 +21,12 @@ export function Conversation({
         <ScrollArea
             className={cn("min-h-0 flex-1", className)}
             viewportRef={ref}
+            // Radix wraps the viewport's content in a `display:table` box that
+            // grows to its widest child — a generated document's long <pre>
+            // lines then push the whole message column (and its buttons) past
+            // the panel and clip on the right. Force the wrapper to block so the
+            // column stays panel-width and text wraps.
+            viewportClassName="[&>div]:!block [&>div]:!min-w-0"
         >
             <div {...props} />
         </ScrollArea>

@@ -48,7 +48,7 @@ export function DocumentCard({
     }
 
     return (
-        <article className="my-2 overflow-hidden rounded-md border border-rule bg-card">
+        <article className="my-2 w-full min-w-0 overflow-hidden rounded-md border border-rule bg-card">
             <header className="flex items-start justify-between gap-3 border-rule border-b bg-secondary/60 px-3.5 py-2.5">
                 <div className="min-w-0">
                     <p className="label-ops text-signal">
