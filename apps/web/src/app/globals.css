@@ -158,6 +158,19 @@
     }
 }
 
+@layer base {
+    /* Radix ScrollArea wraps its viewport content in a `display:table` box that
+       grows to its widest child. With wrapping text (a generated document's long
+       <pre> lines) that box balloons past the container and clips content — e.g.
+       the chat panel cut off the document's Download button. We never scroll
+       horizontally inside a ScrollArea, so force the wrapper to block: the column
+       stays container-width and text wraps. Tables keep their own overflow-x. */
+    [data-slot="scroll-area-viewport"] > div {
+        display: block !important;
+        min-width: 100% !important;
+    }
+}
+
 @layer utilities {
     /* signature: faint 32px engineering grid substrate */
     .bg-grid-ops {
