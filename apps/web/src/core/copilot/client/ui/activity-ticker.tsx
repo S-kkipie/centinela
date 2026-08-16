@@ -32,7 +32,10 @@ export function ActivityTicker() {
     return (
         <div className="sticky bottom-0 z-30 border-rule border-t bg-panel/90 backdrop-blur">
             {open && entries.length > 0 && (
-                <ScrollArea className="max-h-48 border-rule border-b">
+                <ScrollArea
+                    className="border-rule border-b"
+                    viewportClassName="max-h-48"
+                >
                     <ul className="mx-auto w-full max-w-6xl space-y-1 px-4 py-2 md:px-6">
                         {entries.map((e) => (
                             <li

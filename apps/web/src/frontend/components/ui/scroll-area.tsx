@@ -7,11 +7,19 @@ import { cn } from "@/frontend/lib/utils"
 
 function ScrollArea({
   className,
+  viewportClassName,
   children,
   viewportRef,
   ...props
 }: React.ComponentProps<typeof ScrollAreaPrimitive.Root> & {
   viewportRef?: React.Ref<HTMLDivElement>
+  /**
+   * Classes for the scrolling viewport. Put height caps HERE, not on the root:
+   * the viewport uses `height:100%`, which can't resolve against a root that
+   * only has `max-height`, so the viewport grows to fit all content and never
+   * scrolls. A `max-h-*` on the viewport itself clamps and scrolls correctly.
+   */
+  viewportClassName?: string
 }) {
   return (
     <ScrollAreaPrimitive.Root
@@ -22,7 +30,10 @@ function ScrollArea({
       <ScrollAreaPrimitive.Viewport
         ref={viewportRef}
         data-slot="scroll-area-viewport"
-        className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
+        className={cn(
+          "size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
+          viewportClassName,
+        )}
       >
         {children}
       </ScrollAreaPrimitive.Viewport>

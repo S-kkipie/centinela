@@ -86,7 +86,7 @@ export function DocumentCard({
                     </button>
                 </div>
             </header>
-            <ScrollArea className="max-h-64">
+            <ScrollArea viewportClassName="max-h-64">
                 <pre className="whitespace-pre-wrap px-3.5 py-3 font-mono text-[11px] text-muted-foreground leading-relaxed">
                     {doc.markdown}
                 </pre>

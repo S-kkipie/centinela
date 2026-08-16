@@ -310,7 +310,7 @@ export function FindingsFeed({ watchlistId }: { watchlistId?: string }) {
                                 En vivo
                             </span>
                         </header>
-                        <ScrollArea className="lg:max-h-[calc(100svh-9.5rem)]">
+                        <ScrollArea viewportClassName="lg:max-h-[calc(100svh-9.5rem)]">
                             <div className="space-y-1 p-2">
                                 {items.map((f, i) => (
                                     <FindingRow
